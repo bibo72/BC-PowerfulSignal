@@ -1,0 +1,73 @@
+<ul class="product-tabs tabs" data-tab>
+	<li class="tab is-active">
+		<a class="tab-title" href="#tab-description">{{lang 'products.description'}}</a>
+	</li>
+	<li class="tab more-info-tab" style="display: none;">
+		<a class="tab-title" href="#tab-info">More Information</a>
+	</li>
+	{{#if product.custom_fields.length '>' 0}}
+	<li class="tab">
+		<a class="tab-title" href="#tab-specs">Specifications</a>
+	</li>
+	{{/if}}
+	{{#if settings.show_product_reviews}}
+	<li class="tab">
+		<a class="tab-title" href="#tab-reviews">Reviews</a>
+	</li>
+	{{/if}}
+	{{#if product.warranty}}
+	<li class="tab">
+		<a class="tab-title" href="#tab-warranty">{{lang 'products.warranty'}}</a>
+	</li>
+	{{/if}}
+</ul>
+<div class="productView-tabs tabs-contents">
+	<div class="tab-content is-active" id="tab-description">
+		<p class="productView-title">Product Description</p>
+		{{{product.description}}}
+		{{{snippet 'product_description'}}}
+	</div>
+	<div class="tab-content" id="tab-info" style="display: none;">
+	</div>
+	{{#if product.custom_fields.length '>' 0}}
+	<div class="tab-content" id="tab-specs">
+		<p class="productView-title">Product Specifications</p>
+		{{#each product.custom_fields}}
+		    {{#contains name 'Coverage'}}
+		    {{else}}
+			    {{#if name '===' 'Flag'}}
+			    {{else if name '===' 'Feature'}}
+			    {{else}}
+    			    {{#unless name '===' 'callPricing'}}
+        			    <div class="product-spec">
+            				<dt class="spec-label">{{name}}:</dt>
+        				    <dd class="spec-value">{{{value}}}</dd>
+        			    </div>
+        		    {{/unless}}
+			    {{/if}}
+		    {{/contains}}
+		{{/each}}
+	</div>
+	{{/if}}
+	{{#if settings.show_product_reviews}}
+		<div class="tab-content" id="tab-reviews">
+			<p class="productView-title">Product Reviews</p>
+			{{#if settings.show_product_reviews}}
+				<span class="productView-reviewLink">
+					<a href="{{product.url}}{{#if is_ajax}}#write_review{{/if}}"
+						{{#unless is_ajax }}data-reveal-id="modal-review-form"{{/unless}}>
+						{{lang 'products.reviews.new'}}
+                    </a>
+                </span>
+                {{> components/products/modals/writeReview}}
+           	{{/if}}
+			{{> components/products/reviews reviews=product.reviews product=product urls=urls}}
+		</div>
+	{{/if}}
+	{{#if product.warranty}}
+	<div class="tab-content" id="tab-warranty">
+		<p class="productView-title">{{lang 'products.warranty'}}</p>
+		{{{product.warranty}}}
+	</div>
+   {{/if}}
+</div>

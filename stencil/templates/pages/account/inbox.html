@@ -1,0 +1,22 @@
+{{#partial "page"}}
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+<main class="account">
+    <div class="container">
+        <h1 class="page-heading">{{lang 'account.messages.heading' }}</h1>
+        {{> components/account/navigation account_page='messages'}}
+        <div class="account-body">
+            <section class="account-content">
+                {{#if forms.inbox.error}}
+                    {{> components/common/alert-error forms.inbox.error}}
+                {{/if}}
+                {{#if forms.inbox.success}}
+                    {{> components/common/alert-success forms.inbox.success}}
+                {{/if}}
+                {{> components/account/messages-list messages=customer.inbox.messages}}
+                {{> components/account/messages-form}}
+            </section>
+        </div>
+    </div>
+</main>
+{{/partial}}
+{{> layout/base}}

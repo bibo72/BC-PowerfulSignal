@@ -1,0 +1,46 @@
+---
+products:
+    new:
+        limit: {{theme_settings.homepage_new_products_count}}
+    featured:
+        limit: {{theme_settings.homepage_featured_products_count}}
+    top_sellers:
+        limit: {{theme_settings.homepage_top_products_count}}
+carousel: {{theme_settings.homepage_show_carousel}}
+blog:
+    posts:
+        limit: 10
+    recent_posts:
+        limit: {{theme_settings.homepage_blog_posts_count}}
+---
+{{#partial "hero"}}
+    {{#if carousel}}
+        {{> components/carousel}}
+    {{/if}}
+    {{{snippet 'home_content'}}}
+{{/partial}}
+{{#partial "page"}}
+    {{#each shipping_messages}}
+        {{> components/common/alert-info message}}
+    {{/each}}
+<div class="main full">
+    {{#if banners.bottom}}
+    <div class="banners bottom-banner" data-banner-location="bottom">
+        <div class="banner">
+            {{{limit banners.bottom 1}}}
+        </div>
+    </div>
+    {{/if}}
+    {{#if banners.top}}
+    <div class="banners top-banner" data-banner-location="top">
+        <div class="banner">
+            {{{limit banners.top 1}}}
+        </div>
+    </div>
+    {{/if}}
+    <div class="container">
+        {{> components/common/home-tabs}}
+    </div>
+</div>
+{{/partial}}
+{{> layout/base}}

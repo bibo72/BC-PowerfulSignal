@@ -1,0 +1,56 @@
+{{#if name '===' 'Blog'}}
+	<a class="navPages-action navPages-action-depth-max has-subMenu is-root" href="{{url}}" data-collapsible="navPages-{{@index}}">{{name}} <i class="icon navPages-action-moreIcon" aria-hidden="true"><svg><use xlink:href="#icon-chevron-down" /></svg></i><i class="icon mobile-action"><svg><use xlink:href="#icon-chevron-right" /></svg></i>
+	</a>
+	<div class="navPage-subMenu navPage-subMenu-horizontal" id="navPages-{{@index}}" aria-hidden="true" tabindex="-1">
+		<ul class="navPage-subMenu-list">
+			<li class="navPage-subMenu-item-parent">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="{{url}}">Recent Blog Posts</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Announcements">Announcements</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Custom+Design+%26+Installation">Custom Design &amp; Installation</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Government+Agencies">Government Agencies</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Hospitals+%26+Healthcare">Hospitals &amp; Healthcare</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Hotel+%26+Hospitality">Hotel &amp; Hospitality</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Industrial+%26+Warehouse">Industrial &amp; Warehouse</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Infographics">Infographics</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Offices+%26+High-Rise+Buildings">Offices &amp; High-Rise Buildings</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Public+Safety">Public Safety</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Retail+%26+Service+Centers">Retail &amp; Service Centers</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Reviews">Reviews</a></li><li class="navPage-subMenu-item-child"><a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Tutorials">Tutorials</a>
+			</li>
+			<li class="navPage-subMenu-item-child">
+				<a class="navPage-subMenu-action navPages-action navPages-action-depth-max" href="/blog/tag/Utilities+Energy+Mining">Utilities Energy Mining</a>
+			</li>
+		</ul>
+	</div>
+{{else}}
+	{{#if children}}
+		<a class="navPages-action navPages-action-depth-max has-subMenu is-root" href="{{url}}" data-collapsible="navPages-{{@index}}">
+			{{name}} <i class="icon navPages-action-moreIcon" aria-hidden="true"><svg><use xlink:href="#icon-chevron-down" /></svg></i><i class="icon mobile-action"><svg><use xlink:href="#icon-chevron-right" /></svg></i>
+		</a>
+		{{> components/common/pages-navigation-dropdown}}
+	{{else}}
+		<a class="navPages-action" href="{{url}}">{{name}}</a>
+	{{/if}}
+{{/if}}

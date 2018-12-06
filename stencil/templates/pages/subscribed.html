@@ -1,0 +1,19 @@
+{{#partial "page"}}
+<main class="page">
+    <div class="page-content">
+        <h1 class="page-heading">
+            {{#if subscription.error}}
+                {{lang 'newsletter.subscribed_heading_error'}}
+            {{else}}
+                {{lang 'newsletter.subscribed_heading'}}
+            {{/if}}
+        </h1>
+        {{#if subscription.error}}
+            {{> components/common/alert-error subscription.error}}
+        {{else}}
+            {{> components/common/alert-success (lang 'newsletter.subscribed_message')}}
+        {{/if}}
+    </div>
+</main>
+{{/partial}}
+{{> layout/base}}

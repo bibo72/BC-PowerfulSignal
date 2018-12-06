@@ -1,0 +1,154 @@
+{{#if page_type '===' 'default'}}
+{{else if page_type '===' 'brand'}}
+{{else if page_type '===' 'category'}}
+{{else if page_type '===' 'page'}}
+{{else}}
+    {{#if banners.bottom}}
+    <div class="banners" data-banner-location="bottom">
+        <div class="banner">
+            {{{limit banners.bottom 1}}}
+        </div>
+    </div>
+    {{/if}}
+{{/if}}
+<section class="footer-widget">
+    <div style="display: inline-block; vertical-align: middle;">
+        <a href="http://www.shopperapproved.com/reviews/powerfulsignal.com/" class="shopperlink">
+        <img src="//www.shopperapproved.com/newseals/24837/456380-header-details.gif" style="border: 0;" alt="Customer Reviews" oncontextmenu="var d = new Date(); alert('Copying Prohibited by Law - This image and all included logos are copyrighted by Shopper Approved \251 '+d.getFullYear()+'.'); return false;" />
+        </a>
+    </div>
+    <div style="display: inline-block; vertical-align: middle;">
+        <div id="reviewBadgeWidget"><div id="reviewBadgeWidgetInner" class="stjr-widget"></div></div><script> (function(src, callback){var s, r, t; r = false; s = document.createElement('script'); s.type = 'text/javascript';s.src = src; s.onload = s.onreadystatechange = function() { if ( !r && (!this.readyState || this.readyState == 'complete') ) { r = true; callback(); } };t = document.getElementsByTagName('script')[0]; t.parentNode.insertBefore(s, t);}('https://static3.sitejabber.com/js/widget.min.1528492168.js', function() { new STJR.ReviewBadgeWidget({ id: 'reviewBadgeWidget',url:'powerfulsignal.com',type:'small',border_color:'',background_color:'',font_color:'light'}).render(); }) );</script>
+    </div>
+</section>
+<section class="footer-newsletter">
+    <div class="container">
+        {{#if settings.show_newsletter_box}}
+            {{> components/common/subscription-form}}
+        {{/if}}
+    </div>
+</section>
+<footer class="footer" role="contentinfo">
+    <div class="container">
+		<section class="footer-info" style="border-bottom: 0; padding-bottom: 0;">
+			<article class="footer-info-col store-info" data-section-type="siteLinks">
+				<div class="footer-links">
+					<h5 class="footer-info-heading">Sites</h5>
+					<ul class="footer-info-list">
+						<li><a href="https://cellsignalboosters.com/" target="_blank">CellSignalBoosters.com</a></li>
+						<li><a href="https://www.wilsonproway.com/" target="_blank">WilsonProWay.com</a></li>
+						<li><a href="https://www.weboost.com/" target="_blank">weBoost.com</a></li>
+						<li><a href="https://www.weboost.com/" target="_blank">WilsonPro.com</a></li>
+						<li><a href="https://www.hiboostusa.com/" target="_blank">HiBoostUSA.com</a></li>
+						<li><a href="https://www.surecall.com/" target="_blank">SureCall.com</a></li>
+					</ul>
+				</div>
+			</article>
+			<article class="footer-info-col store-info" data-section-type="topArticles">
+				<div class="footer-links">
+					<h5 class="footer-info-heading">Top Articles</h5>
+					<ul class="footer-info-list">
+						<li><a href="/cell-signal-strength/">Cell Signal Strength</a></li>
+						<li><a href="/support/knowledgebase/awareness/what-technologies-can-improve-my-cell-signal/">How to Improve Cell Signal</a></li>
+						<li><a href="/complete-guide-to-home-cell-signal-boosters/">Home Booster Guide</a></li>
+						<li><a href="/support/product-comparisons/">Product Comparisons</a></li>
+						<li><a href="/support/knowledgebase/decision/how-do-i-choose-the-right-system-to-improve-cell-signal-reception-in-my-building/">The Right Building System</a></li>
+						<li><a href="/support/knowledgebase/consideration/what-do-i-need-to-know-before-buying-a-cellular-amplifier-system/">Before You Buy</a></li>
+					</ul>
+				</div>
+			</article>
+			<article class="footer-info-col store-info" data-section-type="topWilsonSignalBoosters">
+				<div class="footer-links">
+					<h5 class="footer-info-heading">Top Wilson Kits</h5>
+					<ul class="footer-info-list">
+						<li><a href="/weboost-470510-drive-4g-x-max-cell-phone-signal-booster-for-vehicles/">weBoost Drive 4G&#8209;X</a></li>
+						<li><a href="/weboost-470108-drive-4g-m-cell-phone-signal-booster-for-vehicles/">weBoost Drive 4G&#8209;M</a></li>
+						<li><a href="/weboost-471104-connect-4g-x-cell-phone-signal-booster-for-homes-with-bonus-dome-antenna/">weBoost Connect 4G&#8209;X</a></li>
+						<li><a href="/weboost-470103-connect-4g-cell-phone-signal-booster-for-homes/">weBoost Connect 4G</a></li>
+						<li><a href="/wilsonpro-463127-pro-70-plus-cell-phone-signal-booster-system-with-1-dome-antenna/">WilsonPro 70 Plus</a></li>
+						<li><a href="/wilsonpro-465134-pro-70-cell-phone-signal-booster-system-with-1-dome-antenna/">WilsonPro 70</a></li>
+					</ul>
+				</div>
+			</article>
+			<article class="footer-info-col store-info" data-section-type="topHiBoostSignalBoosters">
+				<div class="footer-links">
+					<h5 class="footer-info-heading">Top HiBoost Kits</h5>
+					<ul class="footer-info-list">
+						<li><a href="/hiboost-home-4k-lcd-cell-phone-signal-booster/">HiBoost Home 4K</a></li>
+						<li><a href="/top-signal-2x-hiboost-4k-cell-phone-signal-booster-with-1-antenna/">Top Signal 2X HiBoost 4K</a></li>
+						<li><a href="/hiboost-home-10k-lcd-cell-phone-signal-booster/">HiBoost Home 10K LCD</a></li>
+						<li><a href="/top-signal-2x-hiboost-10k-cell-phone-signal-booster-with-1-antenna/">Top Signal 2X HiBoost 10K</a></li>
+						<li><a href="/hiboost-home-15k-lcd-cell-phone-signal-booster/">HiBoost Home 15K LCD</a></li>
+						<li><a href="/top-signal-hiboost-20k-pro-cell-phone-signal-booster-with-1-antenna/">Top Signal HiBoost 20K Pro</a></li>
+					</ul>
+				</div>
+			</article>
+		</section>
+	</div>
+    <div class="container">
+        <section class="footer-info">
+            <article class="footer-info-col store-info" data-section-type="storeInfo">
+                <h5 class="footer-info-heading">{{lang 'footer.info'}}</h5>
+                <address>{{nl2br settings.address}}</address>
+                <p class="phone-number"><a href="tel:+18669123444">866-912-3444</a></p>
+                <p>or</p>
+                <p class="phone-number"><a href="tel:+14356346800">435-634-6800</a></p>
+                <p class="email-address"><a href="mailto:sales@powerfulsignal.com">sales@powerfulsignal.com</a></p>
+                {{> components/common/social-links}}
+				<p><a href="/customer-reviews/">Reviews</a></p>
+            </article>
+            <article class="footer-info-col" data-section-type="footer-categories">
+                <h5 class="footer-info-heading">My Account</h5>
+                <ul class="footer-info-list">
+                    {{#if customer}}
+                        <li><a href="{{urls.account.index}}" title="View My Account">{{lang 'common.account'}}</a></li>
+                        <li><a href="{{urls.auth.logout}}" title="Logout">{{lang 'common.logout'}}</a></li>
+                    {{else}}
+                        <li><a href="{{urls.auth.login}}" title="Login">{{lang 'common.login'}}</a></li>
+                        {{#if settings.account_creation_enabled}}
+                        <li><a href="{{urls.auth.create_account}}" class="Create an Account">{{lang 'common.sign_up'}}</a>
+                        {{/if}}
+                    {{/if}}
+                    <li><a href="{{urls.account.orders.all}}" title="Order Status">Order Status</a></li>
+                    <li><a href="{{urls.cart}}" title="View cart">My Cart</a></li>
+                    <li><a href="{{urls.wishlists.all}}" title="View Wishlist">My Wishlist</a></li>
+                </ul>
+            </article>
+            <article class="footer-info-col " data-section-type="footer-webPages">
+                <h5 class="footer-info-heading">{{lang 'footer.navigate'}}</h5>
+                <ul class="footer-info-list">
+                    {{#each pages}}
+                        <li>
+                            <a href="{{url}}">{{name}}</a>
+                        </li>
+                    {{/each}}
+                </ul>
+            </article>
+            <article class="footer-info-col" data-section-type="footer-brands">
+                <h5 class="footer-info-heading">Shop</h5>
+                <ul class="footer-info-list">
+                    {{#each categories}}
+                    <li>
+                        <a href="{{url}}">{{name}}</a>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{#if theme_settings.social_icon_placement_bottom '!==' 'bottom_none'}}
+                    <h5 class="footer-info-heading">{{lang 'social.connect'}}</h5>
+                    {{> components/common/social-links}}
+                {{/if}}
+            </article>
+            <a class="scroll-to-top"></a>
+        </section>
+        {{#if theme_settings.geotrust_ssl_common_name}}
+            <div class="footer-geotrust-ssl-seal">
+                {{> components/common/geotrust-ssl-seal}}
+            </div>
+        {{/if}}
+        {{#if theme_settings.show_copyright_footer}}
+            <div class="footer-copyright">
+                <p class="powered-by">Copyright {{moment format="YYYY"}} <a href="{{urls.home}}" title="{{settings.store_name}}">{{settings.store_name}}</a>. All Rights Reserved. All prices are in USD. <a href="{{urls.sitemap}}" class="footer-sitemap">{{lang 'sitemap.page_title'}}</a></p>
+            </div>
+        {{/if}}
+    </div>
+</footer>

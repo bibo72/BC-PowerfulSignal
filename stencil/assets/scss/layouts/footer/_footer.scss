@@ -1,0 +1,318 @@
+// =============================================================================
+// FOOTER (CSS)
+// =============================================================================
+
+// Layout and columns
+// -----------------------------------------------------------------------------
+//
+// 1. To enable the grid's display: inline-block; to work properly, we need to
+//    remove the white-space that it creates between columns with font-size: 0;
+// 2. Re-set the font-size that was reduced to 0 in point 1 for children.
+//
+// -----------------------------------------------------------------------------
+.footer {
+    background-color: $footer-background;
+    border-top: container("border");
+    padding: spacing("double") 0;
+}
+.footer-info {
+    border-bottom: 1px solid #4a4a4a;
+    font-size: 0; // 1
+    margin: 0 0 remCalc(20);
+    padding: 0 0 remCalc(20);
+    position: relative;
+    &:after {
+        clear: both;
+        content: '';
+        display: block;
+    }
+}
+.footer-info-col {
+    color: #d0d0d0;
+    font-size: remCalc(15);
+    margin: 0 0 remCalc(10);
+    padding: 0 remCalc(10) remCalc(10);
+    text-align: center;
+    width: 100%;
+    @include breakpoint("small") {
+        float: left;
+        margin: 0 0 remCalc(20);
+        padding: 0 remCalc(20) 0 0;
+        text-align: left;
+        width: 50%;
+        &:nth-of-type(odd) {
+            clear: left;
+        }
+    }
+    @include breakpoint("medium") {
+        width: 25%;
+        &:nth-of-type(odd) {
+            clear: none;
+        }
+    }
+    > :first-child {
+        margin-top: 0;
+    }
+    > :last-child {
+        margin-bottom: 0;
+    }
+    &.store-info {
+        .footer-info-heading {
+            text-align: center;
+            @include breakpoint("small") {
+                text-align: left;
+            }
+        }
+        address {
+            font-style: normal;
+            margin: 0 0 remCalc(10);
+            &:before {
+                background: url('../icons/marker.svg') center center no-repeat;
+                background-size: 100%;
+                content: '';
+                display: inline-block;
+                height: remCalc(15);
+                margin: 0 remCalc(5) 0 0;
+                position: relative;
+                top: remCalc(2);
+                width: remCalc(15);
+            }
+        }
+        p {
+            margin: 0;
+            a {
+                color: #d0d0d0;
+                padding: remCalc(5) 0;
+                text-decoration: none;
+                &:hover {
+                    color: #db792d;
+                }
+            }
+        }
+        .phone-number {
+            a {
+                &:before {
+                    background: url('../icons/phone.svg') center center no-repeat;
+                    background-size: 100%;
+                    content: '';
+                    display: inline-block;
+                    height: remCalc(15);
+                    margin: 0 remCalc(5) 0 0;
+                    vertical-align: middle;
+                    width: remCalc(15);
+                }
+                &:hover {
+                    &:before {
+                        background-image: url('../icons/phone-hover.svg');
+                    }
+                }
+            }
+        }
+        .email-address {
+            a {
+                &:before {
+                    background: url('../icons/mail.svg') center center no-repeat;
+                    background-size: 100%;
+                    content: '';
+                    display: inline-block;
+                    margin: 0 remCalc(5) 0 0;
+                    vertical-align: middle;
+                    height: remCalc(15);
+                    width: remCalc(15);
+                }
+                &:hover {
+                    &:before {
+                        background-image: url('../icons/mail-hover.svg');
+                    }
+                }
+            }
+        }
+    }
+}
+.footer-info-col--small {
+    @include breakpoint("medium") {
+        width: width("2/12");
+    }
+}
+.footer-info-col--social {
+    width: 100%;
+}
+.footer-info-col--left {
+    @include breakpoint("small") {
+        padding: 0;
+    }
+}
+.footer-info-col--right {
+    @include breakpoint("small") {
+        left: 50%;
+        position: inherit;
+    }
+    @include breakpoint("medium") {
+        left: 0;
+        padding: 0;
+        text-align: right;
+    }
+}
+
+// Content
+// -----------------------------------------------------------------------------
+.footer-info-heading {
+    background: #292929;
+    color: $footer-heading-fontColor;
+    font-size: remCalc(18);
+    margin: 0 0 remCalc(10);
+    padding: remCalc(10) 0;
+    text-transform: uppercase;
+    @include breakpoint("small") {
+        background: none;
+        border-bottom: 1px solid #4a4a4a;
+        padding: 0 0 remCalc(5);
+    }
+}
+.footer-info-list {
+    list-style: none;
+    margin-left: 0;
+    a {
+        color: #d0d0d0;
+        display: block;
+        font-size: remCalc(15);
+        padding: remCalc(5) 0;
+        text-decoration: none;
+        // scss-lint:disable NestingDepth
+        &:hover {
+            color: stencilColor("color-textSecondary--hover");
+        }
+        // scss-lint:enable NestingDepth
+    }
+}
+.footer-copyright {
+    color: #868686;
+    font-size: remCalc(12);
+    text-align: center;
+    @include breakpoint("small") {
+        text-align: right;
+    }
+    > .powered-by {
+        color: #868686;
+        font-size: fontSize("tiny");
+        margin: 0;
+    }
+    a {
+        color: #868686;
+        text-decoration: none;
+        // scss-lint:disable NestingDepth
+        &:hover {
+            color: stencilColor("color-textSecondary--hover");
+        }
+        &.footer-sitemap {
+            color: #db792d;
+        }
+    }
+}
+.footer-payment-icons {
+    height: remCalc(40);
+    margin-top: spacing("single");
+    @include breakpoint("medium") {
+        margin-top: spacing("double");
+    }
+    .footer-payment-icon {
+        height: 100%;
+        margin: spacing("quarter");
+        vertical-align: middle;
+        width: remCalc(50);
+    }
+    svg {
+        fill: stencilColor("icon-color");
+    }
+}
+.footer-geotrust-ssl-seal {
+    @include breakpoint("small") {
+        bottom: 0;
+        position: absolute;
+        right: 16px;
+    }
+    table {
+        margin: auto;
+    }
+}
+.footer-widget {
+    background: #f6f6f6;
+    padding: remCalc(15) 0;
+    text-align: center;
+}
+.footer-newsletter {
+    background: #d1d1d1;
+    .newsletter-subscription {
+        padding: remCalc(15) 0;
+        &:after {
+            clear: both;
+            content: '';
+            display: block;
+        }
+        @include breakpoint("medium") {
+            display: table;
+            width: 100%;
+        }
+    }
+    .newsletter-heading {
+        text-align: center;
+        h2 {
+            font-size: remCalc(22);
+            font-weight: 300;
+            letter-spacing: remCalc(1);
+            text-transform: uppercase;
+            word-spacing: remCalc(3);
+            @include breakpoint("medium") {
+                margin: 0;
+            }
+        }
+        @include breakpoint("medium") {
+            display: table-cell;
+            height: remCalc(40);
+            vertical-align: middle;
+            width: 50%;
+        }
+    }
+    .newsletter-form {
+        .form {
+            margin: 0;
+        }
+        .form-field {
+            margin: 0;
+        }
+        .form-input {
+            margin: 0 0 remCalc(10);
+            @include breakpoint("small") {
+                float: left;
+                margin: 0 remCalc(10) 0 0;
+                width: calc(50% - 85px);
+            }
+        }
+        .form-submit {
+            width: 100%;
+            @include breakpoint("small") {
+                float: left;
+                margin: 0;
+                width: remCalc(150);
+            }
+        }
+        @include breakpoint("medium") {
+            display: table-cell;
+            height: remCalc(40);
+            vertical-align: middle;
+            width: 50%;
+        }
+    }
+}
+.scroll-to-top {
+    background: url('../icons/up.svg') center center no-repeat;
+    background-size: 100%;
+    clear: both;
+    display: block;
+    height: remCalc(25);
+    margin: 0 auto;
+    width: remCalc(25);
+    &:hover {
+        background-image: url('../icons/up-hover.svg');
+    }
+}

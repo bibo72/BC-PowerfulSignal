@@ -1,0 +1,70 @@
+// =============================================================================
+// TABS (CSS)
+// =============================================================================
+//
+// Most of these styles deliberately reset Citadel's defaults for smaller
+// screens since the styles in Stencil for smaller screens are more persistent
+// across breakpoints.
+//
+// -----------------------------------------------------------------------------
+.tabs {
+    .home-tabs & {
+        border: 0;
+        border-top: 1px solid #e8e8e8;
+    }
+}
+.tab {
+    float: none;
+    @include breakpoint("medium") {
+        float: left;
+    }
+    &.is-active {
+        @include breakpoint("small") {
+            margin-bottom: $tab-title-border-bottom-offset;
+        }
+        .tab-title {
+            background: #5aa094;
+            &:hover {
+                background: #5aa094;
+                color: #fff;
+            }
+        }
+    }
+}
+.tab-title {
+    font-weight: 600;
+    padding: remCalc(15) remCalc(20);
+    text-align: center;
+    text-decoration: $tab-title-text-decoration;
+    text-transform: uppercase;
+    &:hover {
+        background: #f0f0f0;
+        color: #456380;
+        text-decoration: underline;
+    }
+}
+//
+// State for when tab-content has js generated of calculated content, like carousel
+//
+// Purpose: The content being display: none, means any js calculated dimensions
+// are incorrect as the elements inside the tab-content have no dimensions to grab.
+// Carousel is a prime example. It needs widths to calculate the layout and slides
+// -----------------------------------------------------------------------------
+.tab-content.has-jsContent {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    visibility: hidden;
+    &.is-active {
+        height: auto;
+        overflow: visible;
+        padding: $tabs-content-padding;
+        visibility: visible;
+    }
+}
+.tab-contents {
+    .page-heading {
+        display: none;
+    }
+}

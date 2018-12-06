@@ -1,0 +1,11 @@
+// =============================================================================
+// HEADER (Settings)
+// =============================================================================
+
+$header-bg:                                 stencilColor("header-backgroundColor");
+$header-height:                             70px;
+$header-toggle-width:                       $header-height;
+$header-logo-marginVertical:                5px;
+$header-logo-paddingVertical:               $header-logo-marginVertical;
+$header-image-height:						$header-height - $header-logo-marginVertical;
+$storeName-color:                           stencilColor("storeName-color");

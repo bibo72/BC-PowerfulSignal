@@ -1,0 +1,128 @@
+// =============================================================================
+// PRODUCT VIEW (CSS)
+// =============================================================================
+
+// Product view layout
+// -----------------------------------------------------------------------------
+.productView {
+    .modal & {
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+    &:after {
+        clear: both;
+        content: '';
+        display: block;
+    }
+}
+.productView--quickView {
+    .socialLinks-item--print {
+        display: none;
+    }
+}
+.productView-images {
+    text-align: center;
+    @include breakpoint("large") {
+        float: left;
+        max-width: remCalc(350);
+        width: 50%;
+    }
+}
+.productView-details {
+    padding: 0 remCalc(10);
+    &.productView-actions {
+        @include breakpoint("small") {
+            float: left;
+            width: calc(100% - 200px);
+        }
+        @include breakpoint("large") {
+            width: calc(100% - 550px);
+        }
+    }
+    &.productView-brand-price {
+        border: 1px solid #d0d0d0;
+        margin: 0 remCalc(10) remCalc(20);
+        padding: 0 remCalc(10) remCalc(10);
+        text-align: center;
+        .productView-rightCart {
+            display: none;
+            margin: remCalc(10) 0 0;
+            .form-field {
+                margin: 0 0 remCalc(15);
+            }
+            .form-action {
+                .add-to-cart {
+                    background: #5aa095;
+                    border-color: #5aa095;
+                    border-radius: 0;
+                    display: block;
+                    font-size: remCalc(20);
+                    padding: remCalc(15) remCalc(10);
+                    width: 100%;
+                }
+                @include breakpoint("small") {
+                    display: block;
+                }
+            }
+            @include breakpoint("small") {
+                display: block;
+            }
+        }
+        @include breakpoint("small") {
+            border-top: 0;
+            border-bottom: 0;
+            float: left;
+            margin: 0 auto remCalc(20);
+            text-align: left;
+            width: remCalc(200);
+        }
+    }
+}
+.productView-tabs {
+    padding: 0 remCalc(15);
+}
+.productView-description {
+    padding: 0 remCalc(10);
+    .productView-title {
+        border-bottom: container("border");
+        margin: 0 remCalc(-10) remCalc(10);
+    }
+    .tab-content {
+        display: block;
+    }
+    .productView-description {
+        @include breakpoint("medium") {
+            clear: both;
+            float: none;
+            width: 100%;
+        }
+    }
+    > .tabs {
+        background: #eaeaec;
+        padding: remCalc(5) remCalc(20);
+        .tab {
+            .tab-title {
+                color: #0b2874;
+                padding: remCalc(15) remCalc(20);
+                &:hover {
+                    background: none;
+                    color: #0b2874;
+                    text-decoration: underline;
+                }
+            }
+            &.is-active {
+                .tab-title {
+                    background: #fff;
+                    border-bottom: 1px solid #fff;
+                    color: #891007;
+                }
+            }
+        }
+        @include breakpoint("small") {
+            padding: remCalc(5) remCalc(20) 0 remCalc(20);
+        }
+    }
+    @include breakpoint("medium") {
+        padding: 0;
+    }
+}

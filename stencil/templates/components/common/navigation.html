@@ -1,0 +1,68 @@
+<nav class="navUser">
+    <div class="container">
+        {{> components/common/currency-selector}}
+        <ul class="navuser-left">
+            <li class="navUser-item mobile-toggle">
+                <a href="#" class="mobileMenu-toggle" data-mobile-menu-toggle="menu">
+                    <span class="mobileMenu-toggleIcon">Toggle menu</span>
+                </a>
+            </li>
+            <li class="navUser-item">
+                <a class="navUser-action" href="/about-us/">About Us</a>
+            </li>
+            <li class="navUser-item">
+                <a class="navUser-action" href="/contact-us/">Contact Us</a>
+            </li>
+            <li class="navUser-item">
+                <a class="navUser-action" href="/professional-design-install/free-custom-quote/">Custom Quote</a>
+            </li>
+        </ul>
+        <div class="navUser-quickSearch" data-prevent-quick-search-close>
+            {{> components/common/quick-search}}
+        </div>
+        <ul class="navUser-section navUser-section--alt">
+            {{#if theme_settings.social_icon_placement_top}}
+                <li class="navUser-item navUser-item--social">
+                    {{> components/common/social-links}}
+                </li>
+                <li class="navUser-item navUser-item--divider">|</li>
+            {{/if}}
+            {{#if customer.store_credit.value '>' 0}}
+                <li class="navUser-item">
+                    <a class="navUser-action navUser-action--storeCredit"
+                       data-dropdown="storeCredit-dropdown"
+                       data-options="align:bottom"
+                       href="{{urls.cart}}">
+                            <span class="navUser-action-divider">{{lang 'common.store_credit_overview' credit=customer.store_credit.formatted}}</span>
+                    </a>
+                    <div class="dropdown-menu" id="storeCredit-dropdown" data-dropdown-content aria-hidden="true">
+                        {{{lang 'common.store_credit' store_credit=customer.store_credit.formatted}}}
+                    </div>
+                </li>
+            {{/if}}
+            <li class="navUser-item navUser-item-compare">
+                <a class="navUser-action navUser-item--compare" href="{{urls.compare}}" data-compare-nav>{{lang 'common.compare'}} (<span class="countPill countPill--positive countPill--alt">0</span>)</a>
+            </li>
+            {{#if settings.gift_certificates_enabled}}
+                <li class="navUser-item">
+                    <a class="navUser-action" href="{{urls.gift_certificate.purchase}}">{{lang 'common.gift_cert'}}</a>
+                </li>
+            {{/if}}
+            <li class="navUser-item navUser-item--account">
+                <a class="navUser-action" href="{{urls.account.index}}">{{#if customer}}{{customer.name}}{{else}}{{lang 'common.account'}}{{/if}}</a>
+            </li>
+            <li class="navUser-item navUser-item--cart">
+                <a
+                    class="navUser-action"
+                    data-cart-preview
+                    data-dropdown="cart-preview-dropdown"
+                    data-options="align:right"
+                    href="{{urls.cart}}">
+                    <span class="navUser-item-cartLabel">{{lang 'common.cart'}}</span> <span class="countPill countPill--positive cart-quantity"><span class="cart-quantity-number">{{cart.quantity}}</span> {{#if cart.quantity '===' 1}}item{{else}}items{{/if}}</span>
+                </a>
+
+                <div class="dropdown-menu" id="cart-preview-dropdown" data-dropdown-content aria-hidden="true"></div>
+            </li>
+        </ul>
+    </div>
+</nav>

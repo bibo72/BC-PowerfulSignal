@@ -1,0 +1,32 @@
+---
+blog:
+    posts:
+        limit: 10
+        pages: 3
+        summary: 500
+---
+{{#partial "page"}}
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+<main class="page page-blog">
+	<div class="container">
+		<aside class="page-sidebar">
+			<div class="recent-blogs">
+				<h2>Recent Posts</h2>
+				<ul>
+					{{#each (limit blog.posts 5)}}
+					<li><a href="{{url}}">&raquo; {{title}}</a></li>
+					{{/each}}
+				</ul>
+			</div>
+		</aside>
+		<section class="page-content blogs-page">
+		    <h1 class="page-heading">{{ blog.name }}</h1>
+		    {{#each blog.posts}}
+		        {{> components/blog/blog post=this settings=../settings}}
+		    {{/each}}
+		    {{> components/common/paginator pagination.blog}}
+		</section>
+	</div>
+</main>
+{{/partial}}
+{{> layout/base}}

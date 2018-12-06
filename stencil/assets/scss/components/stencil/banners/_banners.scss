@@ -1,0 +1,100 @@
+// =============================================================================
+// Banners Component
+// =============================================================================
+// Banners
+// -----------------------------------------------------------------------------
+//
+// Purpose: Control the look and feel of the top and bottom site banners
+//
+// -----------------------------------------------------------------------------
+.banners {
+    p:last-child {
+        margin-bottom: 0;
+    }
+    .home & {
+        text-align: center;
+    }
+}
+.banner {
+    + .banner {
+        margin-top: spacing("single");
+    }
+}
+.bottom-banner-background-green {
+    background-color: #369784;
+}
+.bottom-banner-background-white {
+    background: linear-gradient(to bottom,rgba(255,255,255,1) 0,rgba(246,246,246,1) 73%,rgba(168,165,168,1) 100%);
+    padding: remCalc(30) 0;
+}
+.bhpch1 {
+    color: #fff;
+    font-size: remCalc(40);
+    font-weight: normal;
+    margin: 0 0 remCalc(5);
+    padding: remCalc(35) 0 remCalc(18);
+    @include breakpoint("small") {
+        font-size: remCalc(50);
+    }
+}
+.circle-cta-blue {
+    background-color: #456380;
+}
+.circle-cta-green {
+    background-color: #369784;
+}
+.circle-cta-grey {
+    background-color: #4b4949;
+}
+.circle-cta-orange {
+    background-color: #ed8127;
+}
+.circle-cta {
+    border-radius: 50%;
+    height: remCalc(180);
+    margin: 0 remCalc(10) remCalc(20);
+    width: remCalc(180);
+    @include breakpoint("small") {
+        height: remCalc(250);
+        margin: 0;
+        width: remCalc(250);
+    }
+}
+.top-banner {
+    margin: 0 auto remCalc(50);
+    .home & {
+        background: #456380;
+    }
+    h2 {
+        background-color: #063852;
+        color: #fff;
+        margin-bottom: 0!important;
+        padding: 10px 0!important;
+    }
+}
+.bottom-banner {
+    a {
+        display: inline-block;
+        padding: remCalc(5) remCalc(40);
+        span {
+            color: #fff;
+            float: left;
+            font-size: remCalc(34);
+            font-weight: normal;
+            line-height: 1;
+            padding: remCalc(55) 0 remCalc(10);
+            text-align: center;
+            width: 100%;
+        }
+        em {
+            color: #d6d7d9;
+            float: left;
+            font-size: remCalc(16);
+            font-style: normal;
+            font-weight: normal;
+            line-height: normal;
+            padding: remCalc(5) remCalc(15) remCalc(10);
+            width: 100%;
+        }
+    }
+}

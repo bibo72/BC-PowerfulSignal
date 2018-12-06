@@ -1,0 +1,496 @@
+// =============================================================================
+// PRODUCT LIST (CSS)
+// =============================================================================
+// Product list
+// -----------------------------------------------------------------------------
+.productList {
+    margin: 0;
+    .product {
+        box-shadow: 0 0 8px -1px rgba(0,0,0,.25);
+        margin: 0 0 remCalc(5);
+        padding: remCalc(20) remCalc(15);
+        position: relative;
+        + .product {
+            margin: remCalc(10) 0 remCalc(5);
+        }
+        &:after {
+            clear: both;
+            content: '';
+            display: block;
+            height: 0;
+        }
+    }
+    &.productGrid {
+        .product {
+            box-shadow: none;
+            padding: remCalc(5);
+            + .product {
+                margin: 0 0 remCalc(5);
+            }
+            .flags {
+                display: none;
+            }
+        }
+        .listItem-figure {
+            margin: 0;
+            padding: 0;
+        }
+        .listItem-details {
+            display: none;
+        }
+        .listItem-signal-strength {
+            display: none;
+        }
+
+        .listItem-buttons {
+            padding-top: 0;
+            @include breakpoint("medium") {
+                display: none;
+            }
+            &.absolute-buttons {
+                @include breakpoint("medium") {
+                    bottom: 0;
+                    left: 0;
+                    position: absolute;
+                    right: 0;
+                }
+            }
+        }
+    }
+}
+// Product list item
+// -----------------------------------------------------------------------------
+.listItem {
+    .productGrid & {
+        display: block;
+        min-height: remCalc(370);
+        overflow: hidden;
+        position: relative;
+        .sale-flag-sash {
+            left: remCalc(-25);
+        }
+        @include breakpoint("medium") {
+            &:hover {
+                box-shadow: 0 0 9px 0 rgba(0,0,0,0.4);
+                .listItem-figure {
+                    z-index: -1;
+                }
+                .listItem-actions {
+                    border-top: 4px solid #456380;
+                    background: #fff;
+                    margin-top: remCalc(-27);
+                }
+                .listItem-price {
+                    margin-bottom: remCalc(-27);
+                }
+                .listItem-buttons {
+                    display: block;
+                }
+            }
+        }
+    }
+    &:after {
+        clear: both;
+        content: '';
+        display: block;
+        height: 0;
+    }
+}
+.listItem-figure,
+.listItem-body {
+    @include breakpoint("small") {
+        display: block;
+        float: left;
+        vertical-align: top;
+    }
+    .productGrid & {
+        display: block;
+        float: none;
+    }
+}
+// QuickView button
+// -----------------------------------------------------------------------------
+.listItem-button {
+    background-color: $card-figcaption-button-background;
+    border-color: $card-figcaption-button-borderColor;
+    color: $card-figcaption-button-color;
+    &:hover {
+        background-color: $card-figcaption-button-backgroundHover;
+        border-color: $card-figcaption-button-borderColor;
+        color: $card-figcaption-button-color;
+    }
+}
+// List figure
+// -----------------------------------------------------------------------------
+.listItem-figure {
+    margin: 0 0 spacing("single");
+    @include breakpoint("small") {
+        margin: 0;
+        padding: 0 2% 0 0;
+        width: 25%;
+    }
+    @include breakpoint("large") {
+        vertical-align: top;
+        position: relative;
+    }
+    .productGrid & {
+        border: 1px solid #d0d0d0;
+        margin: 0;
+        position: relative;
+        width: 100%;
+    }
+    .listItem-button {
+        margin: spacing("single") 0;
+        @include breakpoint("large") {
+            @include verticalPositionMiddle();
+            display: inline-block;
+            margin: 0 0 spacing("single");
+            pointer-events: all;
+            transform-style: preserve-3d;
+        }
+    }
+}
+.listItem-figureBody {
+    opacity: 1;
+    text-align: center;
+    @include breakpoint("large") {
+        bottom: 0;
+        height: 100%;
+        left: spacing("half");
+        opacity: 0;
+        position: absolute;
+        right: spacing("half");
+        top: 0;
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+.listItem-image {
+    width: 100%;
+}
+.listItem-body {
+    @include breakpoint("small") {
+        padding: 0;
+        width: 75%;
+    }
+    .productGrid & {
+        border-top: 4px solid #456380;
+        background: #fff;
+        margin-top: remCalc(-27);
+        padding: remCalc(5);
+        width: 100%;
+        @include breakpoint("medium") {
+            border-color: #456380;
+            margin-top: 0
+        }
+    }
+}
+// List content
+// -----------------------------------------------------------------------------
+.listItem-content {
+    @include breakpoint("small") {
+        display: table;
+        width: 100%;
+    }
+    .productGrid & {
+        display: block;
+    }
+}
+.listItem-details,
+.listItem-actions {
+    @include breakpoint("small") {
+        display: block;
+        float: right;
+    }
+    .productGrid & {
+        display: block;
+        float: none;
+    }
+}
+// List details
+// -----------------------------------------------------------------------------
+.listItem-details {
+    float: none;
+    li {
+        line-height: initial;
+    }
+    @include breakpoint("large") {
+        float: right;
+        > :last-child {
+            margin-bottom: 0;
+        }
+        width: 50%;
+    }
+}
+.listItem-rating {
+    margin-bottom: spacing("quarter");
+    .productGrid & {
+        display: none;
+    }
+}
+.listItem-brand {
+    color: color("greys", "light");
+    font-size: fontSize("base");
+    margin: 0 0 spacing("eighth");
+    @include breakpoint("medium") {
+        font-size: fontSize("smaller");
+        margin-bottom: 0;
+    }
+}
+.listItem-title {
+    font-size: remCalc(20);
+    line-height: 1;
+    margin: 0 0 remCalc(10);
+    > a {
+        color: #0b2874;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    .productGrid & {
+        font-size: remCalc(16);
+        text-align: center;
+        > a {
+            color: #333;
+            &:hover {
+                color: #456380;
+            }
+        }
+    }
+}
+.listItem-price {
+    color: #ed8127;
+    font-size: remCalc(28);
+    font-weight: 600;
+    margin: 0 0 remCalc(5);
+    .price--rrp {
+        color: #b32e0a;
+        display: block;
+        font-size: remCalc(18);
+    }
+    .productGrid & {
+        text-align: center;
+    }
+}
+// List actions
+// -----------------------------------------------------------------------------
+//
+// 1. Magic number width to align closer to the intended design.
+//
+// -----------------------------------------------------------------------------
+.listItem-actions {
+    .listItem-sku {
+        color: #0b2874;
+        font-size: remCalc(16);
+        font-weight: 600;
+        margin: remCalc(10) 0 0;
+        text-transform: uppercase;
+        .productGrid & {
+            display: none;
+        }
+    }
+    .listItem-title {
+        display: none;
+        .productGrid & {
+            display: block;
+        }
+    }
+    .button {
+        background: #5aa094;
+        border: 0;
+        border-radius: 0;
+        color: #fff;
+        font-size: remCalc(16);
+        margin-bottom: 0;
+        padding: remCalc(15) remCalc(20);
+        transition: background 0.3s;
+        width: 100%;
+        + .button {
+            margin: spacing("half") 0 0;
+        }
+        &.out-of-stock {
+            background: #fff;
+            color: #333;
+        }
+        &.compare-button {
+            background: #f0f0f0;
+            color: #333;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: remCalc(15) remCalc(20);
+            input {
+                display: none;
+            }
+            @include breakpoint("small") {
+                padding: remCalc(7) 0;
+            }
+            &:hover {
+                background-color: #aeaeae;
+                color: #fff;
+                &:before {
+                    background-image: url('../icons/compare-hover.svg');
+                }
+            }
+            &:before {
+                background-image: url('../icons/compare.svg');
+            }
+        }
+        &:hover {
+            background: #333;
+        }
+        &:before {
+            background: url('../icons/cart.svg') center center no-repeat;
+            background-size: remCalc(18);
+            content: '';
+            display: inline-block;
+            height: remCalc(15);
+            margin: 0 remCalc(5) 0 0;
+            vertical-align: top;
+            width: remCalc(15);
+        }
+    }
+    .productGrid & {
+        border: 0;
+        padding: remCalc(10) 0 0;
+        width: 100%;
+        .BestPricePromise {
+            text-align: center;
+        }
+        .button {
+            background: #333;
+            float: left;
+            font-size: 1rem;
+            display: block;
+            margin: 0;
+            padding: remCalc(4);
+            text-align: left;
+            width: calc(100% - 90px);
+            &.compare-button {
+                background: #f0f0f0;
+                text-align: center;
+                width: remCalc(90);
+            }
+            &:hover {
+                background: #063852;
+            }
+        }
+    }
+    &:after {
+        clear: both;
+        content: '';
+        display: block;
+    }
+}
+.listItem-title-mobile {
+    margin: 0 0 remCalc(20);
+    .productGrid & {
+        display: none;
+    }
+    @include breakpoint("large") {
+        display: none;
+    }
+}
+// Product list when sidebar is present
+// -----------------------------------------------------------------------------
+.page-sidebar + .page-content {
+    .productList:not(.productGrid) {
+        .listItem-figure {
+            @include breakpoint("small") {
+                width: 50%;
+            }
+            @include breakpoint("large") {
+                width: 25%;
+            }
+        }
+        .listItem-body {
+            @include breakpoint("small") {
+                width: 50%;
+            }
+            @include breakpoint("large") {
+                width: 75%;
+            }
+        }
+        .listItem-details {
+            .listItem-title {
+                display: none;
+                @include breakpoint("large") {
+                    display: block;
+                }
+            }
+            @include breakpoint("large") {
+                display: block;
+                padding: 0 remCalc(10);
+            }
+        }
+        .listItem-actions {
+            .productView-price {
+                font-size: remCalc(22);
+            }
+            @include breakpoint("small") {
+                border-left: 1px solid #e2e2e2;
+                min-height: remCalc(220);
+                padding: 0 0 0 remCalc(15);
+                width: 50%;
+            }
+            @include breakpoint("large") {
+                width: 25%;
+            }
+        }
+    }
+}
+.listItem-custom-fields {
+    color: #0b2874;
+    display: none;
+    font-size: remCalc(16);
+    ul {
+        list-style: initial;
+        margin: 0 0 0 remCalc(20);
+    }
+    .productGrid & {
+        display: none;
+    }
+    @include breakpoint("large") {
+        display: block;
+    }
+}
+.listItem-signal-strength {
+    clear: both;
+    display: table;
+    padding: remCalc(20) 0 0;
+    width: 100%;
+    line-height: 1.1 /*mbp: add*/;
+    .signal-strength-row {
+        color: #6f7072;
+        display: table-row;
+        font-size: remCalc(14) /*mbp: was (16)*/;
+    }
+    .signal-strength-heading {
+        background: #f2f3f4;
+        color: #6f7072;
+        display: table-row;
+        font-size: 1rem;
+        .signal-strength-col {
+            border-top: 1px solid #dcdcdd;
+            border-bottom: 1px solid #dcdcdd;
+            padding: remCalc(8) remCalc(10) /*mbp: was (6) (10)*/;
+            text-indent: 0;
+        }
+    }
+    .signal-strength-col {
+        font-weight: 600;
+        overflow: hidden;
+        border-bottom: 1px solid #dcdcdd;
+        display: table-cell;
+        padding: remCalc(8) remCalc(10) /*mbp: was (5) (10)*/;
+        width: 50%;
+        + .signal-strength-col {
+            text-align: right;
+            width: 50%;
+        }
+    }
+    @include breakpoint("large") {
+        clear: none;
+    }
+}

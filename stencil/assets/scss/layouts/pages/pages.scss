@@ -1,0 +1,98 @@
+////////////////////////////////////////////
+// PAGES (CSS)
+////////////////////////////////////////////
+.web-page {
+	.page-content {
+		@include breakpoint("medium") {
+			margin: 0 auto;
+			max-width: calc(100% - 227px);
+		}
+	}
+}
+.phone {
+	color: #333;
+}
+.imgcap {
+	float: none;
+	margin: 0 0 remCalc(15);
+	text-align: center;
+	@include breakpoint("medium") {
+		float: right;
+		margin: 0 0 remCalc(15) remCalc(15);
+	}
+}
+.covertbl {
+	display: table;
+	.coverrowgrp {
+		display: table-row-group;
+		.coverrow {
+			display: table-row;
+		}
+	}
+}
+.covercollft, .covercolrgt {
+    display: table-cell;
+    border-bottom: 1px solid silver;
+    padding: remCalc(3) remCalc(10);
+}
+.covercollft {
+	text-align: right;
+}
+code {
+	background: #f9f2f4;
+	padding: remCalc(2) remCalc(4);
+}
+.psred {
+	color: #f00;
+}
+.brandlogo {
+	div {
+		display: inline-block;
+		margin: remCalc(10) remCalc(10) 0 0;
+	}
+	img {
+	    border-radius: remCalc(15);
+	    background: silver;
+	    box-shadow: 5px 5px 5px silver;
+	    height: remCalc(52);
+		padding: 0;
+	    width: remCalc(170);
+	}
+}
+.carrierregister {
+    display: block;
+    max-width: remCalc(520);
+    text-align: center;
+	img {
+	    border-radius: remCalc(15);
+	    background: silver;
+	    box-shadow: 5px 5px 5px silver;
+    	height: auto;
+	    margin: remCalc(7) auto;
+    	padding: remCalc(2);
+    	width: 45%;
+    	max-width: remCalc(250);
+	}
+}
+.mandoctbl {
+    display: table;
+    empty-cells: show;
+    width: 100%;
+    .mandocrowgrp {
+    	display: table-row-group;
+    	.mandocrow {
+    		display: table-row;
+    	}
+    }
+}
+.mandoccol-1 {
+    font-weight: 600;
+    width: 52%;
+}
+.mandoccol-1, .mandoccol-2 {
+    border-bottom: 1px solid silver;
+    display: table-cell;
+    font-size: 1rem;
+    padding: remCalc(5);
+    text-align: left;
+}

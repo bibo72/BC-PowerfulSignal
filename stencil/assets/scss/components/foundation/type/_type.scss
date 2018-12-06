@@ -1,0 +1,101 @@
+// =============================================================================
+// TYPE (CSS)
+// =============================================================================
+// Stencil type component additions
+// -----------------------------------------------------------------------------
+body {
+    font-size: $body-fontSize;
+    font-size: remCalc(18);
+    font-weight: $body-font-weight;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    margin: 0 0 remCalc(10);
+}
+h5,
+h6 {
+    text-transform: $heading-textTransform;
+}
+a {
+    color: #456380;
+    font-weight: 400;
+    text-decoration: none;
+    transition: $anchor-transition;
+    &:focus,
+    &:hover {
+        color: #456380;
+        text-decoration: underline;
+    }
+    .page & {
+        color: #ed8127;
+        font-weight: 600;
+    }
+}
+cite {
+    line-height: $blockquote-cite-lineHeight;
+    margin: $blockquote-cite-margin;
+}
+.page-heading {
+    margin: 0 0 remCalc(10);
+}
+h1 {
+    color: #5e5e61;
+    font-size: $h1-font-size;
+    line-height: remCalc(44);
+    margin: 0 0 remCalc(5);
+}
+h2 {
+    color: #5e5e61;
+    font-size: remCalc(26);
+    font-weight: normal;
+    @include breakpoint("small") {
+        font-size: $h2-font-size;
+    }
+}
+h3 {
+    font-size: $h3-font-size;
+    font-weight: normal;
+}
+h4 {
+    font-size: $h4-font-size;
+}
+h5 {
+    font-size: $h5-font-size;
+}
+h6 {
+    font-size: $h6-font-size;
+}
+.definitionList {
+    @include clearfix;
+}
+.definitionList-key {
+    color: stencilColor("color-textSecondary");
+    float: left;
+    font-weight: fontWeight("normal");
+    margin: 0 spacing("quarter") 0 0;
+}
+.definitionList-value {
+    margin: 0;
+}
+iframe {
+    max-width: 100%;
+}
+blockquote {
+    border-left: 5px solid #eee;
+    font-size: remCalc(17);
+    margin: 0 0 remCalc(20);
+    padding: remCalc(10) remCalc(20);
+    p {
+        font-size: remCalc(18);
+        line-height: remCalc(28);
+    }
+}
+li,
+p {
+    line-height: remCalc(28);
+}

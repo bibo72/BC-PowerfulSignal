@@ -1,0 +1,74 @@
+---
+category:
+    shop_by_price: true
+    products:
+        limit: {{theme_settings.categorypage_products_per_page}}
+---
+{{inject "categoryProductsPerPage" theme_settings.categorypage_products_per_page}}
+{{#partial "head"}}
+    {{#if pagination.category.previous}}
+        <link rel="prev" href="{{pagination.category.previous}}">
+    {{/if}}
+    {{#if pagination.category.next}}
+        <link rel="next" href="{{pagination.category.next}}">
+    {{/if}}
+{{/partial}}
+{{#partial "page"}}
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+<main class="page">
+    <div class="container">
+        {{#if banners.bottom}}
+        <aside class="page-sidebar">
+            <div class="banners category-bottom-banner" data-banner-location="bottom">
+                <div class="banner">
+                    {{{limit banners.bottom 1}}}
+                </div>
+            </div>
+            {{#or category.subcategories category.faceted_search_enabled}}
+                <div id="faceted-search-container">
+                    {{> components/category/sidebar}}
+                </div>
+            {{else}}
+                {{#if theme_settings.shop_by_price_visible}}
+                    <div id="faceted-search-container">
+                        {{> components/category/sidebar}}
+                    </div>
+                {{/if}}
+            {{/or}}
+        </aside>
+        {{/if}}
+        <section class="page-content">
+            <div class="category-description">
+                {{{category.description}}}
+            </div>
+            <div class="subcategory-list">
+                {{#if category.subcategories}}
+                <div class="sidebarBlock">
+                    <ul class="navList">
+                        {{#each category.subcategories}}
+                        <li class="navList-item{{#unless image}} subcat-list{{/unless}}">
+                            {{#if image}}
+                            <div class="subcategory-image">
+                                <a href="{{url}}" alt="{{name}}" title="{{name}}"><img src="{{getImage image 'thumbnail'}}" alt="{{name}}" /></a>
+                            </div>
+                            {{/if}}
+                            <div class="subcategory-name">
+                                <a class="navList-action" href="{{url}}" alt="{{name}}" title="{{name}}">{{name}}</a>
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
+            </div>
+            {{{snippet 'categories'}}}
+            <div id="product-listing-container">
+                {{#if category.products}}
+                    {{> components/category/product-listing}}
+                {{/if}}
+            </div>
+        </section>
+    </div>
+</main>
+{{/partial}}
+{{> layout/base}}

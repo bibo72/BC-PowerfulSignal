@@ -1,0 +1,36 @@
+// =============================================================================
+// BUTTONS (CSS)
+// =============================================================================
+
+.button {
+    line-height: 1rem;
+    transition: all 0.15s ease;
+    + .button {
+        margin-left: 0;
+        @include breakpoint("medium") {
+            margin-left: spacing("half");
+        }
+    }
+}
+.button[disabled] {
+    cursor: not-allowed;
+}
+.button--icon {
+    svg {
+        fill: stencilColor("button--icon-svg-color");
+    }
+}
+.start-here-button {
+    background-color: #063852;
+    border: 1px solid #063852;
+    border-radius: remCalc(4);
+    color: #ed8127;
+    font-size: remCalc(18);
+    padding: remCalc(10) remCalc(50) !important;
+    margin-bottom: remCalc(40);
+    text-align: center!important;
+    text-transform: uppercase;
+    &:hover {
+        background-color: #063852;
+    }
+}

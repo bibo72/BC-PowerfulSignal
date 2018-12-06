@@ -1,0 +1,37 @@
+<div class="form-field form-field--increments">
+	<label class="form-label form-label--alternate" for="qty[]">{{lang 'products.quantity'}}</label>
+	<div class="form-increment" data-quantity-change>
+		<button class="button button--icon" data-action="dec">
+			<span class="is-srOnly">{{lang 'products.quantity_decrease'}}</span>
+			<i class="icon" aria-hidden="true">
+				<svg>
+					<use xlink:href="#icon-keyboard-arrow-down"/>
+				</svg>
+			</i>
+		</button>
+		<input class="form-input form-input--incrementTotal"
+			id="qty[]"
+			name="qty[]"
+			type="tel"
+			value="{{#if product.min_purchase_quantity}}{{product.min_purchase_quantity}}{{else}}1{{/if}}"
+			data-quantity-min="{{product.min_purchase_quantity}}"
+			data-quantity-max="{{product.max_purchase_quantity}}"
+			min="1"
+			pattern="[0-9]*"
+			aria-live="polite" />
+		<button class="button button--icon" data-action="inc">
+			<span class="is-srOnly">{{lang 'products.quantity_increase'}}</span>
+			<i class="icon" aria-hidden="true">
+				<svg>
+					<use xlink:href="#icon-keyboard-arrow-up"/>
+				</svg>
+			</i>
+		</button>
+	</div>
+</div>
+{{#or customer (if theme_settings.restrict_to_login '!==' true)}}
+<div class="form-action">
+	<input data-wait-message="{{lang 'products.adding_to_cart'}}" class="button add-to-cart add-to-cart-right button--primary" type="button" value="{{#if product.pre_order}}{{lang 'products.pre_order'}}{{else}}{{lang 'products.add_to_cart'}}{{/if}}">
+</div>
+{{{snippet 'product_addtocart'}}}
+{{/or}}

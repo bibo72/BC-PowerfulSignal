@@ -1,0 +1,33 @@
+<a class="modal-close" aria-label="{{lang 'common.close'}}" data-drop-down-close role="button">
+    <span aria-hidden="true">&#215;</span>
+</a>
+<ul class="productList">
+    {{#if product_results.products}}
+        {{#each (limit product_results.products 5)}}
+        <li class="product">
+            <figure class="quicksearch-figure">
+                <a href="{{url}}">
+                    <img class="quicksearch-image lazyload" data-sizes="auto" src="{{cdn 'img/loading.svg'}}" data-src="{{getImage image 'productgallery_size' (cdn theme_settings.default_image_product)}}" alt="{{image.alt}}" title="{{image.alt}}" />
+                </a>
+            </figure>
+            <div class="quicksearch-body">
+                <p class="quicksearch-title">
+                    <a href="{{url}}">{{name}}</a>
+                </p>
+                <div class="quicksearch-price">
+                    {{> components/products/price price=price}}
+                </div>
+            </div>
+        </li>
+        {{/each}}
+        <li class="product quicksearch-all-results">
+            <p class="quicksearch-title">
+                <a href="{{urls.search}}?search_query={{forms.search.query}}" title="View all results">View all results &rarr;</a>
+            </p>
+        </li>
+    {{else}}
+        <li class="product quickSearchMessage">
+            {{lang 'search.results.quick_count' count=pagination.product_results.total search_query=forms.search.query}}
+        </li>
+    {{/if}}
+</ul>

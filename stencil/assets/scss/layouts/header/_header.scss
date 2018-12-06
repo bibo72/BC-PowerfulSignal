@@ -1,0 +1,234 @@
+// =============================================================================
+// HEADER (CSS)
+//
+// 1. Setting font size of header-logo to 0, since wrapper element may vary, and
+//    inline-block whitespace messes with header height. Font-size is reset to
+//    appropriate size on header-logo-text.
+// 2. Needs left/right margin so it doesn't cover left/right nav bar toggles
+// 3. Offset the letter-spacing on the last character by adding a right negative
+//    margin. This centers the text logo properly.
+// 4. When the word "cart" is added to the mobile header's cart link, add more
+//    margin to compensate.
+//
+// -----------------------------------------------------------------------------
+.header {
+    background-color: $header-bg;
+    border-bottom: container("border");
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: zIndex("low");
+    @include breakpoint("medium") {
+        border-bottom: 0;
+        overflow: visible;
+    }
+    &.is-open {
+        @include breakpoint("medium") {
+            height: auto;
+        }
+    }
+}
+.header-logo {
+    display: table-cell;
+    height: remCalc(70);
+    vertical-align: middle;
+    text-align: left;
+    font-size: 0;   // 1
+    @include breakpoint("medium") {
+        display: table-cell;
+        height: remCalc(85);
+        text-align: left;
+        vertical-align: middle;
+        width: 33.333%;
+        .header.fixed & {
+            background-color: color("greys", "lightest");
+            margin: 0;
+            padding: spacing("quarter") 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    }
+    > a {
+        @include clearfix;
+        color: $storeName-color;
+        display: inline-block;
+        padding: $header-logo-paddingVertical 0;
+        position: relative;
+        text-decoration: none;
+        width: 100%;
+        z-index: zIndex("low");
+        // scss-lint:disable NestingDepth
+        @include breakpoint("medium") {
+            background: none;
+            border-bottom: 0;
+            display: inline;
+            padding: 0;
+        }
+        &:hover {
+            color: color("link", "hover");
+        }
+        &:active {
+            color: color("link", "active");
+        }
+    }
+}
+.header-logo--left {
+    text-align: left;
+}
+.header-logo--right {
+    text-align: right;
+}
+.header-logo-text {
+    display: block;
+    font-family: $fontFamily-hero;
+    font-size: $fontSize-logo-small;   // 1
+    font-weight: stencilFontWeight("logo-font");
+    letter-spacing: remCalc(5px);
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    padding: remCalc(3px) 0;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+    @include breakpoint("small") {
+        font-size: $fontSize-logo-medium;
+        letter-spacing: remCalc(9px);
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+    @include breakpoint("medium") {
+        display: inline;
+        font-size: $fontSize-logo-large;
+        margin-left: 0;
+        margin-right: -(remCalc(9px)); // 3
+        max-width: none;
+        overflow: auto;
+        white-space: normal;
+        .header.fixed & {
+            font-size: fontSize("larger");
+        }
+    }
+}
+.header-logo-image {
+    max-height: $header-image-height;
+    @include breakpoint("medium") {
+        max-height: none;
+    }
+}
+.header-search {
+    display: none;
+    .form {
+        border: 1px solid #d4d4d4;
+        border-radius: remCalc(4);
+        margin: 0;
+    }
+    .form-field {
+        margin: 0;
+    }
+    .form-input {
+        border: 0;
+        border-radius: remCalc(4) 0 0 remCalc(4);
+        float: left;
+        height: remCalc(40);
+        text-transform: uppercase;
+        width: calc(100% - 40px);
+    }
+    .form-submit {
+        background: url('../img/search.gif') #fff center center no-repeat;
+        background-size: remCalc(20);
+        border: 0;
+        border-radius: 0 remCalc(4) remCalc(4) 0;
+        height: remCalc(40);
+        text-indent: -999rem;
+        width: remCalc(40);
+    }
+    @include breakpoint("medium") {
+        display: table-cell;
+        height: remCalc(85);
+        text-align: center;
+        vertical-align: middle;
+        width: 33.333%;
+    }
+}
+.header-phone {
+    display: table-cell;
+    height: remCalc(60);
+    text-align: right;
+    vertical-align: middle;
+    a {
+        color: #565454;
+        font-size: remCalc(20);
+        font-weight: bold;
+        text-decoration: none;
+        &:hover {
+            color: #333;
+        }
+        @include breakpoint("medium") {
+            font-size: remCalc(25)
+        }
+    }
+    @include breakpoint("medium") {
+        height: remCalc(85);
+        width: 33.333%;
+    }
+}
+//
+// Mobile Menu Toggle
+//
+// 1. Animate lines from 'x' to hamburger
+// -----------------------------------------------------------------------------
+.mobileMenu-toggle {
+    @include square(40px);
+    border-right: 1px solid #d0d0d0;
+    display: block;
+    font-size: 0;
+    padding: 0 0 0 remCalc(10);
+    z-index: zIndex("high");
+    @include breakpoint("medium") {
+        display: none;
+    }
+    .mobileMenu-toggleIcon,
+    .mobileMenu-toggleIcon::before,
+    .mobileMenu-toggleIcon::after {
+        background: #fff;
+        content: "";
+        display: block;
+        height: 2px;
+        position: absolute;
+        transform: rotate(0deg);
+        transition: transform 100ms ease-in, top 100ms ease-in 150ms, bottom 100ms ease-in 150ms; // 1
+        width: remCalc(20);
+    }
+    .mobileMenu-toggleIcon {
+        top: remCalc(20);
+        transition: background-color 10ms ease-in 100ms;
+    }
+    .mobileMenu-toggleIcon::before {
+        top: -0.5rem;
+    }
+    .mobileMenu-toggleIcon::after {
+        bottom: -0.5rem;
+    }
+    &.is-open .mobileMenu-toggleIcon {
+        background-color: transparent;
+        transition-delay: 100ms;
+        // scss-lint:disable NestingDepth
+        &::before,
+        &::after {
+            background-color: #fff;
+            bottom: auto;
+            top: auto;
+            transition: transform 100ms ease-in 150ms, top 100ms ease-in, bottom 100ms ease-in; // Animate lines from hamburger to 'x'
+        }
+        &::before {
+            top: 0;
+            transform: rotate(45deg);
+        }
+        &::after {
+            bottom: 0;
+            transform: rotate(-45deg);
+        }
+    }
+}

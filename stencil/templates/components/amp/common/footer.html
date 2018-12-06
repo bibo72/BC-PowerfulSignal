@@ -1,0 +1,115 @@
+<footer class="amp-footer" role="contentinfo">
+    <article data-section-type="footer-webPages">
+        <h5 class="amp-footer-heading">{{lang 'footer.navigate'}}</h5>
+        <ul class="amp-footer-list">
+            {{#each pages}}
+            <li>
+                <a href="{{url}}">{{name}}</a>
+            </li>
+            {{/each}}
+            <li>
+                <a href="{{urls.sitemap}}">{{lang 'sitemap.page_title'}}</a>
+            </li>
+        </ul>
+    </article>
+
+    <article data-section-type="footer-categories">
+        <h5 class="amp-footer-heading">{{lang 'footer.categories'}}</h5>
+        <ul class="amp-footer-list">
+            {{#each categories}}
+                <li>
+                    <a href="{{url}}">{{name}}</a>
+                </li>
+            {{/each}}
+        </ul>
+    </article>
+
+    <article data-section-type="footer-brands">
+        <h5 class="amp-footer-heading">{{lang 'footer.brands'}}</h5>
+        <ul class="amp-footer-list">
+            {{#each shop_by_brand}}
+                <li>
+                    <a href="{{url}}">{{name}}</a>
+                </li>
+            {{/each}}
+            <li><a href="{{urls.brands}}">{{lang 'common.view_all'}}</a></li>
+        </ul>
+    </article>
+
+    <article data-section-type="storeInfo">
+        <h5 class="amp-footer-heading">{{lang 'footer.info'}}</h5>
+        <address>{{nl2br settings.address}}</address>
+        {{#if settings.phone_number}}
+            <strong>{{lang 'footer.call_us' phone_number=settings.phone_number}}</strong>
+        {{/if}}
+    </article>
+    <article>
+        {{#if theme_settings.show_powered_by}}
+            <p>Powered by <a href="http://bigcommerce.com" rel="nofollow">BigCommerce</a></p>
+        {{/if}}
+        {{#if theme_settings.show_copyright_footer}}
+            <p class="powered-by">&copy; {{settings.store_name}} </p>
+        {{/if}}
+    </article>
+
+<!-- Google Analytics Dynamic Remarketing
+    <script>
+    if(window.location.pathname == "/"){
+                var google_tag_params = {
+                    ecomm_pagetype: 'home'
+                };
+    }
+    else if (document.getElementsByClassName('productView').length > 0){
+    var id = document.querySelector('[name="product_id"]').getAttribute('value');
+    var price = parseFloat(document.getElementsByClassName('price')[0].innerText.replace(/[^0-9.]/g,''));
+                var google_tag_params = {
+                    ecomm_prodid: id,
+                    ecomm_pagetype: 'product',
+                    ecomm_totalvalue: price
+                };
+    }
+    else if (document.getElementsByClassName('subcategory-list').length > 0){
+                var google_tag_params = {
+                    ecomm_pagetype: 'category'
+                };
+    }
+    else if (window.location.href.indexOf('confirm') > 0){
+                var google_tag_params = {
+                    ecomm_pagetype: 'purchase'
+                };
+    }
+     else if(window.location.href.indexOf('/cart.php') != -1){
+       var id = [];
+    for(i=0; i<document.getElementsByClassName('cart-item-image').length; i++){
+     id.push(document.getElementsByClassName('cart-item-image')[i].getAttribute('src').split('products')[1].split('/')[1]);
+    }
+    var price = parseFloat(document.getElementsByClassName('cart-total-grandTotal')[0].innerText.replace(/[^0-9.]/g,''));
+     var google_tag_params = {
+                    ecomm_prodid: id,
+                    ecomm_pagetype: 'cart',
+                    ecomm_totalvalue: price
+                };  
+         }
+    else{
+                var google_tag_params = {
+                    ecomm_pagetype: 'other'
+                };
+    }
+    </script>
+    
+    <script type="text/javascript">
+    /* <![CDATA[ */
+    var google_conversion_id = 1061450104;
+    var google_custom_params = window.google_tag_params;
+    var google_remarketing_only = true;
+    /* ]]> */
+    </script>
+    <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+    </script>
+    <noscript>
+    <div style="display:inline;">
+    <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1061450104/?guid=ON&amp;script=0"/>
+    </div>
+    </noscript> -->
+
+</footer>

@@ -1,0 +1,26 @@
+// =============================================================================
+// GRID (CSS)
+// =============================================================================
+.container {
+	margin: 0 auto;
+	max-width: remCalc(1200);
+	width: 95%;
+	.navUser > & {
+		width: 100%;
+	}
+	.header > & {
+		display: table;
+	}
+	.header-search > & {
+		max-width: remCalc(275);
+	}
+	.body > & {
+		max-width: none;
+		width: 100%;
+	}
+	&:after {
+		clear: both;
+		content: '';
+		display: block;
+	}
+}

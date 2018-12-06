@@ -1,0 +1,54 @@
+////////////////////////////////////////
+// HOME
+////////////////////////////////////////
+.youtube {
+    background-color: #000;
+    margin: 0 auto remCalc(30);
+    position: relative;
+    padding-top: 45%;
+    overflow: hidden;
+    cursor: pointer;
+    max-width: remCalc(900);
+    iframe {
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+    img {
+        cursor: pointer;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+    .play-button {
+        background: #333;
+        border-radius: remCalc(10);
+        box-shadow: 0 0 30px rgba(0,0,0,0.6);
+        cursor: pointer;
+        height: remCalc(60);
+        left: 50%;
+        opacity: 0.8;
+        position: absolute;
+        transform: translate3d(-50%, -50%, 0);
+        top: 50%;
+        width: remCalc(90);
+        z-index: 1;
+        &:before {
+            border-color: transparent transparent transparent #fff;
+            border-style: solid;
+            border-width: remCalc(15) 0 remCalc(15) remCalc(25);
+            content: '';
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate3d(-50%, -50%, 0);
+        }
+        &:hover {
+            background: rgba(255,0,0,0.8);
+        }
+    }
+}

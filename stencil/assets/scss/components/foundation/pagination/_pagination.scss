@@ -1,0 +1,110 @@
+// =============================================================================
+// PAGINATION (CSS)
+// =============================================================================
+// Pagination list items
+// -----------------------------------------------------------------------------
+//
+// 1. Centred list via inline-block. Font-size: 0; to remove white-space.
+// 2. Specificity overrides for Foundation's inadequate selectors.
+//
+// -----------------------------------------------------------------------------
+.pagination-list {
+    background: #f0f0f0;
+    @include clearfix;
+    font-size: 0; // 1
+    margin-bottom: spacing("single");
+    padding: remCalc(5) 0;
+    text-align: center;
+    .pagination-item { // 2
+        display: inline-block;
+        vertical-align: top;
+    }
+}
+// Pagination list items
+// -----------------------------------------------------------------------------
+//
+// 1. Specificity overrides for Foundation's inadequate selectors.
+//
+// -----------------------------------------------------------------------------
+.pagination-item {
+    border: $pagination-item-border;
+    line-height: 1;
+    .pagination-link {
+        border-radius: 0;
+        font-weight: 600;
+        padding: remCalc(4) remCalc(8);
+        text-decoration: none;
+        transition: $pagination-link-transition;
+        // scss-lint:disable NestingDepth
+        &:hover {
+            background: #063852;
+            color: $pagination-link-color-hover; 
+        }
+    }
+    &.pagination-item--current { // 1
+
+    }
+    &.pagination-item--previous, // 1
+    &.pagination-item--next { // 1
+        // scss-lint:disable NestingDepth, SelectorDepth
+        > a {
+            color: $pagination-item-previousNext-color;
+            &:hover {
+                color: $pagination-item-previousNext-color-hover;
+                .icon > svg {
+                    fill: $pagination-item-previousNext-color-hover;
+                }
+            }
+        }
+    }
+}
+.pagination-item--previous,
+.pagination-item--next {
+    &.pagination-item {
+        a {
+            background: center center no-repeat;
+            background-size: 100%;
+            display: block;
+            height: remCalc(22);
+            width: remCalc(22);
+        }
+    }
+}
+.pagination-item--previous {
+    &.pagination-item {
+        a {
+            background-image: url('../icons/chevron-left.svg') !important;
+        }
+    }
+}
+.pagination-item--next {
+    &.pagination-item {
+        a {
+            background-image: url('../icons/chevron-right.svg') !important;
+        }
+    }
+}
+// Simple/small pagination (Next/Previous arrows are the only way to navigate)
+// -----------------------------------------------------------------------------
+.pagination-list--small {
+    position: relative;
+    .pagination-item {
+        color: $pagination-list--small-color;
+        cursor: inherit;
+        line-height: $pagination-list--small-lineHeight;
+    }
+    .pagination-link {
+        padding: $pagination-list--small-link-padding;
+    }
+    .pagination-item--previous,
+    .pagination-item--next {
+        position: absolute;
+        top: 0;
+    }
+    .pagination-item--previous {
+        left: 0;
+    }
+    .pagination-item--next {
+        right: 0;
+    }
+}

@@ -1,0 +1,16 @@
+{{#if page.title '===' 'About Us'}}
+<div class="banners page-bottom-banner" style="display: none;">
+	<div class="banner">
+		<!-- banner content code goes here -->
+		<p>Test banner</p>
+	</div>
+</div>
+{{else if page.title '===' 'Cell Signal Strength'}}
+<div class="banners page-bottom-banner" style="display: none;">
+	<div class="banner">
+		<!-- banner content code goes here -->
+	</div>
+</div>
+{{else}}
+    {{> components/common/sidebar-content-sitewide}}
+{{/if}}

@@ -1,0 +1,11 @@
+{{#partial "page"}}
+<main class="page">
+	<div class="container">
+	    <div class="page-content">
+	        <h1 class="page-heading">{{lang 'newsletter.unsubscribed_heading'}}</h1>
+	        {{> components/common/alert-success (lang 'newsletter.unsubscribed_message' store_name=settings.store_name)}}
+	    </div>
+	</div>
+</main>
+{{/partial}}
+{{> layout/base}}

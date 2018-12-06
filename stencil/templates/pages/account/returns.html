@@ -1,0 +1,17 @@
+{{#partial "page"}}
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+<main class="account">
+	<div class="container">
+	    <div class="account-body">
+	        <section class="account-content">
+	            {{#if customer.returns}}
+	                {{> components/account/returns-list returns=customer.returns}}
+	            {{else}}
+	                {{> components/common/alert-info (lang 'account.returns.none')}}
+	            {{/if}}
+	        </section>
+	    </div>
+	</div>
+</main>
+{{/partial}}
+{{> layout/base}}

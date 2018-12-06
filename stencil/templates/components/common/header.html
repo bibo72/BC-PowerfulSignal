@@ -1,0 +1,26 @@
+<header class="header" role="banner">
+    {{> components/common/navigation}}
+    <div class="container">
+        {{#if page_type '===' 'default'}}
+            <h1 class="header-logo header-logo--{{theme_settings.logo-position}}">
+                {{> components/common/store-logo}}
+            </h1>
+        {{else}}
+            <div class="header-logo header-logo--{{theme_settings.logo-position}}">
+                {{> components/common/store-logo}}
+            </div>
+        {{/if}}
+        <div class="header-search" data-prevent-quick-search-close>
+            {{> components/common/quick-search}}
+        </div>
+        <div class="header-phone">
+            <a href="tel:+18669123444">866-912-3444</a>
+        </div>
+    </div>
+    {{{region name="header_bottom"}}}
+    <div class="navPages-container" id="menu" data-menu>
+        {{> components/common/navigation-menu}}
+    </div>
+    <div id="r2t" onclick="topFunction()"> <!-- Return to top button -->
+    </div>
+</header>

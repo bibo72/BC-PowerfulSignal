@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="no-js" lang="{{ locale_name }}">
+    <head>
+        <title>{{ head.title }}</title>
+        {{{ head.meta_tags }}}
+        {{{ head.config }}}
+        {{#block "head"}} {{/block}}
+        <link href="{{ head.favicon }}" rel="shortcut icon">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        {{ getFontsCollection }}
+        {{{stylesheet '/assets/css/theme.css'}}}
+        <script src="{{cdn 'assets/modernizr-custom.js'}}"></script>
+        {{{head.scripts}}}
+        {{{head.rsslinks}}}
+        {{inject 'themeSettings' theme_settings}}
+        {{inject 'genericError' (lang 'common.generic_error')}}
+        {{inject 'maintenanceMode' settings.maintenance}}
+        {{inject 'urls' urls}}
+        {{{snippet 'htmlhead'}}}
+    </head>
+    <body id="top" class="{{#if page_type '===' 'default'}}home{{else if page_type '===' 'brand'}}brand-page{{else if page_type '===' 'category'}}category-page{{else if page_type '===' 'page'}}web-page{{/if}}">
+        {{{snippet 'header'}}}
+        <div class="icons-svg-sprite">{{> components/common/icons/icon-defs }}</div>
+        {{#if settings.privacy_cookie}}
+            {{> components/common/cookie}}
+        {{/if}}
+        {{> components/common/header }}
+        {{> components/common/body }}
+        {{> components/common/footer }}
+        <script>window.__webpack_public_path__ = "{{cdn 'assets/dist/'}}";</script>
+        <script src="{{cdn 'assets/dist/theme-bundle.main.js'}}"></script>
+        <script>
+            // Exported in app.js
+            window.stencilBootstrap("{{page_type}}", {{jsContext}}).load();
+        </script>
+        {{{footer.scripts}}}
+        {{{snippet 'footer'}}}
+    </body>
+</html>

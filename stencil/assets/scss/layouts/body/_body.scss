@@ -1,0 +1,116 @@
+// =============================================================================
+// BODY (CSS)
+//
+// 1. Header is fixed on small screens, use the content body to create the whitespace
+//    between it and the header on all situations. If you change the spacing here,
+//    please update .heroCarousel too.
+//
+// =============================================================================
+.body {
+    margin-bottom: spacing("double") * 2;
+    margin-top: spacing("single"); // 1
+    a {
+        font-weight: 600;
+    }
+    @include breakpoint("medium") {
+        margin-top: remCalc(166);
+    }
+    @include breakpoint("large") {
+        margin-top: remCalc(170);
+    }
+}
+.page-content--centered {
+    @include breakpoint("medium") {
+        @include grid-column(
+            $columns: 8,
+            $center: true
+        );
+    }
+}
+.page-content--textCenter {
+    text-align: center;
+}
+.page-sidebar {
+    background: #f6f6f7;
+    display: none;
+    padding: 0;
+    position: relative;
+    .banners {
+        border-bottom: 1px solid #cecece;
+        margin: 0 0 remCalc(2 0);
+        padding: remCalc(10);
+        a {
+            font-weight: 400;
+        }
+        h2 {
+            border-bottom: 1px solid #cacbcb;
+            color: #0b2874;
+            font-size: remCalc(24);
+            font-weight: 400;
+            letter-spacing: 0;
+            margin: 0 remCalc(-10) remCalc(10);
+            padding: 0 remCalc(10) remCalc(10);
+            text-transform: capitalize;
+        }
+        h3 {
+            font-size: remCalc(21);
+        }
+        p {
+            font-size: remCalc(15);
+            line-height: remCalc(18);
+            margin: 0 0 remCalc(5);
+        }
+    }
+    .sidebar-content {
+        padding: 0 remCalc(15);
+        a {
+            font-weight: 400;
+        }
+        h2 {
+            border-bottom: 1px solid #cacbcb;
+            color: #0b2874;
+            font-size: remCalc(24);
+            font-weight: 400;
+            letter-spacing: 0;
+            margin: 0 remCalc(-15) remCalc(10);
+            padding: remCalc(5) remCalc(10) remCalc(10);
+            text-transform: capitalize;
+        }
+        h3 {
+            font-size: remCalc(22);
+        }
+        p {
+            margin: 0 0 remCalc(5);
+        }
+    }
+    @include breakpoint("medium") {
+        box-shadow: 0 0 8px -1px rgba(0,0,0,.25);
+        display: block;
+        float: left;
+        margin: remCalc(10) remCalc(10) 0 0;
+        width: remCalc(217);
+        + .page-content {
+            float: left;
+            padding: 0 remCalc(10);
+            width: calc(100% - 227px);
+        }
+    }
+}
+.page-blog {
+    .page-sidebar {
+        background: none;
+        box-shadow: none;
+        @include breakpoint("medium") {
+            float: right;
+            margin: 0 remCalc(5) 0 remCalc(20);
+            padding: 0;
+            width: remCalc(225);
+        }
+        + .page-content {
+            @include breakpoint("medium") {
+                float: left;
+                width: calc(100% - 250px);
+            }
+        }
+    }
+}

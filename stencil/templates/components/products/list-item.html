@@ -1,0 +1,152 @@
+<article class="listItem">
+    <div class="listItem-title-mobile">
+        <p class="listItem-title">
+            <a href="{{url}}">{{name}}</a>
+        </p>
+    </div>
+    <div class="flags">
+        {{#or price.non_sale_price_with_tax price.non_sale_price_without_tax}}
+            {{#if theme_settings.product_sale_badges '===' 'sash'}}
+            <div class="sale-flag-sash flag">
+                <span class="sale-text">On Sale!</span>
+            </div>
+            {{else if theme_settings.product_sale_badges '===' 'topleft'}}
+            <div class="sale-flag-side flag">
+                <span class="sale-text">On Sale!</span>
+            </div>
+            {{else if theme_settings.product_sale_badges '===' 'burst'}}
+            <div class="starwrap flag">
+                <div class="sale-text-burst">On Sale!</div>
+                <div class="sale-flag-star"></div>
+            </div>
+            {{/if}}
+        {{/or}}
+        {{#each custom_fields}}
+            {{#if name '===' 'Flag'}}
+            <div class="flag flag-blue">
+                {{value}}
+            </div>
+            {{/if}}
+        {{/each}}
+    </div>
+    <figure class="listItem-figure">
+        <a href="{{url}}">
+            <img class="listItem-image lazyload" data-sizes="auto" src="{{cdn 'img/loading.svg'}}" data-src="{{getImage image 'productgallery_size' (cdn theme_settings.default_image_product)}}" alt="{{image.alt}}" title="{{image.alt}}" />
+        </a>
+    </figure>
+    <div class="listItem-actions">
+        <p class="listItem-title">
+            <a href="{{url}}">{{name}}</a>
+        </p>
+        {{#each custom_fields}}
+            {{#if name '===' 'callPricing'}}
+            <div class="productView-call-price">
+                <p class="productView-price">
+                    <span>{{value}}</span>
+                </p>
+            </div>
+            {{/if}}
+        {{/each}}
+        {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
+            <div class="BestPricePromise">
+                <a href="/best-price-promise/" target="_blank">best price promise</a>
+            </div>
+            <div class="listItem-price">
+                {{> components/products/price price=price}}
+            </div>
+            <div class="listItem-buttons">
+                {{#if show_cart_action}}
+                    {{#if has_options}}
+                        <a href="{{url}}" class="button" data-product-id="{{id}}">{{lang 'products.choose_options'}}</a>
+                    {{/if}}
+                    {{#if pre_order}}
+                        <a href="{{pre_order_add_to_cart_url}}" class="button">{{lang 'products.pre_order'}}</a>
+                    {{/if}}
+                    {{#if add_to_cart_url }}
+                        <a href="{{add_to_cart_url}}" class="button">{{lang 'products.add_to_cart'}}</a>
+                    {{/if}}
+                    {{#if out_of_stock_message }}
+                        <a href="{{url}}" class="button out-of-stock" data-product-id="{{id}}">{{out_of_stock_message}}</a>
+                    {{/if}}
+                {{/if}}
+                {{#if show_compare}}
+                    <label class="button compare-button" for="compare-{{id}}">
+                        {{lang "products.compare"}} <input type="checkbox" name="products[]" value="{{id}}" id="compare-{{id}}" data-compare-id="{{id}}">
+                    </label>
+                {{/if}}
+            </div>
+        {{else}}
+            {{> components/common/login-for-pricing}}
+        {{/or}}
+        {{#if sku}}
+        <div class="listItem-sku">sku: {{sku}}</div>
+        {{/if}}
+    </div>
+    <div class="listItem-details">
+        <p class="listItem-title">
+            <a href="{{url}}">{{name}}</a>
+        </p>
+        {{#if show_rating}}
+            <p class="listItem-rating">{{> components/products/ratings rating=rating}}</p>
+        {{/if}}
+        <div class="listItem-custom-fields">
+            <ul>
+                {{#each custom_fields}}
+                    {{#if name '===' 'Feature'}}
+                    <li>{{{value}}}</li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+        {{#each custom_fields}}
+            {{#if name '===' 'Coverage: Weak (−100 dBm, 1 bar)'}}
+            <div class="listItem-signal-strength">
+                <div class="signal-strength-heading">
+                    <div class="signal-strength-col">
+                        Outside Signal Strength
+                    </div>
+                    <div class="signal-strength-col">
+                        Coverage @ <span class="nowrap">700 MHz LTE</span>
+                    </div>
+                </div>
+            {{/if}}
+        {{/each}}
+        {{#each custom_fields}}
+            {{#if name '===' 'Coverage: Weak (−100 dBm, 1 bar)'}}
+            <div class="signal-strength-row">
+                <div class="signal-strength-col">
+                    {{#replace "Coverage: " name}}{{/replace}}
+                </div>
+                <div class="signal-strength-col">
+                    {{{value}}}
+                </div>
+            </div>
+            {{/if}}
+            {{#if name '===' 'Coverage: Fair (−90 dBm, 2–3 bars)'}}
+            <div class="signal-strength-row">
+                <div class="signal-strength-col">
+                    {{#replace "Coverage: " name}}{{/replace}}
+                </div>
+                <div class="signal-strength-col">
+                    {{{value}}}
+                </div>
+            </div>
+            {{/if}}
+            {{#if name '===' 'Coverage: Strong (−80 dBm, 4–5 bars)'}}
+            <div class="signal-strength-row">
+                <div class="signal-strength-col">
+                    {{#replace "Coverage: " name}}{{/replace}}
+                </div>
+                <div class="signal-strength-col">
+                    {{{value}}}
+                </div>
+            </div>
+            {{/if}}
+        {{/each}}
+        {{#each custom_fields}}
+            {{#if name '===' 'Coverage: Weak (−100 dBm, 1 bar)'}}
+                </div>
+            {{/if}}
+        {{/each}}
+    </div>
+</article>

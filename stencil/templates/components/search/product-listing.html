@@ -1,0 +1,25 @@
+{{#if product_results.products.length}}
+<div class="pagination-sortbox">
+	<div class="sortbox">
+		{{> components/products/filter sort=pagination.product_results.sort}}
+	</div>
+	<div class="change-prodlist">
+		<div class="change-item">
+			<a href="#" class="change-list{{#if theme_settings.product_list_display_mode '===' 'list'}} active-prods{{/if}}"></a>
+		</div>
+		<div class="change-item">
+			<a class="change-grid{{#if theme_settings.product_list_display_mode '===' 'grid'}} active-prods{{/if}}"></a>
+		</div>
+	</div>
+	{{> components/common/paginator pagination.product_results}}
+</div>
+{{/if}}
+<form action="{{urls.compare}}" method='POST' data-product-compare>
+    {{#if theme_settings.product_list_display_mode '===' 'grid'}}
+        {{> components/products/grid products=product_results.products show_compare=product_results.show_compare theme_settings=theme_settings}}
+    {{else}}
+        {{> components/products/list products=product_results.products show_compare=product_results.show_compare theme_settings=theme_settings}}
+    {{/if}}
+</form>
+
+{{> components/common/paginator pagination.product_results}}

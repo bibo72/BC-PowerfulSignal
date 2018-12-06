@@ -1,0 +1,20 @@
+{{#partial "page"}}
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+<main class="page">
+    <div class="container">
+        <aside class="page-sidebar">
+            {{> components/common/sidebar-content-sitewide}}
+        </aside>
+        <section class="page-content">
+            <h1 class="page-heading">{{page.title}}</h1>
+            {{#if forms.contact.success}}
+                {{{lang 'forms.contact_us.successful' shopPath=urls.home}}}
+            {{else}}
+                <p>{{{page.content}}}</p>
+                {{> components/page/contact-us-form}}
+            {{/if}}
+        </section>
+    </div>
+</main>
+{{/partial}}
+{{> layout/base}}

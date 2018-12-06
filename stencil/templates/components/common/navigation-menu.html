@@ -1,0 +1,64 @@
+<nav class="navPages">
+    <div class="mobile-overlay"></div>
+    <div class="navPages-main-content">
+        <div class="mobile-top">
+            <div class="user-links">
+                {{#if customer}}
+                <a href="{{urls.account.index}}">{{lang 'common.account'}}</a>
+                    <a href="{{urls.auth.logout}}">{{lang 'common.logout'}}</a>
+                {{else}}
+                    <a href="{{urls.auth.login}}">{{lang 'common.login'}}</a>
+                    {{#if settings.account_creation_enabled}}
+                        <a href="{{urls.auth.create_account}}">{{lang 'common.sign_up'}}</a>
+                    {{/if}}
+                {{/if}}
+            </div>
+            <div class="mobile-nav-close">
+                <a href="#" class="mobileMenu-toggle is-open" data-mobile-menu-toggle="menu" aria-controls="menu" aria-expanded="true">
+                    <span class="mobileMenu-toggleIcon">Toggle menu</span>
+                </a>
+            </div>
+        </div>
+        <ul class="navPages-list{{#if theme_settings.navigation_design '!==' 'simple'}} navPages-list-depth-max{{/if}}">
+            {{#each categories}}
+                <li class="navPages-item">
+                {{#if ../theme_settings.navigation_design '===' 'simple'}}
+                    {{> components/common/navigation-list}}
+                {{/if}}
+                {{#if ../theme_settings.navigation_design '===' 'alternate'}}
+                    {{> components/common/navigation-list-alternate}}
+                {{/if}}
+                </li>
+            {{/each}}
+            {{#unless theme_settings.hide_content_navigation}}
+                {{#each pages}}
+                <li class="navPages-item">
+                    {{#if ../theme_settings.navigation_design '===' 'simple'}}
+                            {{> components/common/pages-navigation-list}}
+                    {{/if}}
+                    {{#if ../theme_settings.navigation_design '===' 'alternate'}}
+                        {{> components/common/pages-navigation-list-alternate}}
+                    {{/if}}
+                </li>
+                {{/each}}
+            {{/unless}}
+        </ul>
+        <ul class="navPages-list navPages-list--user">
+            {{#if settings.gift_certificates_enabled}}
+                <li class="navPages-item">
+                    <a class="navPages-action" href="{{urls.gift_certificate.purchase}}">{{lang 'common.gift_cert'}}</a>
+                </li>
+            {{/if}}
+            {{#if theme_settings.product_list_display_mode '==' 'list'}}
+                <li class="navPages-item">
+                    <a class="navPages-action navPages-action--compare" href="{{urls.compare}}" data-compare-nav>{{lang 'common.compare'}} <span class="countPill countPill--positive countPill--alt"></span></a>
+                </li>
+            {{/if}}
+            {{#if theme_settings.social_icon_placement_top}}
+                <li class="navPages-item">
+                    {{> components/common/social-links}}
+                </li>
+            {{/if}}
+        </ul>
+    </div>
+</nav>
