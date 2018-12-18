@@ -53,5 +53,19 @@
                 <a class="navBar-action" href="{{urls.account.details}}">{{lang 'account.nav.settings'}}</a>
             </li>
         {{/if}}
+        {{#if account_page '===' 'shipping_lists'}}
+            <li class="navBar-item is-active" id="user_shoppinglist_nav" style="display:none;"><a class="navBar-action" href="/shopping-lists/">Shopping Lists</a></li>
+        {{else}}
+            <li class="navBar-item" id="user_shoppinglist_nav" style="display:none;">
+                <a class="navBar-action" href="/shopping-lists/">Shopping Lists</a>
+            </li>
+        {{/if}}
+        {{#if account_page '===' 'user_management'}}
+            <li class="navBar-item is-active" id="user_management_nav" style="display:none;">User Management</li>
+        {{else}}
+            <li class="navBar-item" id="user_management_nav" style="display:none;">
+                <a class="navBar-action" href="/user-management/">User Management</a>
+            </li>
+        {{/if}}
     </ul>
 </nav>

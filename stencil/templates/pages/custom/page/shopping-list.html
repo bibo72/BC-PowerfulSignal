@@ -1,0 +1,177 @@
+{{#partial "page"}}
+<main class="account">
+    {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+    <div class="container">
+
+
+    <h2 class="page-heading">Shopping List</h2>
+    {{> components/account/navigation account_page='shopping_lists'}}
+
+    <div class="b2b-wrap">
+    	<div class="title-wrap title-wrap--alt">
+	        <h2 class="page-title" id="shopping_list_name"></h2>
+	        <a href="javascript:void(0);" class="action-link" data-reveal-id="modal-shopping-list-rename-form" data-rename-list>Rename</a>
+	        <div class="page-title-desc" id="shopping_list_comment"></div>
+
+	    </div>
+	    <p class="list-status" id="shopping_list_status"></p>
+
+	    <div class="alertBox alertBox--error" id="unavailable_info_box" style="display:none;margin-bottom:20px;">
+		    <div class="alertBox-column alertBox-icon">
+		        <icon glyph="ic-error" class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg></icon>
+		    </div>
+		    <p class="alertBox-column alertBox-message">
+		        <span>You have UNAVAILABLE items in you list, </span>
+		        <button href="javascript:void(0);" class="action" id="delete_unavailable_item">Delete All Unavailable Items</button>
+		    </p>
+		</div>
+
+
+	    <div class="table-toolbar top">
+    		<div class="number-items">
+    			<span id="num_items">0</span> Items
+    		</div>
+    		<div class="action-links">
+    		    <label class="action-label" for="select_all"><input type="checkbox" name="select_all" id="select_all"> Select all</label>
+    			<a class="action-link" href="javascript:void(0);" id="shopping_item_remove" data-delete-items>Remove Selected</a>
+    		</div>
+    	</div>
+	    <div class="table-wrap">
+	    	<table class="shopping-list-table" id="shopping_list_table">
+	    	    <thead>
+	    	    	<tr>
+		    		    <th colspan="2">Item</th>
+		    		    <th class="t-align-r">Price</th>
+		    		    <th class="t-align-r">Qty</th>
+		    		    <th class="t-align-r">Subtotal</th>
+		    		</tr>
+	    	    </thead>
+		    	<tbody>
+
+		    		<!-- <tr>
+		    		    <td class="col-checkbox"><input type="checkbox"></td>
+		    			<td class="col-product-info">
+
+		    				<div class="product-iamge"><img src="http://mage22ee.silksoftware.net/pub/media/catalog/product/cache/fd4c882ce4b945a790b629f572e4ef93/w/s/ws12-orange_main.jpg" alt=""></div>
+		    				<div class="product-description">
+		    				    <div class="product-title"><a href="#">Radiant Tee</a></div>
+		    				    <div class="product-attribute product-sku"><span>SKU: </span>WS12</div>
+		    				    <div class="product-attribute"><span>Size: </span>M
+
+		    				    </div>
+		    				    <div class="product-attribute"><span>Color: </span>Orange</div>
+		    				</div>
+		    			</td>
+		    			<td class="t-align-r"><span class="product-price">$22.00</span></td>
+		    			<td class="t-align-r col-product-qty"><input type="text" value="4" class="input-text qty"></td>
+		    			<td class="t-align-r col-action">
+		    					    			<div class="action-wrap">
+		    					    				<div class="product-subtotal">$22.00</div>
+		    					    			    <div class="action-lists">
+		    					    			    	<a class="action-icon" href="#"><i class="fa fa-edit"></i></a>
+		    					    			    	<a class="action-icon" href="#"><i class="fa fa-delete"></i></a>
+		    					    			    </div>
+		    					    			</div>
+
+		    			</td>
+		    		</tr> -->
+
+		    	</tbody>
+	    	</table>
+	    </div>
+
+	    <div class="table-toolbar">
+    		<div class="toolbar-actions">
+    			<button href="javascript:void(0);" class="action action--primary" id="add_to_cart">Add to Cart</button>
+    			<button href="javascript:void(0);" class="action" id="update_list_items">Update List</button>
+    			<!-- <button href="javascript:void(0);" class="action" id="apply_approval">Submit for Approval</button> -->
+    			<button href="javascript:void(0);" class="action fright" id="delete_list">Delete Shopping List</button>
+    		</div>
+    	</div>
+
+    	<p>	&nbsp;</p>
+
+    	<div class="form-wrap" id="quick_add_section">
+	    	<div class="title-wrap">
+	    	    <h2 class="page-title">Quick Add</h2>
+	    	</div>
+	    	<div >
+	    		<div class="form-field large">
+	    			<label class="form-label" for="product_search_input">Enter SKU or Product Name
+	    			<small>*</small></label>
+	    			<input class="form-input" type="text" id="product_search_input" name="product_search_input">
+	    		</div>
+	    		<div class="form-field small">
+	    			<label class="form-label" for="product_qty">Qty
+	    			<small>*</small></label>
+	    			<input class="form-input" type="text" id="product_qty" name="product_qty">
+	    		</div>
+	    		<div class="form-field large" id="product_search_results" style="margin-bottom: 0;">
+
+	    		</div>
+	    		<div class="form-field large">
+	    			<label class="form-label" for="product_search_skus">Enter Multiple SKUs</label>
+	    			<input class="form-input" type="text" id="product_search_skus" name="product_search_skus">
+	    			<div class="form-input-desc">Use commas or paragraph to separate SKUs.</div>
+	    		</div>
+	    		<div class="form-field small">
+	    			<label class="form-label" for="">&nbsp;
+	    			</label>
+	    			<input class="button button--primary button--search" type="button" id="search_skus" name="search_skus" value="Search">
+	    		</div>
+	    		<div class="form-field large" id="skus_search_results" style="margin-bottom: 0;">
+
+	    		</div>
+
+	    		<div class="form-action">
+	    			<a href="javascript:void(0);" class="action" id="add_items_to_list">Add to List</a>
+	    		</div>
+	    	</div>
+	    </div>
+    </div>
+
+    <div id="modal-shopping-list-rename-form" class="modal modal--small" data-reveal>
+	    <div class="modal-header">
+	        <h2 class="modal-header-title">Rename Shopping List</h2>
+	        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
+	            <span aria-hidden="true">&#215;</span>
+	        </a>
+	    </div>
+	    <div class="modal-body">
+	        <form class="form" action="" method="post">
+	            <fieldset class="form-fieldset">
+	                <div class="form-field">
+	                    <label class="form-label" for="list_name">Shopping List Name
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="list_name" id="list_name">
+	                </div>
+	                <div class="form-field">
+	                	<label class="form-label" for="list_comment">Description</label>
+	                	<textarea class="form-input" name="list_comment" id="list_comment" cols="30" rows="3"></textarea>
+	                </div>
+
+	                <div class="form-field">
+	                    <input type="button" class="button button--primary"
+	                           value="Save" id="rename_list">
+
+	                    <a href="#" class="button  modal-close  modal-close--button">Cancel</a>
+	                </div>
+
+	            </fieldset>
+	        </form>
+	    </div>
+	  </div>
+
+	<div class="b2b-loading-overlay" id="b2b_loading_overlay">
+		<img src="{{cdn 'img/loading.gif'}}" alt="">
+	</div>
+  {{#each cart.items}}
+    <p class="cartItems" style="display: none;">
+      {{id}}
+    </p>
+  {{/each}}
+  </div>
+</main>
+{{/partial}}
+{{> layout/base}}

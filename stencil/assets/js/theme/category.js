@@ -12,7 +12,34 @@ export default class Category extends CatalogPage {
             hooks.on('sortBy-submitted', this.onSortBySubmit);
         }
     }
-
+    getAllProducts() {
+        const paginations = this.context.paginationCategory || [];
+        if (paginations) {
+            for (let i = 1; i < paginations.length; i++) {
+                const formatUrl = paginations[i].url;
+                const productsPerPage = this.context.categoryProductsPerPage;
+                const requestOptions = {
+                    config: {
+                        category: {
+                            shop_by_price: true,
+                            products: {
+                                limit: productsPerPage,
+                            },
+                        },
+                    },
+                    template: 'b2b/catalog-product-listing'
+                };
+                api.getPage(formatUrl, requestOptions, (err, content) => {
+                    const $listing = $(content);
+                    if (err) {
+                        throw new Error(err);
+                    }
+                    // Refresh view with new content
+                    console.log($listing);
+                });
+            }
+        }
+    }
     initFacetedSearch() {
         const $productListingContainer = $('#product-listing-container');
         const $facetedSearchContainer = $('#faceted-search-container');

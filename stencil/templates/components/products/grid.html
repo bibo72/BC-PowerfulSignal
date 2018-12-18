@@ -1,6 +1,6 @@
-<ul class="productGrid">
+<ul class="productGrid" b2b-products-gallery>
     {{#each products}}
-    <li class="product">
+    <li class="product" catalog-product-{{id}}>
         {{>components/products/card show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
     </li>
     {{/each}}

@@ -5,6 +5,10 @@ category:
         limit: {{theme_settings.categorypage_products_per_page}}
 ---
 {{inject "categoryProductsPerPage" theme_settings.categorypage_products_per_page}}
+{{#if pagination.category.links}}
+{{inject "paginationCategory" pagination.category.links}}
+{{/if}}
+
 {{#partial "head"}}
     {{#if pagination.category.previous}}
         <link rel="prev" href="{{pagination.category.previous}}">
@@ -15,7 +19,7 @@ category:
 {{/partial}}
 {{#partial "page"}}
 {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
-<main class="page">
+<main class="page" catalog-listing-wrap>
     <div class="container">
         <aside class="page-sidebar">
             {{#if banners.bottom}}

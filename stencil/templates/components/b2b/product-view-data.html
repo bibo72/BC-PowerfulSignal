@@ -1,0 +1,9 @@
+<div class="productView" data-product-info
+    data-product-image="{{#if product.main_image}}{{getImage product.main_image 'shopping_list_size' (cdn theme_settings.default_image_product)}}{{/if}}"  
+    data-product-title="{{product.title}}"
+    data-product-sku="{{#if product.sku}}{{product.sku}}{{/if}}"
+    data-product-price="{{product.price.without_tax.formatted}}{{product.price.with_tax.formatted}}"
+    data-product-priceValue="{{product.price.without_tax.value}}{{product.price.with_tax.value}}"
+    data-product-url="{{product.url}}"
+    data-product-options="{{JSONstringify product.options}}"
+></div>

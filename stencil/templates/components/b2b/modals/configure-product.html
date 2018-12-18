@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h2 class="modal-header-title">Edit product optons</h2>
+</div>
+<div class="modal-body">
+
+    <p data-product-sku>SKU: <span >{{product.sku}}</span></p>
+    <span id="index_container"></span>
+    <span id="variant_id_container"></span>
+
+    <form class="form" method="post" enctype="multipart/form-data">
+
+        <input type="hidden" name="product_id" value="{{product.id}}"/>
+        <div data-product-option-change style="display:block;">
+            {{#each product.options}}
+                {{{dynamicComponent 'components/products/options'}}}
+            {{/each}}
+        </div>
+
+        <div class="form-actions">
+            <!-- <input class="button button--primary" type="submit" value="{{lang 'common.save'}}"> -->
+            <a id="btn_option_update" data-update-option href="#" class="button button--primary">{{lang 'common.save'}}</a>
+            
+        </div>
+    </form>
+</div>
+

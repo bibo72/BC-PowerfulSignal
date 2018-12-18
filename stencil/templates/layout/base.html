@@ -13,10 +13,16 @@
         {{{head.scripts}}}
         {{{head.rsslinks}}}
         {{inject 'themeSettings' theme_settings}}
+        {{inject 'store_hash' settings.store_hash}}
         {{inject 'genericError' (lang 'common.generic_error')}}
         {{inject 'maintenanceMode' settings.maintenance}}
         {{inject 'urls' urls}}
+        {{inject "page_templete" template}}
+        {{inject "customer" customer}}
+        {{inject "cartData" cart.items}}
         {{{snippet 'htmlhead'}}}
+
+
     </head>
     <body id="top" class="{{#if page_type '===' 'default'}}home{{else if page_type '===' 'brand'}}brand-page{{else if page_type '===' 'category'}}category-page{{else if page_type '===' 'page'}}web-page{{/if}}">
         {{{snippet 'header'}}}

@@ -1,0 +1,123 @@
+{{#partial "page"}}
+<main class="account">
+    {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+
+    <div class="container">
+
+    <h2 class="page-heading">Shopping Lists</h2>
+    {{> components/account/navigation account_page='shopping_lists'}}
+
+    <div class="b2b-wrap">
+    	<div class="title-wrap">
+	        <h2 class="page-title">Shopping Lists</h2>
+	        <div class="title-actions">
+	        	<a href="#" data-reveal-id="modal-shopping-list-new-form" id="shopping_list_new" class="action-link"> Create New Shopping List</a>
+	        </div>
+
+	    </div>
+
+	    <div class="table-toolbar top">
+
+    		<div class="action-links">
+    			<a class="action-link" href="#" id="show_status_all" filter-status data-status-value="all" style="display:none;">Show All Status</a>
+    			<a class="action-link" href="#" id="show_status_40" filter-status data-status-value="40">Show Ready for Approval</a>
+    			<a class="action-link" href="#" id="show_status_30" filter-status data-status-value="30">Show Draft</a>
+    			<a class="action-link" href="#" id="show_status_0" filter-status data-status-value="0">Show Approved</a>
+    		</div>
+    	</div>
+
+	    <div class="table-wrap">
+	    	<table class="shopping-lists-table" id="shopping_lists_table" css-status="all">
+	    	    <thead>
+	    		    <tr>
+		    		    <th>Name &amp; Description</th>
+		    		    <th>Created By</th>
+		    		    <th class="t-align-r">Items</th>
+		    		    <th>Latest Activity</th>
+		    		    <th>Status</th>
+		    		    <th class="t-align-r">Action</th>
+		    		</tr>
+	    	    </thead>
+		    	<tbody>
+
+		    		<!-- <tr>
+		    			<td>
+		    				<div class="cell-line-name">Denice Test</div>
+		    				<div class="cell-line-description">Test</div>
+		    			</td>
+		    			<td class="t-align-r">3</td>
+		    			<td>09/11/2018</td>
+		    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?id=22">View</a></td>
+		    		</tr>
+		    		<tr>
+		    			<td>
+		    				<div class="cell-line-name">Denice Test</div>
+		    				<div class="cell-line-description">Test</div>
+		    			</td>
+		    			<td class="number-field t-align-r">3</td>
+		    			<td>09/11/2018</td>
+		    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?id=22">View</a></td>
+		    		</tr>
+		    		<tr>
+		    			<td>
+		    				<div class="cell-line-name">Denice Test</div>
+		    				<div class="cell-line-description">Test</div>
+		    			</td>
+		    			<td class="t-align-r">3</td>
+		    			<td>09/11/2018</td>
+		    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?id=22">View</a></td>
+		    		</tr> -->
+		    	</tbody>
+	    	</table>
+	    </div>
+
+	    <div class="table-toolbar">
+    		<div class="number-items">
+    			<span id="num_items">0</span> Items
+    		</div>
+    	</div>
+
+    	<div id="modal-shopping-list-new-form" class="modal modal--small" data-reveal>
+		    <div class="modal-header">
+		        <h2 class="modal-header-title">Create Shopping List</h2>
+		        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
+		            <span aria-hidden="true">&#215;</span>
+		        </a>
+		    </div>
+		    <div class="modal-body">
+		        <form class="form" action="" method="post">
+		            <fieldset class="form-fieldset">
+		                <div class="form-field">
+		                    <label class="form-label" for="list_name">Shopping List Name
+		                        <small>{{lang 'common.required' }}</small>
+		                    </label>
+		                    <input class="form-input" type="text" name="list_name" id="list_name">
+		                </div>
+		                <div class="form-field">
+		                	<label class="form-label" for="list_comment">Description</label>
+		                	<textarea class="form-input" name="list_comment" id="list_comment" cols="30" rows="3"></textarea>
+		                </div>
+
+		                <div class="form-actions">
+		                    <input type="button" class="button button--primary"
+		                           value="Save" id="add_new_shoppingList">
+
+		                    <a href="#" class="button  modal-close modal-close--button">Cancel</a>
+		                </div>
+
+		            </fieldset>
+		        </form>
+		    </div>
+		</div>
+
+    </div>
+
+    </div>
+    <div class="b2b-loading-overlay" id="b2b_loading_overlay">
+		<img src="{{cdn 'img/loading.gif'}}" alt="">
+	  </div>
+
+
+</main>
+{{/partial}}
+{{> layout/base}}

@@ -1,0 +1,18 @@
+{{#if product_results.products}}
+    {{#each (limit product_results.products 1)}}
+    <tr data-product-id="{{id}}">
+        <td class="col-checkbox"><input type="checkbox" data-results-check-box data-product-id="{{id}}"></td>
+        <td class="col-product-figure"><img src="{{getImage image 'productview_thumb_size' (cdn theme_settings.default_image_product)}}" alt="{{image.alt}}" title="{{image.alt}}"></td>
+        <td class="col-product-info">{{name}}<br/>
+        <span data-product-sku>{{#if sku}}<b>SKU:</b> {{sku}}</span>{{/if}}</td>
+        <td class="col-product-price" data-product-price data-product-price-value="{{#if price.with_tax}}{{price.with_tax.value}}{{/if}}{{#if price.without_tax}}{{price.without_tax.value}}{{/if}}">{{#if price.with_tax}}{{price.with_tax.formatted}}{{/if}}{{#if price.without_tax}}{{price.without_tax.formatted}}{{/if}}</td>
+        {{!#if multi}}
+        <td class="product-qty-col"><input class="form-input" type="text" id="product_qty_id" name="product_qty_id"></td>
+        {{!/if}}
+    </tr>
+    {{/each}}
+{{else}}
+    <tr>
+        <td>No products found.</td>
+    </tr>
+{{/if}}

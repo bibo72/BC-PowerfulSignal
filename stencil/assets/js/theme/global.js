@@ -17,6 +17,8 @@ import 'lazysizes';
 import loadingProgressBar from './global/loading-progress-bar';
 import FastClick from 'fastclick';
 import sweetAlert from './global/sweet-alert';
+import svgInjector from './global/svg-injector';
+import b2b from './b2b';
 
 function fastClick(element) {
     return new FastClick(element);
@@ -43,6 +45,9 @@ export default class Global extends PageManager {
         maintenanceMode(this.context.maintenanceMode);
         loadingProgressBar();
         sweetAlert();
+        svgInjector();
+        b2b.call(this);
         next();
+
     }
 }
