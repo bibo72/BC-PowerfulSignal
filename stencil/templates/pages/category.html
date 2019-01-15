@@ -19,7 +19,7 @@ category:
 {{/partial}}
 {{#partial "page"}}
 {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
-<main class="page" catalog-listing-wrap>
+<main class="page">
     <div class="container">
         <aside class="page-sidebar">
             {{#if banners.bottom}}
@@ -74,7 +74,7 @@ category:
                 {{/if}}
             </div>
             {{{snippet 'categories'}}}
-            <div id="product-listing-container">
+            <div id="product-listing-container" catalog-listing-wrap>
                 {{#if category.products}}
                     {{> components/category/product-listing}}
                 {{/if}}
