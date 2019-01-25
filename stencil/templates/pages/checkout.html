@@ -8,6 +8,14 @@
     window.language = {{{langJson 'optimized_checkout'}}};
 </script>
 
+<script>
+    if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+        var fileref = document.createElement('link');
+      fileref.setAttribute("rel","stylesheet");
+      fileref.setAttribute("type","text/css");
+    }
+</script>
+
 {{/partial}}
 
 {{#partial "page"}}
@@ -27,6 +35,159 @@
 </header>
 
 {{{ checkout.checkout_content }}}
+
+{{{ footer.scripts }}}
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script>
+    if(sessionStorage.getItem("company_payments")) {
+        const company_payments = JSON.parse(sessionStorage.getItem("company_payments"));
+        //console.log(company_payments);
+        var interval = setInterval(function(){
+            if($(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").length > 0) {
+                clearInterval(interval);
+                console.log("handle payment method");
+                const $checkoutItems = $(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item");
+                $checkoutItems.each(function(){
+                    const $paymentEle = $(this).find('[name="paymentProviderRadio"]');
+                    const paymentCode = $paymentEle.attr("id").replace("radio-", "");
+                    let isEnabled = false;
+                    for (let i = 0; i < company_payments.length; i++) {
+                        if(company_payments[i].code == paymentCode) {
+                            isEnabled = true;
+                        }
+                    }
+                    if(!isEnabled) {
+                        $(this).remove();
+                    } 
+                });
+                if($(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").length > 0) {
+                    $(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").eq(0).find('[name="paymentProviderRadio"]').prop("checked", true);
+                }
+                
+            }
+        },100);
+
+
+       //shipping
+        var interval_shipping = setInterval(function(){
+            if($(".checkout-step--shipping .checkout-form .form-checklist .form-checklist-item").length > 0) {
+                clearInterval(interval_shipping); 
+                
+                $('.checkout-step--shipping .checkout-form .form-checklist .form-checklist-item .shippingOption-desc:contains("Free Shipping")').parents(".form-checklist-item").remove();
+            }
+        },100);
+
+    }
+</script>
+<script>
+$(document).ready(function(){
+
+  function checkForLoading(cb){
+    var loadingOn = function() { return  $('.loadingNotification.ng-hide').length !== 1 };
+    var onTime = Date.now();
+    var interval = setInterval(function(){
+      //console.log("inside Interval");
+
+      var isLoadingOn = loadingOn();
+      if (isLoadingOn) {
+        onTime = Date.now();
+      }
+
+      if (!isLoadingOn && Date.now() - onTime > 400) {
+        clearInterval(interval);
+        setTimeout(cb, 100);
+      }
+
+      //console.log("loading icon is on",isLoadingOn);
+    },100);
+  }
+
+  function hideFreeShipping(){
+    if(sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+                
+        var loadingOn = function() { return  $('.checkout-step--shipping .checkout-form .form-checklist .form-checklist-item .shippingOption-desc:contains("Free Shipping")').length };
+        var timercount = 0;
+        var interval = setInterval(function(){
+          //console.log("inside Interval");
+          timercount ++;
+
+          var isLoadingOn = loadingOn();
+        
+          if (isLoadingOn || timercount > 50) {
+            clearInterval(interval);
+            const $freeShippingOption = $('.checkout-step--shipping .checkout-form .form-checklist .form-checklist-item .shippingOption-desc:contains("Free Shipping")');
+                if($freeShippingOption.length > 0) {
+                    $freeShippingOption.parents(".form-checklist-item").remove();
+
+                }
+
+          }
+        },100);    
+
+    }
+
+  }
+
+  function handlePaymentMethod(){
+    if(sessionStorage.getItem("company_payments")) {
+        const company_payments = JSON.parse(sessionStorage.getItem("company_payments"));
+        
+        if($(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").length > 0) {
+            const $checkoutItems = $(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item");
+            $checkoutItems.each(function(){
+                const $paymentEle = $(this).find('[name="paymentProviderRadio"]');
+                const paymentCode = $paymentEle.attr("id").replace("radio-", "");
+                let isEnabled = false;
+                for (let i = 0; i < company_payments.length; i++) {
+                    if(company_payments[i].code == paymentCode) {
+                        isEnabled = true;
+                    }
+                }
+                if(!isEnabled) {
+                    $(this).remove();
+                } 
+            });
+            if($(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").length > 0) {
+                $(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").eq(0).find('[name="paymentProviderRadio"]').prop("checked", true);
+            }
+        }
+        
+    }
+
+  }
+
+  //set timeout to wait for the angular to load
+  checkForLoading(function(){
+    //setTimeout(function(){
+    //when page loads and form is in shipping cartSection 
+
+      var click = document.addEventListener('click',function(event){
+        //console.log("partialShipStatus in click event: ", partialStatus);
+        button = event.target;
+        var buttonType = $(button).attr("type");
+        console.log(button);
+
+        if (buttonType === 'submit'){
+          checkForLoading(function(){
+            hideFreeShipping();
+            handlePaymentMethod();
+          });
+        } else if($(button).parents("checkout-header").attr("step") == "shipping") {
+            checkForLoading(function(){
+                hideFreeShipping();
+              });
+        } else if($(button).parents("[shipping-option-item-selected-id]").length) {
+            checkForLoading(function(){
+                hideFreeShipping();
+              });
+
+        }
+
+      });
+    });
+});
+</script>
 
 {{/partial}}
 

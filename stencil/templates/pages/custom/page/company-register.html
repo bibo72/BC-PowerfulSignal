@@ -1,0 +1,118 @@
+{{#partial "page"}}
+
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+
+<main class="page">
+
+    <h1 class="page-heading">{{ page.title }}</h1>
+
+    <div class="page-content">
+        {{#replace '%%Syndicate%%' page.content}}
+            {{> components/page/rss_feed}}
+        {{else}}
+            <p>{{{page.content}}}</p>
+        {{/replace}}
+
+        <div class="company-form-wrap">
+            <form action="" data-create-company-form method="post" class="form" style="display: none;">
+                <input type="hidden" name="company_id" id="company_id" value="">
+                <input type="hidden" name="company_customer_role" id="company_customer_role" value="">
+                <input type="hidden" name="company_customer_id" id="company_customer_id" value="">
+
+
+                <h2 class="form-header first">Business Information
+                <span>( <span class="span-required">*</span> Required Fields)</span></h2>
+                <div class="form-field">
+                    <label class="form-label" for="company_name">Company Name
+                        <small>*</small>
+                    </label>
+                    <input class="form-input" type="text" id="company_name" name="company_name">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="company_business_type">Type of Business
+                    </label>
+                    <input class="form-input" type="text" id="company_business_type" name="company_business_type">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="company_website">Website
+                        <small>*</small>
+                    </label>
+                    <input class="form-input" type="text" id="company_website" name="company_website">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="company_address_street">Street Address
+                        <small>*</small>
+                    </label>
+                    <input class="form-input" type="text" id="company_address_street" name="company_address_street">
+                </div>
+                <div class="form-row form-row--half">
+                    <div class="form-field">
+                        <label class="form-label" for="company_address_city">City
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_address_city" name="company_address_city">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="company_address_state">State
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_address_state" name="company_address_state">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="company_address_zip">ZIP Code
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_address_zip" name="company_address_zip">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="company_tax_id">Tax ID Number
+                        
+                        </label>
+                        <input class="form-input" type="text" id="company_tax_id" name="company_tax_id">
+                    </div>
+                    
+                </div>
+
+                <h2 class="form-header">Contact Person</h2>
+
+                <div class="form-row form-row--half">
+                    <div class="form-field">
+                        <label class="form-label" for="company_user_firstName">First Name
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_user_firstName" name="company_user_firstName">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="company_user_lastName">Last Name
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_user_lastName" name="company_user_lastName">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="company_user_phone">Phone Number
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_user_phone" name="company_user_phone">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="company_user_email">Email Address
+                            <small>*</small>
+                        </label>
+                        <input class="form-input" type="text" id="company_user_email" name="company_user_email">
+                    </div>
+                    
+                </div>
+                
+                <div class="form-actions">
+                    <input type="submit" class="button button--primary" value="SUBMIT APPLICATION" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+</main>
+
+{{/partial}}
+
+{{> layout/base}}

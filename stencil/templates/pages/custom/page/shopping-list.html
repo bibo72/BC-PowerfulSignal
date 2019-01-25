@@ -1,9 +1,6 @@
 {{#partial "page"}}
-<main class="account">
+<div class="account">
     {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
-    <div class="container">
-
-
     <h2 class="page-heading">Shopping List</h2>
     {{> components/account/navigation account_page='shopping_lists'}}
 
@@ -123,6 +120,37 @@
 
 	    		</div>
 
+	    		<!-- <div class="form-field large">
+	    			<label class="form-label" for="search_product_catalog">Enter SKU or Product Name</label>
+	    			<input class="form-input" type="text" id="search_product_catalog" name="search_product_catalog">
+	    		</div>
+	    		
+	    		<div class="form-field large" id="catalog_search_results" style="margin-bottom: 0;">
+	    				    		<table class="search-product-table">
+	    				    			<tbody></tbody>
+	    				    		</table>
+	    		
+	    		</div> -->
+	    		
+	    		
+
+	    		<div class="form-field large">
+	    			<label class="form-label" for="">Add from File
+	    			</label>
+	    			<div class="form-input-desc" style="margin-bottom: 1rem;">File must be in .csv format and include "variant_sku", "qty" and "options" columns <a href="http://silk-demo-store45.mybigcommerce.com/content/sample_template.csv">Download Sample</a></div>
+	    			<div class="upload-container">
+	    				<a href="javascript:void(0);" class="uploadFile-mockup button button--primary">Choose File</a>
+	    				<input id="customer_sku_csv" type="file" data-reset="true" class="action-upload" name="sku_file" accept=".csv">
+	    			</div>
+	    			<div class="csv-check-info" id="csv_check_info">
+	    				
+	    			</div>
+	    			<div class="csv-product-list" id="csv_products_list">
+	    				
+	    			</div>
+	    			
+	    		</div>
+
 	    		<div class="form-action">
 	    			<a href="javascript:void(0);" class="action" id="add_items_to_list">Add to List</a>
 	    		</div>
@@ -161,7 +189,7 @@
 	            </fieldset>
 	        </form>
 	    </div>
-	  </div>
+	</div>
 
 	<div class="b2b-loading-overlay" id="b2b_loading_overlay">
 		<img src="{{cdn 'img/loading.gif'}}" alt="">
@@ -171,7 +199,6 @@
       {{id}}
     </p>
   {{/each}}
-  </div>
-</main>
+</div>
 {{/partial}}
 {{> layout/base}}

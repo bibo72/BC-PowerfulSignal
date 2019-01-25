@@ -63,7 +63,8 @@
                             <a href="{{pre_order_add_to_cart_url}}" class="button button--primary">{{lang 'products.pre_order'}}</a>
                         {{/if}}
                         {{#if add_to_cart_url }}
-                            <a href="{{add_to_cart_url}}" class="button button--primary add-to-cart">{{lang 'products.add_to_cart'}}</a>
+                            <!-- <a href="{{add_to_cart_url}}" class="button button--primary add-to-cart">{{lang 'products.add_to_cart'}}</a> -->
+                            <a href="{{url}}" class="button button--primary add-to-cart">View Detail</a>
                         {{/if}}
                         {{#if out_of_stock_message }}
                             <a href="{{url}}" class="button button--primary" data-product-id="{{id}}">{{out_of_stock_message}}</a>

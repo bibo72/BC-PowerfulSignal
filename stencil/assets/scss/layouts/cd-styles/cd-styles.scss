@@ -1558,6 +1558,20 @@ h4 {
         height: 450px;
     }
 }
+@media only screen and (max-width: 1200px) {
+    .indust-logo-icon {
+        text-align: center;
+    }
+}
+.indust-logo-icon {
+    margin: 50px 0 50px 0;
+    font-size: 0px;
+}
+.indust-logo-icon img {
+    width: 80px;
+    margin: 0 0 5px 0;
+    padding: 0;
+}
 .wrapper {
     overflow: hidden;
 }
@@ -2127,4 +2141,13 @@ div.center-imgs {
 }
 .prop65 a {
     font-weight: normal;
+}
+div.appstore {
+    text-align: center;
+}
+img.appstore {
+    display: inline-block;
+    padding: 0;
+    margin: .5rem;
+    width: 200px;
 }

@@ -1,7 +1,7 @@
 <h4>{{lang 'products.related_products' }}</h4>
 <ul class="product-list">
     {{#each this}}
-    <li class="product-card">
+    <li class="product-card" catalog-product-{{id}}>
         {{>components/products/card theme_settings=../theme_settings}}
     </li>
     {{/each}}

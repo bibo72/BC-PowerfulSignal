@@ -1,4 +1,4 @@
-<section class="productCarousel"
+<section class="productCarousel" b2b-products-carousel
     data-slick='{
         "dots": true,
         "infinite": false,
@@ -38,7 +38,7 @@
     }'
 >
     {{#each products}}
-    <div class="productCarousel-slide product">
+    <div class="productCarousel-slide product" catalog-product-{{id}}>
         {{> components/products/card theme_settings=../theme_settings customer=../customer}}
     </div>
     {{/each}}

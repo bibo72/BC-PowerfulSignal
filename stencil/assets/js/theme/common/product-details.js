@@ -34,14 +34,46 @@ export default class ProductDetails {
         this.catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
         this.$tierPriceContainer = $("[tier-price-container]", $scope);
 
-        if (sessionStorage.getItem("bundleb2b_user")) {
+        // if (sessionStorage.getItem("bundleb2b_user")) {
+
+        //     const $product_sku = $("[data-product-sku]", $scope);
+
+        //     if ($product_sku.length > 0) {
+        //         const current_sku = $product_sku.text().trim().slice(5);
+        //         console.log("current_sku ",current_sku);
+        //         this.updateTierPriceRange(current_sku);
+        //         this.setTierPriceByQty(current_sku, 1);
+        //     }
+
+        //     this.getLists();
+
+        //     $form.on('submit', event => {
+        //         this.addProductToCartB2B(event, $form[0]);
+        //     });
+
+        // } else {
+        //     this.$wishlistContainer.show();
+        //     this.$overlay_product.hide();
+
+        //     $form.on('submit', event => {
+        //         this.addProductToCartDefault(event, $form[0]);
+        //     });
+
+        // }
+
+
+        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
 
             const $product_sku = $("[data-product-sku]", $scope);
-
             if ($product_sku.length > 0) {
-                const current_sku = $product_sku.text().trim().slice(5);
-                console.log("current_sku ",current_sku);
-                this.updateTierPriceRange(current_sku);
+                let current_sku = $product_sku.text().replace("SKU:", "").trim();
+                //current_sku = current_sku.substring(3)
+                const $price = $("[data-product-price-without-tax]", $scope) || $("[data-product-price-with-tax]", $scope);
+                const base_price = $price.text().trim();
+                const base_price_symbol = base_price.substring(0, 1);
+                const base_price_value = base_price.replace("$", "");
+                console.log(base_price_value);
+                this.updateTierPriceRange(current_sku, base_price_value, base_price_symbol);
                 this.setTierPriceByQty(current_sku, 1);
             }
 
@@ -126,12 +158,13 @@ export default class ProductDetails {
             const product_id = $("input[name=product_id]", this.$scope).val();
             const product_quantity = $(`input[name="qty[]"`).val();
 
-            const product_variant_sku = $("[data-product-sku]", this.$scope).text().trim();
+            let product_variant_sku = $("[data-product-sku]", this.$scope).text().replace("SKU:", "").trim();
+            //product_variant_sku = product_variant_sku.substring(3)
 
             const variants = this.catalog_products[product_id] || [];
 
             for (var i = 0; i < variants.length; i++) {
-                var pvar_sku = product_variant_sku.slice(5);
+                var pvar_sku = product_variant_sku;
                 if (variants[i].variant_sku.toLowerCase() == pvar_sku.toLowerCase()) {
                     variant_id = variants[i].variant_id;
                 }
@@ -787,102 +820,105 @@ export default class ProductDetails {
      *
      */
 
-     addProductToCartB2B(event, form) {
-       // Do not do AJAX if browser doesn't support FormData
-       if (window.FormData === undefined) {
-           return;
-       }
+    addProductToCartB2B(event, form) {
+        // Do not do AJAX if browser doesn't support FormData
+        if (window.FormData === undefined) {
+            return;
+        }
 
-       console.log("add to cart");
+        console.log("add to cart");
 
-       // Prevent default
-       event.preventDefault();
+        // Prevent default
+        event.preventDefault();
 
-       let itemArr = [];
-       const productObj = {};
-       productObj.product_id = $(form).find("input[name='product_id']").val();
-       productObj.quantity = $(form).find("input[name='qty[]']").val();
-       itemArr.push(productObj);
-       console.log(itemArr);
-
-
-
-       let variant_id;
-       const product_id = $(form).find("input[name='product_id']").val();
-
-       const product_variant_sku = $("[data-product-sku]", this.$scope).text().trim();
-
-       const variants = this.catalog_products[product_id] || [];
-
-       for (var i = 0; i < variants.length; i++) {
-            var pvar_sku = product_variant_sku.slice(5);
-           if (variants[i].variant_sku.toLowerCase() == pvar_sku.toLowerCase()) {
-               variant_id = variants[i].variant_id;
-           }
-       }
-       if (!variant_id) {
-           alert("This product or option has no variant id");
-           return;
-       }
+        let itemArr = [];
+        const productObj = {};
+        productObj.product_id = $(form).find("input[name='product_id']").val();
+        productObj.quantity = $(form).find("input[name='qty[]']").val();
+        itemArr.push(productObj);
+        console.log(itemArr);
 
 
-       this.$overlay_b2b.show();
-       let cartItemIDs = [];
-       let cartId;
 
-       $.ajax({
-           type: "GET",
-           url: "/api/storefront/carts",
-           contentType: "application/json",
-           accept: "application/json",
-           async: true,
-           success: (data) => {
-               if (data && data.length > 0) {
-                   cartId = data[0].id;
-                   cartItemIDs = data[0].lineItems.physicalItems;
-               }
+        let variant_id;
+        const product_id = $(form).find("input[name='product_id']").val();
 
-               console.log(cartItemIDs);
+        let product_variant_sku = $("[data-product-sku]", this.$scope).text().replace("SKU:", "").trim();
+        console.log("startI", product_variant_sku)
+        //product_variant_sku = product_variant_sku.substring(3)
+        console.log('endI', product_variant_sku)
 
-               console.log("number of items in cart: ", cartItemIDs.length);
-               if (cartItemIDs.length > 0) { //if there are items in cart notify user
-                   this.$overlay_b2b.hide();
-                   swal({
-                       title: "The shopping cart isn't empty",
-                       html: "<div class='nonempty-cart'><p>You have items in your shopping cart. Would you like to merge items in this order with items of this shopping cart or replace them?</p>" +
-                           "<p>Select Cancel to stay on the current page.</p></div>",
-                       showCancelButton: true,
-                       confirmButtonText: 'Merge',
-                       cancelButtonText: 'Cancel'
-                   });
-                   $(".swal2-confirm.button").after('<button type="button" class="button replace-button">Replace</button>');
-               } else {
-                   this.$overlay_b2b.show();
-                   this.addProductToCartBundleb2b(itemArr);
-               }
-               $(".swal2-confirm.button").unbind().bind("click", () => {
-                   this.$overlay_b2b.show();
-                   this.addProductToCartBundleb2b(itemArr);
-               });
-               $(".replace-button").unbind().bind("click", () => {
-                   swal.close();
-                   this.$overlay_b2b.show();
-                   this.replaceCart(cartItemIDs, itemArr);
-                   //this.replaceCart(cartItemIDs, cartId, itemArr);
-               });
-           },
-           error: (jqXHR, textStatus, errorThrown) => {
-               this.$overlay_b2b.hide();
+        const variants = this.catalog_products[product_id] || [];
 
-               swal({
-                   type: "error",
-                   text: "There has some error, please try again"
-               });
-               console.log("error", JSON.stringify(jqXHR));
-           }
-       });
+        for (var i = 0; i < variants.length; i++) {
+            var pvar_sku = product_variant_sku;
+            if (variants[i].variant_sku.toLowerCase() == pvar_sku.toLowerCase()) {
+                variant_id = variants[i].variant_id;
+            }
+        }
+        if (!variant_id) {
+            alert("This product or option has no variant id");
+            return;
+        }
 
-         }
+
+        this.$overlay_b2b.show();
+        let cartItemIDs = [];
+        let cartId;
+
+        $.ajax({
+            type: "GET",
+            url: "/api/storefront/carts",
+            contentType: "application/json",
+            accept: "application/json",
+            async: true,
+            success: (data) => {
+                if (data && data.length > 0) {
+                    cartId = data[0].id;
+                    cartItemIDs = data[0].lineItems.physicalItems;
+                }
+
+                console.log(cartItemIDs);
+
+                console.log("number of items in cart: ", cartItemIDs.length);
+                if (cartItemIDs.length > 0) { //if there are items in cart notify user
+                    this.$overlay_b2b.hide();
+                    swal({
+                        title: "The shopping cart isn't empty",
+                        html: "<div class='nonempty-cart'><p>You have items in your shopping cart. Would you like to merge items in this order with items of this shopping cart or replace them?</p>" +
+                            "<p>Select Cancel to stay on the current page.</p></div>",
+                        showCancelButton: true,
+                        confirmButtonText: 'Merge',
+                        cancelButtonText: 'Cancel'
+                    });
+                    $(".swal2-confirm.button").after('<button type="button" class="button replace-button">Replace</button>');
+                } else {
+                    this.$overlay_b2b.show();
+                    this.addProductToCartBundleb2b(itemArr);
+                }
+                $(".swal2-confirm.button").unbind().bind("click", () => {
+                    this.$overlay_b2b.show();
+                    this.addProductToCartBundleb2b(itemArr);
+                });
+                $(".replace-button").unbind().bind("click", () => {
+                    swal.close();
+                    this.$overlay_b2b.show();
+                    this.replaceCart(cartItemIDs, itemArr);
+                    //this.replaceCart(cartItemIDs, cartId, itemArr);
+                });
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                this.$overlay_b2b.hide();
+
+                swal({
+                    type: "error",
+                    text: "There has some error, please try again"
+                });
+                console.log("error", JSON.stringify(jqXHR));
+            }
+        });
+
+    }
 
     addProductToCartDefault(event, form) {
         const $addToCartBtn = $('#form-action-addToCart', $(event.target));
@@ -1078,6 +1114,14 @@ export default class ProductDetails {
             viewModel.stock.$input.text(data.stock);
         }
 
+        if (data.sku) {
+            const current_sku = data.sku;
+            const priceObj = data.price.without_tax || data.price.with_tax; //formatted
+            const base_price_value = priceObj.value;
+            const base_price_symbol = (priceObj.formatted).substring(0, 1);
+            this.updateTierPriceRange(current_sku, base_price_value, base_price_symbol);
+            this.setTierPriceByQty(current_sku, 1);
+        }
         if (!data.purchasable || !data.instock) {
             viewModel.$addToCart.prop('disabled', true);
             viewModel.$increments.prop('disabled', true);
@@ -1087,7 +1131,7 @@ export default class ProductDetails {
         }
 
         //for bundleb2b
-        const current_sku = viewModel.$sku.text();
+        const current_sku = viewModel.$sku.text().replace("SKU:", "").trim();
         this.updateTierPriceRange(current_sku);
         this.setTierPriceByQty(current_sku, 1);
     }
@@ -1202,7 +1246,7 @@ export default class ProductDetails {
     }
 
     //for bundleb2b
-    updateTierPriceRange(sku) {
+    updateTierPriceRange(sku, base_price, price_symbol) {
         const current_sku = sku;
         const product_id = $("input[name='product_id']", this.$scope).val();
         let hasTierPrice = false;
@@ -1228,10 +1272,12 @@ export default class ProductDetails {
 
                         let priceSavedText = "";
                         if (tier_price[j].type == "fixed") {
-                            priceSavedText = `pay only $${parseFloat(price).toFixed(2)} each`;
+                            priceSavedText = `pay only ${price_symbol}${parseFloat(price).toFixed(2)} each`;
 
                         } else {
-                            priceSavedText = `get ${price}% off`;
+                            //priceSavedText = `get ${price}% off`;
+                            const priceValue = base_price - base_price * price / 100;
+                            priceSavedText = `pay only ${price_symbol}${parseFloat(priceValue).toFixed(2)} each`;
 
                         }
 

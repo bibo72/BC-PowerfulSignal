@@ -1,1 +1,0 @@
-{"components/products/price-range":"{{#with price_range}}\r\n    {{min.formatted}} - {{max.formatted}}\r\n{{/with}}\r\n"}

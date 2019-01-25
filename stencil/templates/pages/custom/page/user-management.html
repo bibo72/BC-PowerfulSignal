@@ -1,227 +1,226 @@
 {{#partial "page"}}
-<main class="account">
+<div class="account">
     {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
-    <div class="container">
-      <h2 class="page-heading">User Management</h2>
-      {{> components/account/navigation account_page='user_management'}}
+    <h2 class="page-heading">User Management</h2>
+    {{> components/account/navigation account_page='user_management'}}
 
-      <div class="b2b-wrap">
-      	<div class="title-wrap title-wrap--alt">
-  	        <h2 class="page-title">Company Users</h2>
+    <div class="b2b-wrap">
+    	<div class="title-wrap title-wrap--alt">
+	        <h2 class="page-title">Company Users</h2>
 
-  	    </div>
-  	    <!-- <div class="table-toolbar top">
+	    </div>
+	    <!-- <div class="table-toolbar top">
+	    
+	        		<div class="action-links">
+	        			<a class="action-link" href="#" id="show_active_users">Show Active Users</a>
+	        			<a class="action-link" href="#" id="show_inactive_users">Show Inactive Users</a>
+	        			<a class="action-link" href="#" id="show_all_users">Show All Users</a>
+	        		</div>
+	        	</div> -->
+	    <div class="table-wrap">
+	    	<table class="user-management-table table-active-user" id="user_management_table">
+	    	    <thead>
+	    	    	<tr>
+		    		    <th>Name</th>
+		    		    <th>Email</th>
+		    		    <th>Role</th>
+		    		    <th class="col-actions">Actions</th>
+		    		</tr>
+	    	    </thead>
+		    	<tbody>
 
-  	        		<div class="action-links">
-  	        			<a class="action-link" href="#" id="show_active_users">Show Active Users</a>
-  	        			<a class="action-link" href="#" id="show_inactive_users">Show Inactive Users</a>
-  	        			<a class="action-link" href="#" id="show_all_users">Show All Users</a>
-  	        		</div>
-  	        	</div> -->
-  	    <div class="table-wrap">
-  	    	<table class="user-management-table table-active-user" id="user_management_table">
-  	    	    <thead>
-  	    	    	<tr>
-  		    		    <th>Name</th>
-  		    		    <th>Email</th>
-  		    		    <th style="display:none;">Role</th>
-  		    		    <th class="col-actions">Actions</th>
-  		    		</tr>
-  	    	    </thead>
-  		    	<tbody>
+		    		<!-- <tr data-status="active">
 
-  		    		<!-- <tr data-status="active">
+		    			<td>John Doe</td>
+		    			<td>john.doe@example.com</td>
+		    			<td>Sales Rep</td>
+		    			<td>East Coast Sales</td>
+		    			<td>Active</td>
+		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
+		    		</tr>
+		    		<tr data-status="active">
 
-  		    			<td>John Doe</td>
-  		    			<td>john.doe@example.com</td>
-  		    			<td>Sales Rep</td>
-  		    			<td>East Coast Sales</td>
-  		    			<td>Active</td>
-  		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
-  		    		</tr>
-  		    		<tr data-status="active">
+		    			<td>John Doe</td>
+		    			<td>john.doe@example.com</td>
+		    			<td>Sales Rep</td>
+		    			<td>East Coast Sales</td>
+		    			<td>Active</td>
+		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
+		    		</tr>
+		    		<tr data-status="active">
 
-  		    			<td>John Doe</td>
-  		    			<td>john.doe@example.com</td>
-  		    			<td>Sales Rep</td>
-  		    			<td>East Coast Sales</td>
-  		    			<td>Active</td>
-  		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
-  		    		</tr>
-  		    		<tr data-status="active">
+		    			<td>John Doe</td>
+		    			<td>john.doe@example.com</td>
+		    			<td>Sales Rep</td>
+		    			<td>East Coast Sales</td>
+		    			<td>Active</td>
+		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
+		    		</tr>
+		    		<tr data-status="inactive">
 
-  		    			<td>John Doe</td>
-  		    			<td>john.doe@example.com</td>
-  		    			<td>Sales Rep</td>
-  		    			<td>East Coast Sales</td>
-  		    			<td>Active</td>
-  		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
-  		    		</tr>
-  		    		<tr data-status="inactive">
-
-  		    			<td>John Doe</td>
-  		    			<td>john.doe@example.com</td>
-  		    			<td>Sales Rep</td>
-  		    			<td>East Coast Sales</td>
-  		    			<td>Inactive</td>
-  		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
-  		    		</tr> -->
+		    			<td>John Doe</td>
+		    			<td>john.doe@example.com</td>
+		    			<td>Sales Rep</td>
+		    			<td>East Coast Sales</td>
+		    			<td>Inactive</td>
+		    			<td class="actions-field"><a href="#" data-reveal-id="modal-user-management-edit-form">Edit</a><span class="actions-split">|</span><a href="#">Delete</a></td>
+		    		</tr> -->
 
 
-  		    	</tbody>
-  	    	</table>
-  	    </div>
+		    	</tbody>
+	    	</table>
+	    </div>
 
-  	    <div class="table-toolbar">
-      		<div class="number-items">
-      			<span id="num_items"></span> Items
-      		</div>
-      	</div>
+	    <div class="table-toolbar">
+    		<div class="number-items">
+    			<span id="num_items"></span> Items
+    		</div>
+    	</div>
 
-  	    <div class="table-toolbar">
-      		<div class="toolbar-actions">
-      			<a href="#" class="button button--primary" data-reveal-id="modal-user-management-new-form">Add New User</a>
-      		</div>
-      	</div>
-      </div>
+	    <div class="table-toolbar">
+    		<div class="toolbar-actions">
+    			<a href="#" class="button button--primary" data-reveal-id="modal-user-management-new-form">Add New User</a>
+    		</div>
+    	</div>
+    </div>
 
-      <div id="modal-user-management-new-form" class="modal modal--small" data-reveal>
-  	    <div class="modal-header">
-  	        <h2 class="modal-header-title">Add New User</h2>
-  	        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
-  	            <span aria-hidden="true">&#215;</span>
-  	        </a>
-  	    </div>
-  	    <div class="modal-body">
-  	        <form class="form" action="" method="post">
-  	            <fieldset class="form-fieldset">
-  	                <div class="form-field" style="display:none;">
-  	                    <label class="form-label" for="role_id">User Role
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <select class="form-select" name="role_id" id="role_id">
-  	                    	<option value="1">Admin</option>
-  	                    	<option value="2">Senior buyer</option>
-  	                    	<option value="0">Junior buyer</option>
-  	                    </select>
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="first_name">First Name
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" name="first_name" id="first_name" type="text">
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="last_name">Last Name
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" type="text" name="last_name" id="last_name">
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="email">Email
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" type="text" name="email" id="email">
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="phone">Phone Number
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" type="text" name="phone" id="phone">
-  	                </div>
-  	                <!-- <div class="form-field">
-  	                    <label class="form-label" for="status">Status
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <select class="form-select" name="status" id="status">
-  	                    	<option value="0">Active</option>
-  	                    	<option value="10">Inactive</option>
-  	                    </select>
-  	                </div> -->
+    <div id="modal-user-management-new-form" class="modal modal--small" data-reveal>
+	    <div class="modal-header">
+	        <h2 class="modal-header-title">Add New User</h2>
+	        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
+	            <span aria-hidden="true">&#215;</span>
+	        </a>
+	    </div>
+	    <div class="modal-body">
+	        <form class="form" action="" autocomplete="off" method="post">
+	            <fieldset class="form-fieldset">
+	                <div class="form-field">
+	                    <label class="form-label" for="role_id">User Role
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <select class="form-select" name="role_id" id="role_id">
+	                    	<option value="1">Admin</option>
+	                    	<option value="2">Senior buyer</option>
+	                    	<option value="0">Junior buyer</option>
+	                    </select>
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="first_name">First Name
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" name="first_name" id="first_name" type="text">
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="last_name">Last Name
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="last_name" id="last_name">
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="email">Email
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="email" id="email">
+	                    <span style="display: none">This field can't be null.</span>
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="phone">Phone Number
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="phone" id="phone">
+	                </div>
+	                <!-- <div class="form-field">
+	                    <label class="form-label" for="status">Status
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <select class="form-select" name="status" id="status">
+	                    	<option value="0">Active</option>
+	                    	<option value="10">Inactive</option>
+	                    </select>
+	                </div> -->
 
-  	                <div class="form-actions">
-  	                    <input type="button" class="button button--primary"
-  	                           value="Save" id="save_new_user">
+	                <div class="form-actions">
+	                    <input type="button" class="button button--primary"
+	                           value="Save" id="save_new_user">
 
-  	                    <a href="#" class="button modal-close modal-close--button">Cancel</a>
-  	                </div>
+	                    <a href="#" class="button modal-close modal-close--button">Cancel</a>
+	                </div>
 
-  	            </fieldset>
-  	        </form>
-  	    </div>
-  	</div>
+	            </fieldset>
+	        </form>
+	    </div>
+	</div>
 
-  	<div id="modal-user-management-edit-form" class="modal modal--small" data-reveal>
-  	    <div class="modal-header">
-  	        <h2 class="modal-header-title">Edit User</h2>
-  	        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
-  	            <span aria-hidden="true">&#215;</span>
-  	        </a>
-  	    </div>
-  	    <div class="modal-body">
-  	        <form class="form" action="" method="post">
-  	            <fieldset class="form-fieldset">
-  	                <input name="user_id" id="user_id" type="hidden">
-  	                <div class="form-field">
-  	                    <label class="form-label" for="role_id">User Role
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <select class="form-select" name="role_id" id="role_id">
-  	                    	<option value="1">Admin</option>
-  	                    	<option value="2">Senior buyer</option>
-  	                    	<option value="0">Junior buyer</option>
-  	                    </select>
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="first_name">First Name
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" name="first_name" id="first_name" type="text">
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="last_name">Last Name
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" type="text" name="last_name" id="last_name">
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="email">Email
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" type="text" name="email" id="email">
-  	                </div>
-  	                <div class="form-field">
-  	                    <label class="form-label" for="phone">Phone Number
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <input class="form-input" type="text" name="phone" id="phone">
-  	                </div>
-  	                <!-- <div class="form-field">
-  	                    <label class="form-label" for="status">Status
-  	                        <small>{{lang 'common.required' }}</small>
-  	                    </label>
-  	                    <select class="form-select" name="status" id="status">
-  	                    	<option value="0">Active</option>
-  	                    	<option value="10">Inactive</option>
-  	                    </select>
-  	                </div>
-  	                 -->
-  	                <div class="form-actions">
-  	                    <input type="button" class="button button--primary"
-  	                           value="Save" id="update_user">
+	<div id="modal-user-management-edit-form" class="modal modal--small" data-reveal>
+	    <div class="modal-header">
+	        <h2 class="modal-header-title">Edit User</h2>
+	        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
+	            <span aria-hidden="true">&#215;</span>
+	        </a>
+	    </div>
+	    <div class="modal-body">
+	        <form class="form" action="" method="post">
+	            <fieldset class="form-fieldset">
+	                <input name="user_id" id="user_id" type="hidden">
+	                <div class="form-field">
+	                    <label class="form-label" for="role_id">User Role
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <select class="form-select" name="role_id" id="role_id">
+	                    	<option value="1">Admin</option>
+	                    	<option value="2">Senior buyer</option>
+	                    	<option value="0">Junior buyer</option>
+	                    </select>
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="first_name">First Name
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" name="first_name" id="first_name" type="text">
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="last_name">Last Name
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="last_name" id="last_name">
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="email">Email
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="email" id="email" disabled="true">
+	                </div>
+	                <div class="form-field">
+	                    <label class="form-label" for="phone">Phone Number
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <input class="form-input" type="text" name="phone" id="phone">
+	                </div>
+	                <!-- <div class="form-field">
+	                    <label class="form-label" for="status">Status
+	                        <small>{{lang 'common.required' }}</small>
+	                    </label>
+	                    <select class="form-select" name="status" id="status">
+	                    	<option value="0">Active</option>
+	                    	<option value="10">Inactive</option>
+	                    </select>
+	                </div>
+	                 -->
+	                <div class="form-actions">
+	                    <input type="button" class="button button--primary"
+	                           value="Save" id="update_user">
 
-  	                    <a href="#" class="button  modal-close modal-close--button">Cancel</a>
-  	                </div>
+	                    <a href="#" class="button  modal-close modal-close--button">Cancel</a>
+	                </div>
 
-  	            </fieldset>
-  	        </form>
-  	    </div>
-  	</div>
+	            </fieldset>
+	        </form>
+	    </div>
+	</div>
 
-  	<div class="b2b-loading-overlay" id="b2b_loading_overlay">
-  		<img src="{{cdn 'img/loading.gif'}}" alt="">
-  	</div>
-  </div>
-</main>
+	<div class="b2b-loading-overlay" id="b2b_loading_overlay">
+		<img src="{{cdn 'img/loading.gif'}}" alt="">
+	</div>
+</div>
 {{/partial}}
 {{> layout/base}}

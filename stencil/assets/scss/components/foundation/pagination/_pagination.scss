@@ -60,6 +60,7 @@
 }
 .pagination-item--previous,
 .pagination-item--next {
+    font-size: 0!important;
     &.pagination-item {
         a {
             background: center center no-repeat;

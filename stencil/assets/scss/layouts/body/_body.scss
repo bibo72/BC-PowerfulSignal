@@ -13,10 +13,12 @@
         font-weight: 600;
     }
     @include breakpoint("medium") {
-        margin-top: remCalc(166);
+        margin-top: 0;
+        padding-top: remCalc(166);
     }
     @include breakpoint("large") {
-        margin-top: remCalc(170);
+        margin-top: 0;
+        padding-top: remCalc(170);
     }
 }
 .page-content--centered {

@@ -1,0 +1,25 @@
+{{#partial "page"}}
+
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+<h2 class="page-heading title">Order #<span id="heading_order_id"></span></h2>
+{{> components/account/navigation account_page='orders'}}
+
+<div class="account b2b-order-details">
+    <div class="account-body">
+        
+        <div class="account-content account-content--fixedSmall">
+            
+        </div>
+
+        <aside class="account-sidebar"> 
+            
+        </aside>
+
+    </div>
+
+    <div class="b2b-loading-overlay" id="b2b_loading_overlay">
+		<img src="{{cdn 'img/loading.gif'}}" alt="">
+	</div>
+</div>
+{{/partial}}
+{{> layout/base}}

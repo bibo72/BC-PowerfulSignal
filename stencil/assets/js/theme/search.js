@@ -122,6 +122,9 @@ export default class Search extends CatalogPage {
                 $searchForm.append(input);
             }
         });
+        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") == "none") {
+            $(".navList-item .product-count").show();
+        }
     }
 
     loadTreeNodes(node, cb) {
@@ -197,6 +200,10 @@ export default class Search extends CatalogPage {
             $searchHeading.html(content.heading);
             $searchCount.html(content.productCount);
 
+            this.handleCatalogProducts();
+            if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") == "none") {
+                $(".navList-item .product-count").show();
+            }
             $('html, body').animate({
                 scrollTop: 0,
             }, 100);
@@ -231,5 +238,57 @@ export default class Search extends CatalogPage {
         }
 
         return false;
+    }
+    handleCatalogProducts() {
+        const catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
+        const products = $(".product");
+        for (var product_id in catalog_products) {
+            const productSelector = `[catalog-product-${product_id}]`;
+            if ($(`${productSelector}`).length > 0) {
+                $(`${productSelector}`).attr("catalog-product", "true");
+                let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "");
+                let tier_price;
+                let catalog_price;
+                const variantArr = catalog_products[product_id] || [];
+                if (variantArr.length == 1) {
+                    tier_price = variantArr[0].tier_price || [];
+                    catalog_price = this.getCatalogPrice(base_price, tier_price, 1);
+                }
+                if (catalog_price) {
+                    $(`${productSelector}`).find(".price.price--withoutTax").text("$" + parseFloat(catalog_price).toFixed(2));
+                    $(`${productSelector}`).find(".price.price--withTax").text("$" + parseFloat(catalog_price).toFixed(2));
+                }
+            }
+        }
+        const $productGallery = $("[b2b-products-gallery]");
+        $productGallery.each(function() {
+            const catalogProductCount = $(this).find("[catalog-product]").length;
+            if (catalogProductCount == 0) {
+                $("[catalog-listing-wrap]").show();
+                $(this).parents(".page").html("We can't find products matching the selection.");
+            } else {
+                $("[catalog-listing-wrap]").show();
+                const $catalogProductCounter = $("[data-catalog-product-counter]");
+                if ($catalogProductCounter.length > 0) {
+                    $catalogProductCounter.text(catalogProductCount);
+                }
+            }
+        });
+    }
+    getCatalogPrice(base_price, tier_price_array, qty) {
+        let tier_price = base_price;
+        for (let j = 0; j < tier_price_array.length; j++) {
+            const type = tier_price_array[j].type;
+            const base_qty = tier_price_array[j].qty;
+            const price = tier_price_array[j].price;
+            if (qty >= base_qty) {
+                if (type == "fixed") {
+                    tier_price = price;
+                } else {
+                    tier_price = base_price - base_price * price / 100;
+                }
+            }
+        }
+        return tier_price;
     }
 }

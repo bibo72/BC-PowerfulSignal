@@ -1,4 +1,5 @@
 import config from './config';
+import swal from 'sweetalert2';
 
 export default function(customer) {
 	//store hash
@@ -46,7 +47,7 @@ export default function(customer) {
 		$shoppingListsTable.find("tbody").html("");
 		$overlay.show();
 
-		if (gRoleId == "1" || gRoleId == "2") {
+		if (gRoleId == "1" || gRoleId == "2" || gRoleId == "10") {
 			$shoppingListsTable.find("thead").html(`<tr>
 		    		    <th>Name &amp; Description</th>
 		    		    <th>Created By</th>
@@ -115,7 +116,7 @@ export default function(customer) {
 							let tr;
 							let ths;
 
-							if (gRoleId == 1 || gRoleId == 2) {
+							if (gRoleId == 1 || gRoleId == 2 || gRoleId == 10) {
 								if (listData.status != "30") {
 									tr = `<tr data-status="${listData.status}" data-list="${JSON.stringify(listsData[i])}">
 				    			<td>
@@ -172,76 +173,32 @@ export default function(customer) {
 		});
 	}
 
-	const handleRoleId = function() {
-		const bundleb2b_user = JSON.parse(sessionStorage.getItem("bundleb2b_user"));
-		gRoleId = bundleb2b_user.role_id;
-		bypass_company_id = bundleb2b_user.company_id;
-
-		if (gRoleId == 1 || gRoleId == 2) {
-
-			$("#show_status_30").remove();
-		}
-		if (gRoleId != "") {
-			load_table();
-		} else {
-			alert("User Not Exist.");
-			return;
-		}
-	}
-
-	//init view
-	const getUserInfo = function(_callback) {
-		$.ajax({
-			type: "GET",
-			url: `${config.apiRootUrl}/company?store_hash=${bypass_store_hash}&customer_id=${bypass_customer_id}`,
-			success: function(data) {
-				console.log(data);
-				if (data && data != null) {
-					const company_id = data.id;
-					let role_id = "";
-					const userList = data.customers;
-					for (let i = 0; i < userList.length; i++) {
-						if (userList[i].id == bypass_customer_id) {
-							role_id = userList[i].role;
-						}
-					}
-
-					const user_info = {
-						"user_id": bypass_customer_id,
-						"role_id": role_id,
-						"company_id": company_id,
-					};
-					sessionStorage.setItem("bundleb2b_user", JSON.stringify(user_info));
-
-
-				} else {
-					$overlay.hide();
-				}
-
-				if (_callback) {
-					_callback();
-				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				$overlay.hide();
-				console.log("error", JSON.stringify(jqXHR));
-			}
-		});
-
-	}
-
 	//page loading...
-	//initView();
-
 	var interval = setInterval(function() {
 		if (sessionStorage.getItem("bundleb2b_user")) {
 			clearInterval(interval);
+			if (sessionStorage.getItem("bundleb2b_user") == "none") {
+				window.location.href = "/";
+				return;
+			}
 			const bundleb2b_user = JSON.parse(sessionStorage.getItem("bundleb2b_user"));
 			gRoleId = bundleb2b_user.role_id;
 			bypass_company_id = bundleb2b_user.company_id;
 
 			if (gRoleId == 1 || gRoleId == 2) {
 				$("#show_status_30").remove();
+			}
+			if (gRoleId == 10) {
+				$("#show_status_30").remove();
+				if (!bypass_company_id) {
+					window.location.href = "/salerep/";
+					return swal({
+						type: "error",
+						text: 'Please choose a company on "Dashboard".'
+					});
+
+				}
+
 			}
 			if (gRoleId != "") {
 				load_table();
@@ -258,7 +215,7 @@ export default function(customer) {
 		const list_name = $("#list_name", $form).val();
 		const list_comment = $("#list_comment", $form).val() || " ";
 		let list_status = "30";
-		if (gRoleId == 1 || gRoleId == 2) {
+		if (gRoleId == 1 || gRoleId == 2 || gRoleId == 10) {
 			list_status = "0";
 		}
 

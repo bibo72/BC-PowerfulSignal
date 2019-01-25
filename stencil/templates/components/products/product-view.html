@@ -266,7 +266,7 @@
             {{{snippet 'product_details'}}}
         </div>
     </section>
-    <section class="productView-details productView-brand-price">
+    <section class="productView-details productView-brand-price" style="position: relative">
         <h2 class="productView-brand"{{#if schema}} itemprop="brand" itemscope itemtype="http://schema.org/Brand"{{/if}}>
             <a href="{{product.brand.url}}"{{#if schema}} itemprop="url"{{/if}}><span{{#if schema}} itemprop="name"{{/if}}>{{product.brand.name}}</span></a>
         </h2>
@@ -318,13 +318,20 @@
                           </svg>
                       </i>
                   </a>
-                  <ul aria-hidden="true" class="dropdown-menu" data-dropdown-content id="shoppinglist-dropdown" tabindex="-1">
+                  <ul aria-hidden="true" class="dropdown-menu add-to-shipping-btn" data-dropdown-content id="shoppinglist-dropdown" tabindex="-1">
 
                   </ul>
               </form>
         </div>
         {{> components/common/share}}
     </section>
+
+    <div class="product-loading-overlay" id="product_loading_overlay">
+        <img src="{{cdn 'img/loading.svg'}}" alt="">
+    </div>
+    <div class="b2b-loading-overlay" style="display: none;" id="b2b_loading_overlay">
+        <img src="{{cdn 'img/loading.gif'}}" alt="">
+    </div>
 </div>
 <section class="productView-promos">
     {{> components/products/promo-panel}}
@@ -336,6 +343,7 @@
         {{> components/products/description}}
     {{/if}}
 </section>
+</div>
 <div id="previewModal" class="modal modal--large" data-reveal>
     <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
         <span aria-hidden="true">&#215;</span>

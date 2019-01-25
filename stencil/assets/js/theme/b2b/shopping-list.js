@@ -31,6 +31,7 @@ export default function(customer) {
 	let isOwn = true;
 	let catalogProductsLoaded = false;
 	let gListObj = {};
+	let csvFileData;
 
 	//define list status
 	const gListStatusObj = {
@@ -49,6 +50,7 @@ export default function(customer) {
 	let listStatus;
 	let listOriginalStatus;
 	let catalog_products = {};
+	let catalog_products_sku = {};
 	let gCatalogId = "";
 
 	const $overlay = $("#b2b_loading_overlay");
@@ -80,15 +82,20 @@ export default function(customer) {
 	//list - edit - options
 	$('body').on('click', '[data-edit-option]', event => {
 		const $target = $(event.currentTarget);
-		const productId = $target.parents("tr").attr("data-product-id");
-		const itemIndex = $target.parents("tr").attr("data-index");
+		const $tr = $target.parents("tr");
+		const productId = $tr.attr("data-product-id");
+		const variantId = $tr.attr("data-variant-id");
+		const itemIndex = $tr.attr("data-index");
+		const itemOptions = $tr.attr("data-product-options");
+		const skuHtml = $tr.find(".product-sku").html();
+
 
 		event.preventDefault();
 		// edit item in cart
-		listEditOptions(productId, itemIndex);
+		listEditOptions(productId, variantId, itemIndex, itemOptions, skuHtml);
 	});
+
 	$("body").on('click', '[data-update-option]', event => {
-		debugger
 		const $target = $(event.target);
 		const $modal = $target.parents(".modal");
 		const itemIndex = $("#index_container", $modal).attr("data-index");
@@ -102,7 +109,7 @@ export default function(customer) {
 
 		let options_list = [];
 		for (let item of formData) {
-			if (item[0].indexOf("attribute") != -1) {
+			if (item[0].indexOf("attribute") != -1 && item[1] != "") {
 				const optionObj = {
 					"option_id": item[0],
 					"option_value": item[1]
@@ -136,6 +143,8 @@ export default function(customer) {
 		} else {
 			postData.products.splice(parseInt(itemIndex), 1, itemObj);
 		}
+		console.log(postData);
+		console.log(JSON.stringify(postData));
 
 		$modal.find(".modal-close").eq(0).click();
 
@@ -147,38 +156,6 @@ export default function(customer) {
 
 
 	//define events
-
-	//get user role
-	const getUserInfo = function() {
-
-		$.ajax({
-			type: "GET",
-			url: `${config.apiRootUrl}/company?store_hash=${bypass_store_hash}&customer_id=${bypass_customer_id}`,
-			success: function(data) {
-				console.log("list users", data);
-
-				if (data && data.customers) {
-					bypass_company_id = data.id;
-					const userList = data.customers;
-					for (let i = 0; i < userList.length; i++) {
-						if (userList[i].id == bypass_customer_id) {
-							gRoleId = userList[i].role;
-
-							//load_table();
-						}
-					}
-
-				} else {
-					$overlay.hide();
-				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				$overlay.hide();
-				console.log("error", JSON.stringify(jqXHR));
-			}
-		});
-
-	}
 
 	const scrollToTable = function() {
 		const height = $(".b2b-wrap").offset().top;
@@ -216,7 +193,7 @@ export default function(customer) {
 								gListObj.status = listData.status;
 								gListObj.products = [];
 
-								const listStatus = listData.status;
+								listStatus = listData.status;
 
 								if (listData.customer_id != bypass_customer_id) {
 									isOwn = false;
@@ -349,7 +326,7 @@ export default function(customer) {
 									    				<div class="product-description">
 									    				    <div class="product-title">${product_title}</div>
 									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}<br/><i class="label-unviable">Unavailable</i></div>
-									    				    <div class="product-options"></div>
+									    				    <div class="product-options" style="display:none;"></div>
 									    				</div>
 									    			</td>
 									    			<td class="t-align-r" data-product-priceValue="${product_priceValue}"><span class="product-price">${product_price}</span></td>
@@ -381,7 +358,8 @@ export default function(customer) {
 											//hundle options
 											const optionsStr = $productInfo.attr("data-product-options");
 
-											if (optionsStr) {
+											//console.log(optionsStr);
+											if (optionsStr && optionsStr != "[]") {
 												const optionsArr = JSON.parse(optionsStr);
 												//console.log(optionsArr);
 												const selected_options_arr = options_list;
@@ -395,7 +373,7 @@ export default function(customer) {
 														const selectedOption = selected_options_arr[oj];
 														if (option_id == selectedOption.option_id) {
 															if (option.partial == "input-text") {
-																optionHtml += `<span class"option-name">${option.display_name}:</span> ${selectedOption.option_value} </br>`;
+																optionHtml += `<span class="option-name">${option.display_name}:</span> ${selectedOption.option_value} </br>`;
 
 															} else {
 																if (option.values) {
@@ -403,7 +381,7 @@ export default function(customer) {
 																	for (let ok = 0; ok < optionValues.length; ok++) {
 
 																		if (optionValues[ok].id == selectedOption.option_value) {
-																			optionHtml += `<span class"option-name">${option.display_name}:</span> ${optionValues[ok].label} </br>`;
+																			optionHtml += `<span class="option-name">${option.display_name}:</span> ${optionValues[ok].label} </br>`;
 																		}
 																	}
 																}
@@ -423,10 +401,13 @@ export default function(customer) {
 												$(`tr[data-index-${tmp_index}]`).find(".product-options").html(optionHtml);
 
 												//console.log(options_list);
-												if (options_list && options_list.length > 0) {
-													$(`tr[data-index-${tmp_index}]`).find(".product-options").append(`<div><a href="#" data-edit-option>Change</a></div>`);
 
+												if (listStatus != "40") {
+													$(`tr[data-index-${tmp_index}]`).find(".product-options").append(`<div><a href="#" data-edit-option>Change</a></div>`);
 												}
+
+
+
 											}
 
 										});
@@ -435,6 +416,7 @@ export default function(customer) {
 										$shoppingListTable.find("tbody").append(tr);
 
 										if (listStatus == "40") {
+											debugger
 											$(".col-action .action-lists").hide();
 											$shoppingListTable.find("tbody input").prop("disabled", true);
 										}
@@ -465,7 +447,7 @@ export default function(customer) {
 
 
 
-								if (gRoleId == "1" || gRoleId == "2") {
+								if (gRoleId == "1" || gRoleId == "2" || gRoleId == "10") {
 
 									if (listStatus == "40") {
 										$(".toolbar-actions").html(`
@@ -521,7 +503,8 @@ export default function(customer) {
 			delete productArr[x].primary_image;
 			delete productArr[x].sku;
 		}
-		console.log("listPutData", productArr);
+		console.log("listPutData", listData);
+		console.log("listPutData", JSON.stringify(listData));
 		//return;
 
 		$overlay.show();
@@ -548,6 +531,63 @@ export default function(customer) {
 		});
 	}
 
+	const addCsvProductsToList = function(csvBase64Data, _callback) {
+
+		let productArr = listData.products;
+
+		for (var x = 0; x < productArr.length; x++) {
+			delete productArr[x].name;
+			delete productArr[x].price;
+			delete productArr[x].primary_image;
+			delete productArr[x].sku;
+		}
+		console.log("listPutData", productArr);
+		//return;
+
+		$overlay.show();
+
+		$.ajax({
+			type: "PUT",
+			url: `${config.apiRootUrl}/importrequisitionlist?store_hash=${bypass_store_hash}&id=${listID}&customer_id=${bypass_customer_id}`,
+			data: JSON.stringify(listData),
+			success: function(data) {
+				if (data) {
+					console.log(data);
+					$overlay.hide();
+
+					if (_callback) {
+						_callback();
+					}
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$overlay.hide();
+				console.log("error", JSON.stringify(jqXHR));
+
+			}
+		});
+	}
+
+	const getIdsByVariantSku = function(variantSku) {
+		//debugger
+		console.log(catalog_products);
+		let idsArr = [];
+		for (let pid in catalog_products) {
+			const variant_item = catalog_products[pid];
+			for (let i = 0; i < variant_item.length; i++) {
+				const variant_sku = variant_item[i].variant_sku;
+				if (variant_sku == variantSku) {
+					idsArr.push(variant_item[i].product_id);
+					idsArr.push(variant_item[i].variant_id);
+					return idsArr;
+				}
+			}
+		}
+
+		return idsArr;
+
+	}
+
 	/**
 	get catalog price
 	base_price float
@@ -557,7 +597,7 @@ export default function(customer) {
 	const getCatalogPrice = function(base_price, tier_price_arr, qty) {
 		let catalog_price = base_price;
 
-		const catalog_price_arr = tier_price_arr;
+		const catalog_price_arr = tier_price_arr || [];
 		catalog_price_arr.sort(function(a, b) {
 			if (parseInt(a.qty) >= parseInt(b.qty)) {
 				return 1;
@@ -600,15 +640,26 @@ export default function(customer) {
 
 	//load_table();
 	var interval = setInterval(function() {
-		if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("catalog_products")) {
-			catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
+		if (sessionStorage.getItem("bundleb2b_user")) {
+			clearInterval(interval);
+			if (sessionStorage.getItem("bundleb2b_user") == "none") {
+				window.location.href = "/";
+				return;
+			}
+			if (sessionStorage.getItem("catalog_products")) {
+				catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
+			}
 			gCatalogId = sessionStorage.getItem("catalog_id");
+
 			const bundleb2b_user = JSON.parse(sessionStorage.getItem("bundleb2b_user"));
 			gRoleId = bundleb2b_user.role_id;
 			bypass_company_id = bundleb2b_user.company_id;
 
-			clearInterval(interval);
+
 			load_table();
+
+			//test
+			//parseCsv.validation();
 		}
 		//console.log("loading icon is on",isLoadingOn);
 	}, 100);
@@ -674,10 +725,146 @@ export default function(customer) {
 	$("#add_items_to_list").on('click', function() {
 
 		const $resultTable = $("[product-search-result-table]");
+		const $checkedProducts = $resultTable.find("[data-results-check-box]:checked");
+
+		const $checkedProductsSingle = $("#product_search_result_table").find("[data-results-check-box]:checked");
+		//const $checkedProductsMulti = $("#skus_search_results").find("[data-results-check-box]:checked");
+		const single_product_quantity = $("#product_qty").val();
+
+		if ($resultTable.find("tr").length == 0) {
+			alert("Please search the products by sku or name");
+			return;
+		}
+		if ($checkedProducts.length == 0) {
+			alert("Please select products you want to add to list");
+			return;
+		}
+		const checkNum = /^[1-9]\d*$/;
+		if (!checkNum.test(single_product_quantity) && $checkedProductsSingle.length != 0) {
+			alert("Please enter a valid quantity");
+			$("#product_qty").focus();
+			return;
+		}
+
+		let products_arr = gListObj.products.splice(0) || [];
+		let hasInvalidQty = false;
+		let hasInvalidOption = false;
+
+		$checkedProducts.each(function(index, item) {
+			const $tr = $(item).parents("tr");
+
+			const $item_qty_input = $tr.find(".product-qty-col input");
+			let item_qty;
+			if ($item_qty_input.length > 0) {
+				item_qty = $tr.find(".product-qty-col input").val();
+			} else {
+				item_qty = single_product_quantity;
+			}
+			//const item_qty = $tr.find(".product-qty-col input").val();
+
+			if ($item_qty_input.length > 0 && !checkNum.test(item_qty)) {
+				hasInvalidQty = true;
+				alert("Please enter a valid quantity");
+				$tr.find(".product-qty-col input").focus();
+				return false;
+			}
+			const product_id = $tr.attr("data-product-id");
+			const variant_id = $tr.attr("data-variant-id");
+
+			if (!variant_id) {
+				hasInvalidOption = true;
+			}
+
+			const form = $('form[data-option-form]', $tr)[0];
+			const formData = filterEmptyFilesFromForm(new FormData(form));
+
+			let options_list = [];
+			for (let item of formData) {
+				//console.log(item);
+				if (item[0].indexOf("attribute") != -1 && item[1] != "") {
+					const optionObj = {
+						"option_id": item[0],
+						"option_value": item[1]
+					}
+
+					options_list.push(optionObj);
+				}
+			}
+
+			//if has duplicated products
+			let isExist = false;
+			for (let i = 0; i < products_arr.length; i++) {
+				const sameOption = (JSON.stringify(options_list) == JSON.stringify(products_arr[i].options_list));
+				const sameProductId = (products_arr[i].product_id == product_id);
+				const sameVariantId = (products_arr[i].variant_id == variant_id);
+				if (sameProductId && sameVariantId && sameOption) {
+					products_arr[i].qty = parseInt(products_arr[i].qty) + parseInt(item_qty);
+					isExist = true;
+				}
+			}
+			if (!isExist) {
+				products_arr.push({
+					"product_id": product_id,
+					"variant_id": variant_id,
+					"qty": item_qty,
+					"options_list": options_list
+				});
+			}
+		});
+
+
+		if (hasInvalidOption) {
+			alert("please choose an option.");
+			return;
+		}
+
+		if (hasInvalidQty) {
+			return;
+		}
+
+		let postData = gListObj;
+		postData.products = products_arr;
+		//test data
+		/*postData.products = [{
+			"product_id": "234",
+			"variant_id": "266",
+			"qty": "2"
+		}];*/
+
+
+		//console.log(JSON.stringify(postData));
+		console.log(postData);
+		//return;
+
+		$overlay.show();
+		update_list(postData, function() {
+			scrollToTable();
+			load_table();
+			//clear search input
+			$("#product_search_input").val("");
+			$("#product_qty").val("");
+			$("#product_search_results").html("");
+			$("#product_search_skus").val("");
+			$("#skus_search_results").html("");
+
+			resetCsvFileUpload();
+		});
+
+	});
+	$("#add_items_to_list_01").on('click', function() {
+
+		const $resultTable = $("[product-search-result-table]");
 		//const $checkedProducts = $resultTable.find("[data-results-check-box]:checked");
 		const $checkedProductsSingle = $("#product_search_result_table").find("[data-results-check-box]:checked");
 		const $checkedProductsMulti = $("#skus_search_results").find("[data-results-check-box]:checked");
 		const single_product_quantity = $("#product_qty").val();
+
+		if (csvFileData) {
+			console.log(csvFileData);
+
+			return;
+
+		}
 		if ($resultTable.find("tr").length == 0) {
 			alert("Please search the products by sku or name");
 			return;
@@ -693,7 +880,7 @@ export default function(customer) {
 			return;
 		}
 
-		let products_arr = gListObj.products || [];
+		let products_arr = gListObj.products.splice(0) || [];
 		let hasInvalidQty = false;
 		let hasInvalidOption = false;
 
@@ -715,7 +902,7 @@ export default function(customer) {
 				hasInvalidOption = true;
 			}
 
-			const form = $('form[data-cart-item-add]', $tr)[0];
+			const form = $('form[data-option-form]', $tr)[0];
 			const formData = filterEmptyFilesFromForm(new FormData(form));
 
 			let option_label = {};
@@ -733,7 +920,7 @@ export default function(customer) {
 			let options_list = [];
 			for (let item of formData) {
 				console.log(item);
-				if (item[0].indexOf("attribute") != -1) {
+				if (item[0].indexOf("attribute") != -1 && item[1] != "") {
 					const optionObj = {
 						"option_id": item[0],
 						"option_value": item[1]
@@ -776,7 +963,7 @@ export default function(customer) {
 				hasInvalidOption = true;
 			}
 
-			const form = $('form[data-cart-item-add]', $tr)[0];
+			const form = $('form[data-option-form]', $tr)[0];
 			const formData = filterEmptyFilesFromForm(new FormData(form));
 			let options_list = [];
 
@@ -794,7 +981,7 @@ export default function(customer) {
 
 			for (let item of formData) {
 				console.log(item);
-				if (item[0].indexOf("attribute") != -1) {
+				if (item[0].indexOf("attribute") != -1 && item[1] != "") {
 					const optionObj = {
 						"option_id": item[0],
 						"option_value": item[1]
@@ -1119,6 +1306,7 @@ export default function(customer) {
 
 			const product_id = $(item).attr("data-product-id");
 
+
 			if (catalog_products[product_id]) {
 				$("#product_search_results").html(`<span class="loading-span"></span>`);
 
@@ -1147,6 +1335,19 @@ export default function(customer) {
 						if (catalog_price) {
 							$("#product_search_results #product_search_result_table tbody tr").find("[data-product-price]").text("$" + parseFloat(catalog_price).toFixed(2));;
 						}
+
+						$("#product_search_results #product_search_result_table").find(".product-qty-col input").remove();
+
+						const $optionLabels = $("#product_search_results #product_search_result_table").find("label.form-option");
+						$optionLabels.each(function() {
+							const $optionLabel = $(this);
+							const $optionInput = $optionLabel.prev();
+							const optionId = $optionLabel.attr("for");
+							const new_optionId = `s_${variant_id}_${optionId}`;
+							$optionLabel.attr("for", new_optionId);
+							$optionInput.attr("id", new_optionId);
+
+						});
 					} else {
 						$("#product_search_results").html(`<table class="search-product-table" id="product_search_result_table" product-search-result-table style="margin-bottom:1.5rem;"><tbody><tr><td>No products found.</td></tr></tbody></table>`);
 					}
@@ -1315,6 +1516,17 @@ export default function(customer) {
 							if (catalog_price) {
 								$("#skus_search_results").find(`[product-search-result-table] tbody tr[data-product-id="${product_id}"] [data-product-price]`).text("$" + parseFloat(catalog_price).toFixed(2));;
 							}
+
+							const $optionLabels = $("#skus_search_results").find("label.form-option");
+							$optionLabels.each(function() {
+								const $optionLabel = $(this);
+								const $optionInput = $optionLabel.prev();
+								const optionId = $optionLabel.attr("for");
+								const new_optionId = `multi_${variant_id}_${optionId}`;
+								$optionLabel.attr("for", new_optionId);
+								$optionInput.attr("id", new_optionId);
+
+							});
 						} else {
 							$("#skus_search_results").find("[product-search-result-table] tbody").append(`<tr><td colspan="5">No products found for "${searchQuery}".</td></tr>`);
 						}
@@ -1335,9 +1547,11 @@ export default function(customer) {
 
 	};
 
-	utils.hooks.on('product-option-change', (event, option) => {
+	//not use, will delete later
+	const productOptionsChanged = (event) => {
+		debugger
 
-		const $changedOption = $(option);
+		const $changedOption = $(event.target);
 		const $form = $changedOption.parents('form');
 		const $messageBox = $('.alertMessageBox');
 		const product_id = $('[name="product_id"]', $form).attr('value');
@@ -1354,6 +1568,11 @@ export default function(customer) {
 		const $sku = $("[data-product-sku]", $tr);
 		const $checkbox = $("input[type=checkbox]", $tr);
 		const $priceSpan = $("[data-product-price]", $tr);
+
+		// Do not trigger an ajax request if it's a file or if the browser doesn't support FormData
+		if ($changedOption.attr('type') === 'file' || window.FormData === undefined) {
+			return;
+		}
 
 
 
@@ -1396,12 +1615,12 @@ export default function(customer) {
 				$("#variant_id_container").attr("data-variant-id", variant_id);
 
 				if (data.purchasing_message) {
-					$('p.alertBox-message', $messageBox).text(data.purchasing_message);
+					//$('p.alertBox-message', $messageBox).text(data.purchasing_message);
 					$submit.prop('disabled', true);
-					$messageBox.show();
+					//$messageBox.show();
 				} else {
 					$submit.prop('disabled', false);
-					$messageBox.hide();
+					//$messageBox.hide();
 				}
 
 				if (!data.purchasable || !data.instock) {
@@ -1433,11 +1652,11 @@ export default function(customer) {
 					$('p.alertBox-message', $messageBox).text(data.purchasing_message);
 					//$submit.prop('disabled', true);
 					$checkbox.prop('disabled', true);
-					$messageBox.show();
+					//$messageBox.show();
 				} else {
 					//$submit.prop('disabled', false);
 					$checkbox.prop('disabled', false);
-					$messageBox.hide();
+					//$messageBox.hide();
 				}
 
 				if (!data.purchasable || !data.instock) {
@@ -1459,6 +1678,403 @@ export default function(customer) {
 						$checkbox.prop('checked', false);
 					}
 				}
+
+			}
+
+
+		});
+	}
+
+	//init csv products options
+	const onOptionChange = function(product_id, $form) {
+		debugger
+		utils.api.productAttributes.optionChange(product_id, $form.serialize(), (err, result) => {
+			const data = result.data || {};
+
+
+			if (err) {
+				swal({
+					text: err,
+					type: 'error',
+				});
+				return false;
+			}
+
+			//for edit options
+			//const $submit = $("input[type=submit]", $form);
+			const $submit = $("#btn_option_update", $form);
+
+			const $skuModal = $form.parents(".modal-body").find("[data-product-sku]");
+
+
+			//for search results
+			const $tr = $form.parents('tr');
+			const $sku = $("[data-product-sku]", $tr);
+			const $checkbox = $("input[type=checkbox]", $tr);
+			const $priceSpan = $("[data-product-price]", $tr);
+
+			let variant_id;
+			let tier_price_arr;
+			let base_price;
+
+			if (data.sku) {
+
+				const product_variant_sku = data.sku;
+				$sku.html(`<b>SKU: </b>${data.sku}`);
+				$skuModal.html(`SKU: ${data.sku}`);
+				const variants = catalog_products[product_id] || [];
+				for (var i = 0; i < variants.length; i++) {
+					if (variants[i].variant_sku.toLowerCase() == product_variant_sku.toLowerCase()) {
+						variant_id = variants[i].variant_id;
+						tier_price_arr = variants[i].tier_price;
+					}
+				}
+				//console.log(variant_id);
+
+				//const catalog_price = getCatalogPrice(product_price_value, variants[0].tier_price, 1);
+			}
+
+
+			if ($("body").hasClass("has-activeModal")) {
+				//from edit item modal
+
+				$("#variant_id_container").attr("data-variant-id", variant_id);
+
+				let allValid = true;
+				if (data.purchasing_message) {
+					//$('p.alertBox-message', $messageBox).text(data.purchasing_message);
+					//$submit.prop('disabled', true);
+					allValid = false;
+					//$messageBox.show();
+				} else {
+					$submit.prop('disabled', false);
+					//$messageBox.hide();
+				}
+
+				if (!data.purchasable || !data.instock) {
+					//$submit.prop('disabled', true);
+					allValid = false;
+				}
+				if (!variant_id) {
+
+					$submit.prop('disabled', true);
+					allValid = false;
+				}
+
+				//required text field
+				const $textInputs = $form.find("input.form-input[required]");
+
+				let validInput = true;
+				$textInputs.each(function(index, item) {
+					const $textInput = $(item);
+					if ($textInput.val() && $textInput.val().trim() != "") {} else {
+						validInput = false;
+					}
+
+				});
+
+				if (allValid && validInput) {
+
+					$submit.prop('disabled', true);
+				} else {
+
+					$submit.prop('disabled', true);
+				}
+
+				$textInputs.bind('keyup', function() {
+					const $checkbox = $(this).parents("tr").find("input[type=checkbox]");
+					if ($(this).val() && allValid) {
+						$submit.prop('disabled', true);
+
+					} else {
+						$submit.prop('disabled', true);
+					}
+				});
+
+
+			} else {
+				//from search results
+				$checkbox.prop('disabled', true);
+
+				if (data.price.with_tax) {
+					base_price = data.price.with_tax.value;
+				}
+
+				if (data.price.without_tax) {
+					base_price = data.price.without_tax.value;
+				}
+				const catalog_price = getCatalogPrice(base_price, tier_price_arr, 1);
+				$priceSpan.text("$" + parseFloat(catalog_price).toFixed(2));
+
+				let allValid = true;
+				if (data.purchasing_message) {
+					$('p.alertBox-message', $messageBox).text(data.purchasing_message);
+					//$submit.prop('disabled', true);
+					//$checkbox.prop('disabled', true);
+					allValid = false;
+					//$messageBox.show();
+				} else {
+					//$submit.prop('disabled', false);
+					//$checkbox.prop('disabled', false);
+					//$messageBox.hide();
+				}
+
+				if (!data.purchasable || !data.instock) {
+					//$submit.prop('disabled', true);
+					//$checkbox.prop('disabled', true);
+					//$checkbox.prop('checked', false);
+					allValid = false;
+				}
+				if (variant_id) {
+					$tr.attr("data-variant-id", variant_id);
+					$checkbox.attr("data-variant-id", variant_id);
+					//$checkbox.prop('disabled', false);
+
+				} else {
+					$tr.removeAttr("data-variant-id");
+					$checkbox.removeAttr("data-variant-id");
+					//$checkbox.prop('disabled', true);
+					//$checkbox.prop('checked', false);
+					allValid = false;
+				}
+
+				//required text field
+				debugger
+				const $textInputs = $tr.find("input.form-input[required]");
+
+				let validInput = true;
+				$textInputs.each(function(index, item) {
+					const $textInput = $(item);
+					if ($textInput.val() && $textInput.val().trim() != "") {} else {
+						validInput = false;
+					}
+
+				});
+
+				if (allValid && validInput) {
+					$checkbox.prop('checked', true);
+
+					$checkbox.prop('disabled', false);
+				} else {
+					$checkbox.prop('checked', false);
+					$checkbox.prop('disabled', true);
+				}
+
+				$textInputs.bind('keyup', function() {
+					const $checkbox = $(this).parents("tr").find("input[type=checkbox]");
+					if ($(this).val() && allValid) {
+						$checkbox.prop("disabled", false);
+
+
+					} else {
+
+						$checkbox.prop("checked", false);
+						$checkbox.prop("disabled", true);
+					}
+				});
+
+			}
+
+
+		});
+	}
+
+	//after user click an option
+	utils.hooks.on('product-option-change', (event, option) => {
+		debugger
+
+		const $changedOption = $(option);
+		const $form = $changedOption.parents('form');
+		const $messageBox = $('.alertMessageBox');
+		const product_id = $('[name="product_id"]', $form).attr('value');
+
+		//for edit options
+		//const $submit = $("input[type=submit]", $form);
+		const $submit = $("#btn_option_update", $form);
+
+		const $skuModal = $form.parents(".modal-body").find("[data-product-sku]");
+
+
+		//for search results
+		const $tr = $changedOption.parents('tr');
+		const $sku = $("[data-product-sku]", $tr);
+		const $checkbox = $("input[type=checkbox]", $tr);
+		const $priceSpan = $("[data-product-price]", $tr);
+
+
+		$submit.prop("disabled", true);
+		$checkbox.prop("disabled", true);
+
+
+		utils.api.productAttributes.optionChange(product_id, $form.serialize(), (err, result) => {
+			const data = result.data || {};
+
+
+			if (err) {
+				swal({
+					text: err,
+					type: 'error',
+				});
+				return false;
+			}
+
+
+
+			let variant_id;
+			let tier_price_arr;
+			let base_price;
+
+			if (data.sku) {
+
+				const product_variant_sku = data.sku;
+				$sku.html(`<b>SKU: </b>${data.sku}`);
+				$skuModal.html(`SKU: ${data.sku}`);
+				const variants = catalog_products[product_id] || [];
+				for (var i = 0; i < variants.length; i++) {
+					if (variants[i].variant_sku.toLowerCase() == product_variant_sku.toLowerCase()) {
+						variant_id = variants[i].variant_id;
+						tier_price_arr = variants[i].tier_price;
+					}
+				}
+				//console.log(variant_id);
+
+				//const catalog_price = getCatalogPrice(product_price_value, variants[0].tier_price, 1);
+			}
+
+			if ($("body").hasClass("has-activeModal")) {
+				//from edit item modal
+
+				$("#variant_id_container").attr("data-variant-id", variant_id);
+
+				let allValid = true;
+				if (data.purchasing_message) {
+					$('p.alertBox-message', $messageBox).text(data.purchasing_message);
+					//$submit.prop('disabled', true);
+					allValid = false;
+					$messageBox.show();
+				} else {
+					//$submit.prop('disabled', false);
+					$messageBox.hide();
+				}
+
+				if (!data.purchasable || !data.instock) {
+					//$submit.prop('disabled', true);
+					allValid = false;
+				}
+				if (!variant_id) {
+					//$submit.prop('disabled', true);
+					allValid = false;
+				}
+
+				//required text field
+				const $textInputs = $form.find("input.form-input[required]");
+
+				let validInput = true;
+				$textInputs.each(function(index, item) {
+					const $textInput = $(item);
+					if ($textInput.val() && $textInput.val().trim() != "") {} else {
+						validInput = false;
+					}
+
+				});
+
+				if (allValid && validInput) {
+
+					$submit.prop('disabled', false);
+				} else {
+
+					$submit.prop('disabled', true);
+				}
+
+				$textInputs.bind('keyup', function() {
+					const $checkbox = $(this).parents("tr").find("input[type=checkbox]");
+					if ($(this).val() && allValid) {
+						$submit.prop('disabled', false);
+
+					} else {
+						$submit.prop('disabled', true);
+					}
+				});
+
+			} else {
+				//from search results
+				$checkbox.prop('disabled', true);
+
+				if (data.price.with_tax) {
+					base_price = data.price.with_tax.value;
+				}
+
+				if (data.price.without_tax) {
+					base_price = data.price.without_tax.value;
+				}
+				const catalog_price = getCatalogPrice(base_price, tier_price_arr, 1);
+				$priceSpan.text("$" + parseFloat(catalog_price).toFixed(2));
+
+				let allValid = true;
+				if (data.purchasing_message) {
+					$('p.alertBox-message', $messageBox).text(data.purchasing_message);
+					//$submit.prop('disabled', true);
+					//$checkbox.prop('disabled', true);
+					allValid = false;
+					$messageBox.show();
+				} else {
+					//$submit.prop('disabled', false);
+					//$checkbox.prop('disabled', false);
+					$messageBox.hide();
+				}
+
+				if (!data.purchasable || !data.instock) {
+					//$submit.prop('disabled', true);
+					//$checkbox.prop('disabled', true);
+					//$checkbox.prop('checked', false);
+					allValid = false;
+				}
+				debugger
+				if (variant_id) {
+					$tr.attr("data-variant-id", variant_id);
+					$checkbox.attr("data-variant-id", variant_id);
+
+
+				} else {
+					$tr.removeAttr("data-variant-id");
+					$checkbox.removeAttr("data-variant-id");
+					//$checkbox.prop('disabled', true);
+					//$checkbox.prop('checked', false);
+					allValid = false;
+				}
+
+				//required text field
+				const $textInputs = $tr.find("input.form-input[required]");
+
+				let validInput = true;
+				$textInputs.each(function(index, item) {
+					const $textInput = $(item);
+					if ($textInput.val() && $textInput.val().trim() != "") {} else {
+						validInput = false;
+					}
+
+				});
+
+				if (allValid && validInput) {
+
+					$checkbox.prop('disabled', false);
+				} else {
+					$checkbox.prop('checked', false);
+					$checkbox.prop('disabled', true);
+				}
+
+				$textInputs.bind('keyup', function() {
+					const $checkbox = $(this).parents("tr").find("input[type=checkbox]");
+					if ($(this).val() && allValid) {
+						$checkbox.prop("disabled", false);
+
+
+					} else {
+						$checkbox.prop("disabled", true);
+						$checkbox.prop("checked", false);
+					}
+				});
+
 
 			}
 
@@ -1972,6 +2588,8 @@ export default function(customer) {
 			itemArr.push(productObj);
 		});
 
+		console.log(itemArr);
+
 
 		if (!listItems || listItems.length == 0) {
 			alert("You have no products in list.");
@@ -2042,7 +2660,7 @@ export default function(customer) {
 
 	});
 
-	const listEditOptions = function(productId, itemIndex) {
+	const listEditOptions = function(productId, variantId, itemIndex, itemOptions, skuHtml) {
 		const modal = defaultModal();
 		modal.open();
 
@@ -2050,7 +2668,35 @@ export default function(customer) {
 			template: 'b2b/modals/configure-product'
 		}, (err, response) => {
 			modal.updateContent(response);
-			$("#index_container").attr("data-index", itemIndex);
+			modal.$content.find("#index_container").attr("data-index", itemIndex);
+			modal.$content.find("#variant_id_container").attr("data-variant-id", variantId);
+			modal.$content.find("[data-product-sku]").html(skuHtml);
+
+			//TODO presetted options
+			//[{"option_id":"attribute[198]","option_value":"106"},
+			// {"option_id":"attribute[199]","option_value":"98"},
+			// {"option_id":"attribute[200]","option_value":"111"}]
+			const options = JSON.parse(itemOptions);
+
+
+			for (let j = 0; j < options.length; j++) {
+				const optionName = options[j].option_id; //attribute[198]
+				const optionValue = options[j].option_value;
+
+				const $option = modal.$content.find(`[name="${optionName}"]`);
+				if ($option.length > 0) {
+					if ($option.hasClass("form-radio")) {
+						$option.each(function() {
+							if ($(this).val() == optionValue) {
+								$(this).prop("checked", true);
+							}
+						});
+					} else {
+						$option.val(optionValue);
+					}
+				}
+			}
+
 		});
 	}
 
@@ -2103,4 +2749,345 @@ export default function(customer) {
 	});
 
 
+	//new search
+	let catalog_products_detailInfo = [];
+	const getCatalogProductArr = function(searchQuery) {
+		const search_query = searchQuery;
+		const $SearchResultsContainer = $("#catalog_search_results tbody");
+		for (let pid in catalog_products) {
+			const product = catalog_products[pid];
+			const product_id = product.product_id;
+			utils.api.product.getById(product_id, {
+				template: 'b2b/shopping-list-search-results-item'
+			}, (err, response) => {
+				if (err) {
+					return console.log(err);
+				}
+
+				$SearchResultsContainer.append(response);
+
+
+
+			});
+		}
+
+	}
+	const displayCatalogProducts = function(productArr) {
+
+	}
+
+	$("#search_product_catalog").on("change", (event) => {
+		const $target = $(event.target);
+		const searchQuery = $target.val();
+		getCatalogProductArr(searchQuery);
+	});
+
+
+	//sample data: [244, 287, "SKU100", "SKU-9BB3516E", "1", empty]
+	const displayCsvProducts = function(products) {
+		let csvProdcutsArr = [];
+		const $csvCheckInfoContainer = $("#csv_check_info");
+		const $csvProdcutsContainer = $("#csv_products_list");
+		$csvCheckInfoContainer.html("Loading products...");
+		$csvProdcutsContainer.html(`<table class="search-product-table" product-search-result-table><tbody></tbody></table>`);
+		const $csvProdcutsTbody = $csvProdcutsContainer.find("tbody");
+
+		const productCount = products.length;
+
+		for (let i = 0; i < productCount; i++) {
+			const product_id = products[i][0];
+			const variant_id = products[i][1];
+			const variant_sku = products[i][2];
+			const product_qty = products[i][3];
+			const product_options = products[i][4];
+			//shopping-list-csv-product-item
+			utils.api.product.getById(product_id, {
+				template: 'b2b/shopping-list-csv-product-item'
+			}, (err, response) => {
+				if (err) {
+					return console.log(err);
+				}
+
+				const tmpIndex = i;
+
+				const $response = $(response);
+
+				//change input id and label "for" attribute
+				const $optionLabels = $response.find("label.form-option");
+				$optionLabels.each(function() {
+					const $optionLabel = $(this);
+					const $optionInput = $optionLabel.prev();
+					const optionId = $optionLabel.attr("for");
+					const new_optionId = `csv_${variant_id}_${optionId}`;
+					$optionLabel.attr("for", new_optionId);
+					$optionInput.attr("id", new_optionId);
+				});
+
+				const $form = $response.find("form.option-form");
+				const $checkBox = $form.parents("tr").find("[data-results-check-box]");
+
+				//set qty
+				$response.find("#product_qty_id").val(product_qty);
+				//set variant id
+				$response.attr("data-variant-id", variant_id);
+
+				$csvProdcutsTbody.append($response);
+
+				const hasOptions = $form.find("[data-product-option-change]").html().trim().length;
+				const $inputOptions = $form.find("[data-product-option-change] .form-input");
+
+				if ($inputOptions.length > 0) {
+					//console.log(product_options);
+					//console.log(typeof product_options);
+
+					if (product_options && product_options.trim() != "") {
+						const product_options_arr = product_options.split(";");
+						$inputOptions.each((index, item) => {
+							if (product_options_arr && product_options_arr.length >= index + 1) {
+								$(item).val(product_options_arr[index]);
+							}
+						});
+					}
+				}
+
+				if (hasOptions) {
+					//https://fl4mq0bm40.execute-api.us-west-2.amazonaws.com/prod/productvariants?store_hash=h3jnjw30qw&product_id=234&variant_id=260
+					$.ajax({
+						type: "GET",
+						url: `${config.apiRootUrl}/productvariants?store_hash=${bypass_store_hash}&product_id=${product_id}&variant_id=${variant_id}`,
+						success: function(data) {
+							console.log(data);
+							if (data && data.option_list) {
+								const options = data.option_list;
+								for (let j = 0; j < options.length; j++) {
+									const optionId = options[j].option_id;
+									const optionValue = options[j].option_value;
+
+									const $option = $(`[name="attribute[${optionId}]"]`, $form);
+									if ($option.length > 0) {
+										if ($option.hasClass("form-input")) {
+											//$option.val(optionValue);
+											if (product_options) {
+												$option.val(optionValue);
+											}
+
+										} else if ($option.hasClass("form-select")) {
+											$option.val(optionValue);
+
+										} else if ($option.hasClass("form-radio")) {
+
+											$option.each(function() {
+												if ($(this).val() == optionValue) {
+													$(this).prop("checked", true);
+												}
+											});
+
+										}
+									}
+								}
+
+								//
+								onOptionChange(product_id, $form);
+							}
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+
+							console.log("error", JSON.stringify(jqXHR));
+						}
+					});
+
+				} else {
+					//simple products, direct check them
+					$checkBox.prop("checked", true);
+				}
+
+				if (tmpIndex == productCount - 1) {
+					$csvCheckInfoContainer.html("Your products are listed below.");
+				}
+
+
+
+			});
+		}
+
+	}
+
+	//file upload
+
+	const resetCsvFileUpload = function() {
+		$("#csv_check_info").html("");
+		$("#csv_products_list").html("");
+		$("#customer_sku_csv").val("");
+	}
+	const uploadDealcsv = function() {};
+	/*------ Method for read uploded csv file ------*/
+	uploadDealcsv.prototype.getCsv = function(e) {
+
+		let input = document.getElementById('customer_sku_csv');
+		input.addEventListener('change', function() {
+
+			if (this.files && this.files[0]) {
+				var uploadFile = this.files[0];
+				var reader = new FileReader();
+
+				reader.addEventListener('load', function(e) {
+					resetCsvFileUpload();
+
+					let csvdata = e.target.result;
+					console.log(csvdata);
+					const data = parseCsv.validation(csvdata);
+					console.log(data);
+					/*if (data) {
+						const csvTobase64Data = btoa(JSON.stringify(data));
+						console.log(csvTobase64Data);
+						csvFileData = csvTobase64Data;
+
+						
+						window.csvTobase64 = csvTobase64Data;
+					}*/
+				});
+
+				reader.readAsBinaryString(uploadFile);
+			}
+		});
+	}
+	/*------- Method for parse csv data and display --------------*/
+	uploadDealcsv.prototype.validation = function(content) {
+		const $csvCheckInfoContainer = $("#csv_check_info");
+		$csvCheckInfoContainer.html(`<p class="checking-tips">Checking file...</p>`);
+		let parsedata = [];
+		let originArr = [];
+		let errorCounter = 0;
+		if (content) {
+			originArr = content.split("\n");
+		}
+
+		/*originArr = [
+			"variant_sku,qty,options,,",
+			"SKU074,1,,,",
+			",3,,,",
+			"SKU-9BB3516E,4,,,",
+			"SKU-9BB3516E,,,,",
+			",,,,", 
+			""
+		];*/
+		/*originArr = [
+			"variant_sku,qty,options,,",
+			"SKU074,1,,,",
+			"SKU-9E819FC0,4,,,",
+			"SKU-9BB3516E,1,,,",
+			",,,,",
+			""
+		];*/
+		console.log(originArr);
+
+
+		parseCsv.removeEmptyRow(originArr);
+		let unEmptyArr = originArr;
+
+		let columns = 0;
+		if (unEmptyArr && unEmptyArr.length > 0) {
+			const headerRow = unEmptyArr[0];
+			const headerArr = headerRow.split(",");
+			//["variant_sku", "qty", "options", "", ""]
+			parseCsv.removeEmptyRow(headerArr);
+			columns = headerArr.length;
+			console.log(headerArr);
+
+		} else {
+			$csvCheckInfoContainer.html(`<div class="checking-info-box">Empty file, please upload another.</div>`);
+			return null;
+		}
+
+		for (let i = 1; i < unEmptyArr.length; i++) {
+
+
+			let productIdsArr = "";
+			const dataItem = unEmptyArr[i].split(",");
+			//console.log(dataItem); //["SKU074", "1", "", "", ""]
+
+			parseCsv.removeEmptyRow(dataItem);
+
+			//console.log(dataItem); //["SKU074", "1", "", "", ""]
+
+			let errorInfo = "";
+			if (dataItem.length > columns) {
+				errorInfo += `redundant data; `;
+			} else {
+				dataItem.length = columns;
+			}
+			if (!dataItem[0]) {
+				errorInfo += `variant_sku can't be empty; `;
+			} else {
+				const idsArr = getIdsByVariantSku(dataItem[0]);
+				if (idsArr && idsArr.length > 0) {
+					productIdsArr = idsArr;
+				} else {
+					errorInfo += `variant_sku ${dataItem[0]} doesn't exist; `;
+				}
+			}
+			if (!dataItem[1]) {
+				errorInfo += `qty can't be empty; `;
+			}
+
+			if (errorInfo.trim() != "") {
+				errorCounter++;
+				$csvCheckInfoContainer.append(`<div>#ROW ${i+1}: ${errorInfo}</div>`);
+			}
+			const productDataArr = productIdsArr.concat(dataItem);
+
+			parsedata.push(productDataArr);
+
+		}
+		console.log(parsedata);
+
+		if (errorCounter == 0) {
+			$csvCheckInfoContainer.html(`<div>File check passed.</div>`);
+			displayCsvProducts(parsedata);
+
+		} else {
+			$csvCheckInfoContainer.append(`<div style="font-weight:600;">Your file has ${errorCounter} errors, please correct them and upload the file again.</div>`);
+			$csvCheckInfoContainer.find(".checking-tips").remove();
+		}
+		return parsedata;
+	}
+
+	uploadDealcsv.prototype.isEmptyRow = function(arr) {
+		//[,,,,,]
+		const tmpArr = arr.split(",");
+		for (let k = 0; k < tmpArr.length; k++) {
+			//console.log(tmpArr[k]);
+			if (tmpArr[k] && tmpArr[k] != "" && tmpArr[k] != null) {
+				return false;
+			}
+		}
+		return true;
+	}
+	uploadDealcsv.prototype.removeEmptyRow = function(arr) {
+		const tmpArr = arr;
+		if (parseCsv.isEmptyRow(tmpArr[tmpArr.length - 1])) {
+			tmpArr.pop();
+			parseCsv.removeEmptyRow(tmpArr);
+		} else {
+			return tmpArr;
+		}
+	}
+	var parseCsv = new uploadDealcsv();
+	parseCsv.getCsv();
+
+
+
 }
+
+
+/*$.ajax({
+	type: "GET",
+	url: `${config.apiRootUrl}/company?store_hash=${bypass_store_hash}&customer_id=${bypass_customer_id}`,
+	success: function(data) {
+		console.log("list users", data);
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+		$overlay.hide();
+		console.log("error", JSON.stringify(jqXHR));
+	}
+});*/

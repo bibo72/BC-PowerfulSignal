@@ -57,6 +57,13 @@
         color: stencilColor("icon-color-hover");
         text-decoration: none;
     }
+    &.modal-close--button {
+        position: static;
+        width: auto;
+        height: auto;
+        font-size: $buttonSize-default-fontSize;
+        padding: $buttonSize-default-verticalPadding $buttonSize-default-horizontalPadding;
+    }
 }
 
 .modal-body {

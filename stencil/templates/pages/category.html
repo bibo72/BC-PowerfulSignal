@@ -8,6 +8,8 @@ category:
 {{#if pagination.category.links}}
 {{inject "paginationCategory" pagination.category.links}}
 {{/if}}
+{{inject "categoryId" category.id}}
+{{inject "b2b_total_products" category.total_products}}
 
 {{#partial "head"}}
     {{#if pagination.category.previous}}

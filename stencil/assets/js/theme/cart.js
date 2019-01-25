@@ -6,6 +6,8 @@ import utils from '@bigcommerce/stencil-utils';
 import ShippingEstimator from './cart/shipping-estimator';
 import { defaultModal } from './global/modal';
 import swal from 'sweetalert2';
+import config from './b2b/config';
+
 
 export default class Cart extends PageManager {
     loaded(next) {
@@ -52,7 +54,11 @@ export default class Cart extends PageManager {
                 // if the quantity is changed "1" from "0", we have to remove the row.
                 const remove = (newQty === 0);
 
+                if (remove) {
                 this.refreshContent(remove);
+                } else {
+                    this.updateCatalogPrice(itemId);
+                }
             } else {
                 $el.val(oldQty);
                 swal({
@@ -363,5 +369,93 @@ export default class Cart extends PageManager {
 
         // initiate shipping estimator module
         this.shippingEstimator = new ShippingEstimator($('[data-shipping-estimator]'));
+    }
+    updateCatalogPrice(cartItemId) {
+        this.$overlay.show();
+        $.ajax({
+            type: "GET",
+            url: "../api/storefront/carts",
+            contentType: "application/json",
+            accept: "application/json",
+            success: (data) => {
+                console.log("cart", data);
+                if (data && data.length > 0) {
+                    const cartId = data[0].id;
+                    console.log("cartId", cartId);
+                    const cartItems = data[0].lineItems.physicalItems;
+                    // debugger
+                    for (let i = 0; i < cartItems.length; i++) {
+                        const cartItem = cartItems[i];
+                        const itemId = cartItem.id;
+                        if (cartItemId == itemId) {
+                            const itemProductId = cartItem.productId;
+                            const itemVariantId = cartItem.variantId;
+                            const itemQty = cartItem.quantity;
+                            const gCatalogId = sessionStorage.getItem("catalog_id");
+                            const cartItemObj = {
+                                "item_id": itemId,
+                                "product_id": itemProductId,
+                                "variant_id": itemVariantId,
+                                "quantity": itemQty,
+                                "catalog_id": gCatalogId
+                            };
+                            var normalCartItemObj = {
+                                "item_id": itemId,
+                                "product_id": itemProductId,
+                                "quantity": itemQty,
+                            }
+                            console.log("putdata", JSON.stringify(cartItemObj));
+                            const bypass_store_hash = `${config.storeHash}`;
+                            if(!gCatalogId){
+                                if(itemVariantId){
+                                    normalCartItemObj.variant_id = itemVariantId;
+
+                                }
+                                $.ajax({
+                                    type: "PUT",
+                                    // /carts/{cartId}/items/{itemId}
+
+                                    url: `../api/storefront/carts/${cartId}/${itemId}`,
+                                    data: JSON.stringify({'line_item':normalCartItemObj}),
+                                    success: (data) => {
+                                        console.log("update price done.");
+                                        window.location.reload();
+                                    },
+                                    error: (jqXHR, textStatus, errorThrown) => {
+                                        this.$overlay.hide();
+                                        alert("update catalog price error");
+                                    }
+                                });
+                            }else{
+                                $.ajax({
+                                    type: "PUT",
+                                    url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
+                                    data: JSON.stringify(cartItemObj),
+                                    success: (data) => {
+                                        console.log("update price done.");
+                                        window.location.reload();
+                                    },
+                                    error: (jqXHR, textStatus, errorThrown) => {
+                                        this.$overlay.hide();
+                                        alert("update catalog price error");
+                                    }
+                                });
+                            }
+                          
+                        }
+                    }
+                } else {
+                    this.$overlay.hide();
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                this.$overlay.hide();
+                console.log("error", JSON.stringify(jqXHR));
+                swal({
+                    type: "error",
+                    text: "There has some error, please try again."
+                });
+            }
+        });
     }
 }
