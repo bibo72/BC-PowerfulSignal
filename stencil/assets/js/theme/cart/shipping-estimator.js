@@ -2,7 +2,9 @@ import $ from 'jquery';
 import stateCountry from '../common/state-country';
 import nod from '../common/nod';
 import utils from '@bigcommerce/stencil-utils';
-import { Validators } from '../common/form-utils';
+import {
+    Validators
+} from '../common/form-utils';
 import swal from 'sweetalert2';
 
 export default class ShippingEstimator {
@@ -42,40 +44,36 @@ export default class ShippingEstimator {
     }
 
     bindValidation() {
-        this.shippingValidator.add([
-            {
-                selector: `${this.shippingEstimator} select[name="shipping-country"]`,
-                validate: (cb, val) => {
-                    const countryId = Number(val);
-                    const result = countryId !== 0 && !isNaN(countryId);
+        this.shippingValidator.add([{
+            selector: `${this.shippingEstimator} select[name="shipping-country"]`,
+            validate: (cb, val) => {
+                const countryId = Number(val);
+                const result = countryId !== 0 && !isNaN(countryId);
 
-                    cb(result);
-                },
-                errorMessage: 'The \'Country\' field cannot be blank.',
+                cb(result);
             },
-        ]);
+            errorMessage: 'The \'Country\' field cannot be blank.',
+        }, ]);
     }
 
     bindStateValidation() {
-        this.shippingValidator.add([
-            {
-                selector: $(`${this.shippingEstimator} select[name="shipping-state"]`),
-                validate: (cb) => {
-                    let result;
+        this.shippingValidator.add([{
+            selector: $(`${this.shippingEstimator} select[name="shipping-state"]`),
+            validate: (cb) => {
+                let result;
 
-                    const $ele = $(`${this.shippingEstimator} select[name="shipping-state"]`);
+                const $ele = $(`${this.shippingEstimator} select[name="shipping-state"]`);
 
-                    if ($ele.length) {
-                        const eleVal = $ele.val();
+                if ($ele.length) {
+                    const eleVal = $ele.val();
 
-                        result = eleVal && eleVal.length && eleVal !== 'State/province';
-                    }
+                    result = eleVal && eleVal.length && eleVal !== 'State/province';
+                }
 
-                    cb(result);
-                },
-                errorMessage: 'The \'State/Province\' field cannot be blank.',
+                cb(result);
             },
-        ]);
+            errorMessage: 'The \'State/Province\' field cannot be blank.',
+        }, ]);
     }
 
     /**
@@ -99,7 +97,9 @@ export default class ShippingEstimator {
         let $last;
 
         // Requests the states for a country with AJAX
-        stateCountry(this.$state, this.context, { useIdForStates: true }, (err, field) => {
+        stateCountry(this.$state, this.context, {
+            useIdForStates: true
+        }, (err, field) => {
             if (err) {
                 swal({
                     text: err,
@@ -161,6 +161,15 @@ export default class ShippingEstimator {
                         location.reload();
                     });
                 });
+
+                // for bundleb2b
+                // hide free shipping for b2b user
+                if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+                    const $freeShippingLabel = $(".estimator-form-label-text:contains('Free Shipping')");
+                    if ($freeShippingLabel.length && $freeShippingLabel.parents(".estimator-form-row").length) {
+                        $freeShippingLabel.parents(".estimator-form-row").remove();
+                    }
+                }
             });
         });
 

@@ -220,6 +220,11 @@ export default function() {
 
       $(".snize-ac-results").addClass("b2b-hidden");
       $("section.quickSearchResults").addClass("b2b-visible");
+
+      $("[b2b-list-add-cart-btn]").each(function() {
+        const product_url = $(this).attr("data-product-url");
+        $(this).attr("href", product_url).text("View Detail");
+      });
     }
 
 
@@ -357,8 +362,9 @@ export default function() {
       $productGallery.each(function() {
         const catalogProductCount = $(this).find("[catalog-product]").length;
         if (catalogProductCount == 0) {
-          $("[catalog-listing-wrap]").show();
-          $(this).parents(".page").html("We can't find products matching the selection.");
+          //$("[catalog-listing-wrap]").show();
+          $("[catalog-listing-wrap]").remove();
+          //$(this).parents(".page").html("We can't find products matching the selection.");
         } else {
           $("[catalog-listing-wrap]").show();
           const $catalogProductCounter = $("[data-catalog-product-counter]");

@@ -7,6 +7,9 @@ import $ from 'jquery';
 import FacetedSearch from './common/faceted-search';
 import './custom-category';
 import config from './b2b/config';
+import Url from 'url'; //for b2b
+import urlUtils from './common/url-utils'; //for b2b
+
 export default class Category extends CatalogPage {
     loaded() {
         if ($('#facetedSearch').length > 0) {
@@ -19,8 +22,13 @@ export default class Category extends CatalogPage {
     }
     initB2bFeature() {
         if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
-            $("#product-listing-container .productGrid").empty();
+            //$("#product-listing-container .productGrid").empty();
+            //$("#product-listing-container .productList").empty();
             $(".pagination").hide();
+            $("[b2b-list-add-cart-btn]").each(function() {
+                const product_url = $(this).attr("data-product-url");
+                $(this).attr("href", product_url).text("View Detail");
+            });
             if (sessionStorage.getItem("catalog_id")) {
                 $("#product-listing-container").append(`<div class="pagination pagination-b2b">
                 <ul class="pagination-list" id="jqPagination"></ul>
@@ -33,16 +41,25 @@ export default class Category extends CatalogPage {
     }
 
     getAllProducts() {
-        const paginations = this.context.paginationCategory || [];
+        debugger
+        //const paginations = this.context.paginationCategory || [];
         const $productListingContainer = $('#product-listing-container');
         const catalogProducts = JSON.parse(sessionStorage.getItem("catalog_products") || "{}");
         let categoryProducts = [];
+        const productsPerPage = this.context.categoryProductsPerPage;
         const b2b_total_products = this.context.b2b_total_products || 0;
+        const normalTotalPage = Math.ceil(b2b_total_products / productsPerPage);
         let total_products_count = 0;
-        if (paginations) {
-            for (let i = 0; i < paginations.length; i++) {
-                const formatUrl = paginations[i].url;
-                const productsPerPage = this.context.categoryProductsPerPage;
+        if (normalTotalPage > 1) {
+            for (let i = 1; i <= normalTotalPage; i++) {
+                const curl = Url.parse(location.href, true);
+                curl.query.page = i;
+                const formatUrl = Url.format({
+                    pathname: curl.pathname,
+                    search: urlUtils.buildQueryString(curl.query)
+                });
+                console.log(formatUrl)
+
                 const requestOptions = {
                     config: {
                         category: {
@@ -115,7 +132,8 @@ export default class Category extends CatalogPage {
                 });
             }
         } else {
-            $("[catalog-product]").hide();
+            debugger
+            $(".product").hide();
             $("[catalog-product='true']").show();
 
         }
@@ -131,6 +149,10 @@ export default class Category extends CatalogPage {
 
         $productListingContainer.find(".productGrid").html(productsHtml);
         $productListingContainer.find(".productList").html(productsHtml);
+        $("[b2b-list-add-cart-btn]").each(function() {
+            const product_url = $(this).attr("data-product-url");
+            $(this).attr("href", product_url).text("View Detail");
+        });
 
     }
 
