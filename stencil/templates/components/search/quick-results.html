@@ -1,10 +1,10 @@
 <a class="modal-close" aria-label="{{lang 'common.close'}}" data-drop-down-close role="button">
     <span aria-hidden="true">&#215;</span>
 </a>
-<ul class="productList">
+<ul class="productList" b2b-products-gallery>
     {{#if product_results.products}}
         {{#each (limit product_results.products 5)}}
-        <li class="product">
+        <li class="product" catalog-product-{{id}}>
             <figure class="quicksearch-figure">
                 <a href="{{url}}">
                     <img class="quicksearch-image lazyload" data-sizes="auto" src="{{cdn 'img/loading.svg'}}" data-src="{{getImage image 'productgallery_size' (cdn theme_settings.default_image_product)}}" alt="{{image.alt}}" title="{{image.alt}}" />

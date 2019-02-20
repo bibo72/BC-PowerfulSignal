@@ -335,10 +335,10 @@
                 "download_items": "Download Items",
                 "card_ending": "ending in {card}",
                 "shipments": {
-                  "date": "Date Shipped",
-                  "method": "Shipping Method",
-                  "link": "Tracking Link",
-                  "header": "Shipping Details"
+                    "date": "Date Shipped",
+                    "method": "Shipping Method",
+                    "link": "Tracking Link",
+                    "header": "Shipping Details"
                 },
                 "actions": "Actions",
                 "reorder": "Reorder",
@@ -396,7 +396,7 @@
             "update_details": "Update Details"
         },
         "recent_items": {
-            "heading" : "Recently Viewed",
+            "heading": "Recently Viewed",
             "no_items": "The items you've recently looked at on our site will appear below."
         },
         "wishlists": {
@@ -738,7 +738,7 @@
         "results": {
             "form_label": "Search Keyword:",
             "form_button_text": "Search",
-            "count": "{ count, plural, one {# result} other {# results} } for '{ search_query }'",
+            "count": "{ count, plural, one { result} other { results} } for '{ search_query }'",
             "quick_count": "{ count, plural, one {# product result} other {# product results} } for '{ search_query }'",
             "product_count": "Products ({count})",
             "content_count": "News & Information ({count})"

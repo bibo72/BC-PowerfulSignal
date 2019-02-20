@@ -1,4 +1,6 @@
-import { hooks } from '@bigcommerce/stencil-utils';
+import {
+    hooks
+} from '@bigcommerce/stencil-utils';
 import CatalogPage from './catalog';
 import $ from 'jquery';
 import FacetedSearch from './common/faceted-search';
@@ -122,9 +124,15 @@ export default class Search extends CatalogPage {
                 $searchForm.append(input);
             }
         });
-        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") == "none") {
+
+        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+            $(".body").addClass("b2b-products");
+        } else {
             $(".navList-item .product-count").show();
         }
+        /*if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") == "none") {
+            $(".navList-item .product-count").show();
+        }*/
     }
 
     loadTreeNodes(node, cb) {
@@ -246,7 +254,7 @@ export default class Search extends CatalogPage {
             const productSelector = `[catalog-product-${product_id}]`;
             if ($(`${productSelector}`).length > 0) {
                 $(`${productSelector}`).attr("catalog-product", "true");
-                let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "");
+                let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "").replace(",", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "").replace(",", "");;
                 let tier_price;
                 let catalog_price;
                 const variantArr = catalog_products[product_id] || [];
@@ -262,6 +270,9 @@ export default class Search extends CatalogPage {
         }
         const $productGallery = $("[b2b-products-gallery]");
         $productGallery.each(function() {
+            $productGallery.find(".product").hide();
+            $productGallery.find(".product[catalog-product='true']").show();
+
             const catalogProductCount = $(this).find("[catalog-product]").length;
             if (catalogProductCount == 0) {
                 $("[catalog-listing-wrap]").show();

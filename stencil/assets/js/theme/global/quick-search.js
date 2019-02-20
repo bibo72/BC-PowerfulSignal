@@ -3,7 +3,7 @@ import _ from 'lodash';
 import utils from '@bigcommerce/stencil-utils';
 import StencilDropDown from './stencil-dropdown';
 
-export default function () {
+export default function() {
     const TOP_STYLING = 'top: 49px;';
     const $quickSearchResults = $('.quickSearchResults');
     const $quickSearchDiv = $('#quickSearch');
@@ -31,7 +31,9 @@ export default function () {
 
     // stagger searching for 200ms after last input
     const doSearch = _.debounce((searchQuery) => {
-        utils.api.search.search(searchQuery, { template: 'search/quick-results' }, (err, response) => {
+        utils.api.search.search(searchQuery, {
+            template: 'search/quick-results'
+        }, (err, response) => {
             if (err) {
                 return false;
             }
@@ -44,7 +46,7 @@ export default function () {
     utils.hooks.on('search-quick', (event) => {
         const searchQuery = $(event.currentTarget).val();
 
-        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user")!="none") {
+        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
             $('.snize-ac-results').css("display", "none");
             $('.snize-ac-results').remove();
         }
@@ -91,11 +93,12 @@ export default function () {
         if (sessionStorage.getItem("catalog_products")) {
             const catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
             const products = $(".quickSearchResults .product");
+
             for (var product_id in catalog_products) {
                 const productSelector = `[catalog-product-${product_id}]`;
                 if ($(`${productSelector}`).length > 0) {
                     $(`${productSelector}`).attr("catalog-product", "true");
-                    let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "");
+                    let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "").replace(",", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "").replace(",", "");;
                     let tier_price;
                     let catalog_price;
                     const variantArr = catalog_products[product_id] || [];
@@ -111,9 +114,15 @@ export default function () {
             }
             const $productGallery = $(".quickSearchResults [b2b-products-gallery]");
             $productGallery.each(function() {
+                $productGallery.find(".product").hide();
+                $productGallery.find(".product[catalog-product='true']").show();
+                $productGallery.find(".product.quickSearchMessage").show();
+                $productGallery.find(".product.quicksearch-all-results").show();
+
                 const catalogProductCount = $(this).find("[catalog-product]").length;
                 if (catalogProductCount == 0) {
-                    $(this).parents(".quickSearchResults").html(`<p class="quickSearchMessage">0 product results for 'oiy'</p>`);
+                    //$(this).parents(".quickSearchResults").html(`<p class="quickSearchMessage">0 product results for 'oiy'</p>`);
+                    //$(this).parents(".quickSearchResults").find(".productList").html(`<li class="product quickSearchMessage">0 product results found.</li>`);
                 } else {
                     const $catalogProductCounter = $("[data-catalog-product-counter]");
                     if ($catalogProductCounter.length > 0) {

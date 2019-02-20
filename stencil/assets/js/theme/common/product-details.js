@@ -1758,7 +1758,7 @@ export default class ProductDetails {
         const $price = $("[data-product-price-without-tax]", this.$scope) || $("[data-product-price-with-tax]", this.$scope);
         const base_price = $price.text().trim();
         const base_price_symbol = base_price.substring(0, 1);
-        const base_price_value = base_price.replace("$", "");
+        const base_price_value = base_price.replace("$", "").replace(",", "");
         return base_price_value;
     }
 

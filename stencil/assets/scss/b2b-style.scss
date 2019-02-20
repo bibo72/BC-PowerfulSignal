@@ -1977,3 +1977,35 @@ section.quickSearchResults {
 	}
 
 }
+
+//
+/* .quickSearchResults [b2b-products-gallery]  {
+	.product {
+		display: none;
+
+		&[catalog-product='true'] {
+			display: block;
+		}
+		&.quickSearchMessage,
+		&.quicksearch-all-results {
+			display: block;
+		}
+	}
+} */
+
+.b2b-products {
+	[b2b-products-gallery] {
+		.product {
+			display: none;
+
+			&[catalog-product='true'] {
+				display: block;
+			}
+		}
+	}
+
+	.pagination {
+		display: none;
+	}
+
+}

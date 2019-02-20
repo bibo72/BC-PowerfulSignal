@@ -339,7 +339,7 @@ export default function() {
 
           $(`${productSelector}`).attr("catalog-product", "true");
 
-          let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "");
+          let base_price = $(`${productSelector}`).find(".price.price--withTax").text().replace("$", "").replace(",", "") || $(`${productSelector}`).find(".price.price--withoutTax").text().replace("$", "").replace(",", "");
           let tier_price;
           let catalog_price;
           const variantArr = catalog_products[product_id] || [];
