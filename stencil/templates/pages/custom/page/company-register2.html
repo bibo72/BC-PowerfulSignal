@@ -1,10 +1,12 @@
 {{#partial "page"}}
 
-{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+{{!> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
 
 <main class="page">
 
-    <h1 class="page-heading">{{ page.title }}</h1>
+    <p>&nbsp;</p>
+    <h1 class="page-heading" style="text-align: center;">{{ page.title }}</h1>
+    <p>&nbsp;</p>
 
     <div class="page-content page-content--centered">
         {{#replace '%%Syndicate%%' page.content}}
@@ -12,6 +14,9 @@
         {{else}}
             <div style="text-align:center;">{{{page.content}}}</div>
         {{/replace}}
+
+        <p>&nbsp;</p>
+
 
         <div class="company-form-wrap2">
             <form action="" data-create-company-form method="post" class="form" style="display: none;">
@@ -79,7 +84,7 @@
                     
                     <div class="form-field">
                         <label class="form-label" for="company_address_state">State
-                            
+                           
                         </label>
                         <input class="form-input" type="text" id="company_address_state" name="company_address_state">
                     </div>
@@ -90,6 +95,26 @@
                         <input class="form-input" type="text" id="company_address_zip" name="company_address_zip">
                     </div>
                     
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="company_business_type">Type of Business
+                        
+                    </label>
+                    <input class="form-input" type="text" id="company_business_type" name="company_business_type">
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="company_website">Website
+                        
+                    </label>
+                    <input class="form-input" type="text" id="company_website" name="company_website">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="company_tax_id_number">Tax ID Number
+                        
+                    </label>
+                    <input class="form-input" type="text" id="company_tax_id_number" name="company_tax_id_number">
                 </div>
                 
                 <div class="form-actions">

@@ -175,9 +175,11 @@ export default function(customer) {
                         $tr.siblings("tr").find(".col-sale-actions").html(`<span class="button button--primary button--small view-action" action-begin-masquerade="">Begin Masquerade</span>`);
 
                         //add quick order pad link
-                        // if (!$(".navUser-item--quickorder").length) {
-                        //     $(".navUser-section").prepend(`<li class="navUser-item navUser-item--quickorder"><a class="navUser-action" href="/quick-order-pad/">Quick Order Pad</a></li>`);
-                        // }
+                        if (!$(".navUser-item--quickorder").length) {
+                            $(".navUser-section").prepend(`<li class="navUser-item navUser-item--quickorder">
+                                <a class="navUser-action" href="/quick-order-pad/">Quick Order Pad</a>
+                            </li>`);
+                        }
 
                         if (catalog_id) {
                             sessionStorage.setItem("catalog_id", catalog_id.toString());
@@ -337,70 +339,75 @@ export default function(customer) {
     });
 
     // const getCartItems
-    const getCartItems = function(){
+    const getCartItems = function() {
         let cartItemIDs = [];
-		$.ajax({
-			type: "GET",
-			url: "../api/storefront/carts",
-			contentType: "application/json",
-			accept: "application/json",
-			async: true,
-			success: (data) => {
+        $.ajax({
+            type: "GET",
+            url: "../api/storefront/carts",
+            contentType: "application/json",
+            accept: "application/json",
+            async: true,
+            success: (data) => {
                 // debugger
-				if (data && data.length > 0) {
-                    
-                    cartItemIDs = data[0].lineItems.physicalItems;
+                if (data && data.length > 0) {
+
+                    //cartItemIDs = data[0].lineItems.physicalItems;
+                    const cartItemIDs_all = data[0].lineItems.physicalItems;
+                    cartItemIDs = cartItemIDs_all.filter(function(item) {
+                        return item.parentId == null;
+                    });
                     // return cartItemIDs
                     clearCart(cartItemIDs)
                     $overlay.hide();
 
                 }
-                
-			
-			},
-			error: () => {
-				$overlay.hide();
-				swal({
-					type: "error",
-					text: "There has some error, please try again."
+
+
+            },
+            error: () => {
+                $overlay.hide();
+                swal({
+                    type: "error",
+                    text: "There has some error, please try again."
                 });
                 // return cartItemIDs
-			}
+            }
         });
         return cartItemIDs
-        
+
     }
 
     //clear cart contents
-	const clearCart = function(cartItemArr) {
-        console.log("clear cart",cartItemArr)
-		const cartitem = cartItemArr[cartItemArr.length - 1];
-		$overlay.show();
-		utils.api.cart.itemRemove(cartitem.id, (err, response) => {
-			if (response.data.status === 'succeed') {
-				cartItemArr.pop();
+    const clearCart = function(cartItemArr) {
+        console.log("clear cart", cartItemArr)
+        const cartitem = cartItemArr[cartItemArr.length - 1];
+        $overlay.show();
+        utils.api.cart.itemRemove(cartitem.id, (err, response) => {
+            if (response.data.status === 'succeed') {
+                cartItemArr.pop();
 
-				if (cartItemArr.length > 0) {
-					clearCart(cartItemArr);
-				} else {
+                if (cartItemArr.length > 0) {
+                    clearCart(cartItemArr);
+                } else {
                     // addProductToCart(itemArr);
                     $overlay.hide();
+                    debugger
                     $('body').trigger('cart-quantity-update', 0);
 
                     return
-				}
-			} else {
-				$overlay.hide();
-				swal({
-					text: response.data.errors.join('\n'),
-					type: 'error',
-				});
-			}
+                }
+            } else {
+                $overlay.hide();
+                swal({
+                    text: response.data.errors.join('\n'),
+                    type: 'error',
+                });
+            }
 
-		});
+        });
 
     }
-    
+
     const getCatalogProducts = function(catalog_id, _callback) {
         //get catalog products
         $overlay.show();

@@ -83,6 +83,17 @@
 <script>
 $(document).ready(function(){
 
+  if(sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+    var intervalCupon = setInterval(function(){
+      console.log($(".redeemable-label"));
+      if($(".redeemable-label").length > 0) {
+        $(".redeemable-label").remove();
+        clearInterval(intervalCupon);
+      }
+    }, 300);
+  }
+  
+
   function checkForLoading(cb){
     var loadingOn = function() { return  $('.loadingNotification.ng-hide').length !== 1 };
     var onTime = Date.now();

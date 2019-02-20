@@ -84,6 +84,20 @@ export default function(customer) {
 			const company_user_phone = $("#company_user_phone", $companyForm).val();
 			const company_user_email = $("#company_user_email", $companyForm).val();
 
+			const company_business_type = $("#company_business_type", $companyForm).val();
+			const company_weibsite = $("#company_website", $companyForm).val();
+			const company_tax_id_number = $("#company_tax_id_number", $companyForm).val();
+
+			const company_extra_fields = {};
+			if (company_business_type) {
+				company_extra_fields["business_type"] = company_business_type;
+			}
+			if (company_weibsite) {
+				company_extra_fields["website"] = company_weibsite;
+			}
+			if (company_tax_id_number) {
+				company_extra_fields["tax_no"] = company_tax_id_number;
+			}
 
 
 			if ($companyFormSubmitBtn.attr("data-submit-type") && $companyFormSubmitBtn.attr("data-submit-type") == "resubmit") {
@@ -106,7 +120,8 @@ export default function(customer) {
 					"address_line_2": company_address_street2,
 					"email": company_user_email,
 					"phone": company_user_phone,
-					"country_state": company_address_state
+					"country_state": company_address_state,
+					"extra_fields": company_extra_fields
 				};
 				console.log(update_postData);
 				//return;
@@ -176,7 +191,8 @@ export default function(customer) {
 					"email": company_user_email,
 					"phone": company_user_phone,
 					"country_state": company_address_state,
-					"customer_id": bypass_customer_id
+					"customer_id": bypass_customer_id,
+					"extra_fields": company_extra_fields
 				};
 				console.log(postData);
 				//return;
@@ -282,6 +298,12 @@ export default function(customer) {
 					}
 					if (data.email) {
 						$("#company_user_email", $companyForm).val(data.email);
+					}
+
+					if (data.extra_fields) {
+						$("#company_business_type", $companyForm).val(data.extra_fields.business_type || "");
+						$("#company_website", $companyForm).val(data.extra_fields.website || "");
+						$("#company_tax_id_number", $companyForm).val(data.extra_fields.tax_no || "");
 					}
 
 				}

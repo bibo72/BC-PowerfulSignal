@@ -389,7 +389,11 @@ export default function(customer) {
 			success: (data) => {
 				if (data && data.length > 0) {
 					cartId = data[0].id;
-					cartItemIDs = data[0].lineItems.physicalItems;
+					//cartItemIDs = data[0].lineItems.physicalItems;
+					const cartItemIDs_all = data[0].lineItems.physicalItems;
+					cartItemIDs = cartItemIDs_all.filter(function(item) {
+						return item.parentId == null;
+					});
 				}
 				debugger
 				console.log("number of items in cart: ", cartItemIDs.length);
@@ -765,40 +769,171 @@ export default function(customer) {
 
 	}
 
+	// for simple products
+	const getVariantIdByProductId = function(productId) {
+		let variantId;
+
+		if (catalog_products && catalog_products[productId]) {
+			const variantSkus = catalog_products[productId];
+			variantId = variantSkus[0].variant_id;
+		}
+		return variantId;
+	}
+
+	const handlePickListOptions = function(cartItemObj, cb) {
+		const cartItemId = cartItemObj.item_id;
+		const product_id = cartItemObj.product_id;
+		const variant_id = cartItemObj.variant_id;
+
+		utils.api.productAttributes.configureInCart(cartItemId, {
+			template: 'b2b/configure-product-data',
+		}, (err, response) => {
+			console.log(response.data);
+
+			let selectedPickListOptins = [];
+
+			if (response.data && response.data.options) {
+				const options = response.data.options;
+
+
+
+				for (let i = 0; i < options.length; i++) {
+					const option = options[i];
+
+					if (option.partial == "product-list") {
+						const optionValues = option.values;
+
+						for (let j = 0; j < optionValues.length; j++) {
+							const optionValue = optionValues[j];
+
+							if (optionValue.selected) {
+								selectedPickListOptins.push({
+									"option_id": option.id,
+									"option_value": optionValue.id,
+									"option_data": optionValue.data
+								});
+
+							}
+						}
+					}
+				}
+
+				console.log(selectedPickListOptins);
+			}
+
+			if (selectedPickListOptins) {
+				$.ajax({
+					type: "GET",
+					url: `${config.apiRootUrl}/productvariants?store_hash=${config.storeHash}&product_id=${product_id}&variant_id=${variant_id}`,
+					success: (data) => {
+						console.log(data);
+						let extras_list = [];
+
+
+						for (let k = 0; k < selectedPickListOptins.length; k++) {
+							let showCustomPrice = true;
+
+							if (data && data.option_list) {
+								const options = data.option_list;
+
+
+								for (let j = 0; j < options.length; j++) {
+									const optionId = options[j].option_id;
+									const optionValue = options[j].option_value;
+
+									if (optionId == selectedPickListOptins[k].option_id && optionValue == selectedPickListOptins[k].option_value) {
+										showCustomPrice = false;
+
+
+									}
+
+
+
+								}
+
+								if (showCustomPrice) {
+									const extra_product_id = selectedPickListOptins[k].option_data;
+									const extra_variant_id = getVariantIdByProductId();
+									if (extra_variant_id) {
+										extras_list.push({
+											"extra_product_id": extra_product_id,
+											"extra_variant_id": extra_variant_id
+										});
+									} else {
+										extras_list.push({
+											"extra_product_id": extra_product_id
+										});
+									}
+
+								}
+							}
+
+						}
+
+						if (extras_list) {
+							cartItemObj.extras_list = _.cloneDeep(extras_list);
+						}
+
+						if (cb) {
+							cb();
+						}
+
+
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log("error", JSON.stringify(jqXHR));
+					}
+				});
+			} else {
+				if (cb) {
+					cb();
+				}
+
+			}
+
+
+		});
+
+	}
+
 	const updateCatalogPrice = function(cartItemsArr, cartId) {
 		const cartItemObj = cartItemsArr[cartItemsArr.length - 1];
 		delete cartItemObj.option_text;
 		console.log("putdata", JSON.stringify(cartItemObj));
 
-		$.ajax({
-			type: "PUT",
-			url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
-			data: JSON.stringify(cartItemObj),
-			success: function(data) {
-				console.log("update catalog price...", data);
+		handlePickListOptions(cartItemObj, () => {
+			console.log("putdata2", JSON.stringify(cartItemObj));
 
-				cartItemsArr.pop();
-				if (cartItemsArr.length == 0) {
-					console.log("update price done.");
+			$.ajax({
+				type: "PUT",
+				url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
+				data: JSON.stringify(cartItemObj),
+				success: function(data) {
+					console.log("update catalog price...", data);
+
+					cartItemsArr.pop();
+					if (cartItemsArr.length == 0) {
+						console.log("update price done.");
+						$overlay.hide();
+
+
+
+						swal({
+							text: "Your list items have been added to cart",
+							type: 'success'
+						});
+
+						//window.location.reload();
+
+					} else {
+						updateCatalogPrice(cartItemsArr, cartId);
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
 					$overlay.hide();
-
-
-
-					swal({
-						text: "Your list items have been added to cart",
-						type: 'success'
-					});
-
-					//window.location.reload();
-
-				} else {
-					updateCatalogPrice(cartItemsArr, cartId);
+					alert("update catalog price error");
 				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				$overlay.hide();
-				alert("update catalog price error");
-			}
+			});
 		});
 
 	}

@@ -222,6 +222,21 @@ export default function(customer) {
             const $tr = $(item);
             const itemQty = $tr.find("[data-qty]").val();
             const product_id = $tr.attr("data-product-id");
+            const $productInput = $tr.find("[data-sku]");
+
+            //reset
+            $tr.find(".error-info").hide();
+            $tr.find("[data-qty]").removeClass("error");
+
+            if ($productInput.length > 0 && $productInput.val().trim() != "") {
+                allVaild = false;
+                $tr.find(".error-info").show();
+
+                if (!itemQty) {
+                    allVaild = false;
+                    $tr.find("[data-qty]").addClass("error");
+                }
+            }
             if (product_id || itemQty) {
                 if (!product_id) {
                     allVaild = false;
@@ -296,7 +311,11 @@ export default function(customer) {
             success: (data) => {
                 if (data && data.length > 0) {
                     cartId = data[0].id;
-                    cartItemIDs = data[0].lineItems.physicalItems;
+
+                    const cartItemIDs_all = data[0].lineItems.physicalItems;
+                    cartItemIDs = cartItemIDs_all.filter(function(item) {
+                        return item.parentId == null;
+                    });
                 }
                 console.log("number of items in cart: ", cartItemIDs.length);
 
@@ -413,7 +432,11 @@ export default function(customer) {
             success: (data) => {
                 if (data && data.length > 0) {
                     cartId = data[0].id;
-                    cartItemIDs = data[0].lineItems.physicalItems;
+                    //cartItemIDs = data[0].lineItems.physicalItems;
+                    const cartItemIDs_all = data[0].lineItems.physicalItems;
+                    cartItemIDs = cartItemIDs_all.filter(function(item) {
+                        return item.parentId == null;
+                    });
                 }
                 console.log("number of items in cart: ", cartItemIDs.length);
 

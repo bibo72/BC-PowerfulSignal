@@ -1,0 +1,79 @@
+{{#partial "page"}}
+<div class="account">
+    {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+    <h2 class="page-heading">Quick Order Pad</h2>
+    {{> components/account/navigation}}
+
+    <div class="b2b-wrap">
+	    <div class="quick-order-pad-wrap">
+	    	<div class="quick-order-pad">
+		    	
+		    		<table class="quick-order-pad-table" id="quick_order_pad_table">
+		    			<thead>
+		    				<tr>
+		    					<th></th>
+		    					<th>SKU#</th>
+		    					<th class="th-col-quantity">Quantity</th>
+		    					<th class="th-col-price">Price</th>
+		    				</tr>
+		    			</thead>
+		    			<tbody>
+		    				
+		    			</tbody>
+		    		</table>
+	    		
+	    		<div class="table-toolbar">
+		    		<div class="toolbar-actions">
+		    			<button href="javascript:void(0);" class="button" id="add_new_row">Add Row</button>
+		    			<button href="javascript:void(0);" class="button button--primary fright" id="add_to_cart">Add to Cart</button>
+		    		</div>
+		    	</div>
+	    	</div>
+	    </div>
+	    <div class="quick-order-pad-split"><span>OR</span></div>
+	    <div class="quick-order-pad-wrap">
+	    	<div class="quick-order-pad">
+	    	    <div>
+	    	    	<div class="file-upload-title">Add to Cart By CSV</div>
+
+	    			<div class="file-upload-header">
+	    				<div class="file-upload-drop" id="drag_upload_csv">
+	    				    <span>Drag &amp; Drop<br/>CSV File</span>
+	    				</div>
+	    				<div class="file-upload-input">
+	    					<div class="upload-container">
+			    				<a href="javascript:void(0);" class="uploadFile-mockup button">Choose File</a>
+			    				<input id="customer_sku_csv" type="file" data-reset="true" class="action-upload" name="sku_file" accept=".csv">
+			    			</div>
+			    			<div class="form-input-desc" style="margin-bottom: 1rem;"><a href="http://silk-demo-store45.mybigcommerce.com/content/sample_template.csv">Download Sample CSV File</a></div>
+	    				</div>
+	    			</div>
+	    			
+	    			
+	    			<div class="csv-check-info" id="csv_check_info"></div>
+	    			<div class="csv-product-list" id="csv_products_list">
+		    			<table class="quick-order-pad-table" id="quick_order_pad_table_csv">
+			    			
+			    		</table>
+	    			</div>
+	    	    </div>
+		    		
+	    		
+	    		<div class="table-toolbar">
+		    		<div class="toolbar-actions">
+		    			<button href="javascript:void(0);" class="button button--primary fright" id="add_to_cart_csv">Add to Cart</button>
+		    		</div>
+		    	</div>
+	    	</div>
+	    </div>
+	    
+
+	    
+    </div>
+	
+	<div class="b2b-loading-overlay" id="b2b_loading_overlay">
+		<img src="{{cdn 'img/loading.gif'}}" alt="">
+	</div>
+</div>
+{{/partial}}
+{{> layout/base}}

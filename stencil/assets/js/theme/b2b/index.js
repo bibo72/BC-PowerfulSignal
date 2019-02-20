@@ -9,15 +9,19 @@ import salerep from './salerep';
 import companyRegistry from './company-register';
 import companyRegistry2 from './company-register2';
 import quickOrderPad from './quick-order-pad';
+import accountSetting from './account-setting';
 import config from './config';
 
 export default function() {
+  const accountSettingUrl = this.context.urls.account.details;
+
   //hide wishlist and account settings when user belongs to a company
   function hideWishlist() {
     var $accountNav = $(".navBar-action");
     //console.log("$accountNav: ",$accountNav);
     $.each($accountNav, function(index, item) {
-      if ($($accountNav[index]).attr('href').indexOf('/wishlist.php') != -1 || $($accountNav[index]).attr('href').indexOf('/account.php?action=account_details') != -1) {
+      //if ($($accountNav[index]).attr('href').indexOf('/wishlist.php') != -1 || $($accountNav[index]).attr('href').indexOf('/account.php?action=account_details') != -1) {
+      if ($($accountNav[index]).attr('href').indexOf('/wishlist.php') != -1) {
         $(this).parent().hide();
       }
     });
@@ -60,6 +64,7 @@ export default function() {
     console.log("logged in customer: email=%s id=%s", bypass_email, bypass_customer_id)
 
     const page_templete = this.context.page_templete.replace(/\\/g, '/');
+    //console.log(page_templete);
 
     const getUserInfo = function(_callback1, _callback2) {
       //get role id
@@ -77,6 +82,7 @@ export default function() {
 
             const userList = data.customers;
             const company_id = data.id;
+            const company_name = data.company_name;
             const catalog_id = data.catalog_id;
             const company_payments = data.payments;
             let role_id = "";
@@ -91,15 +97,16 @@ export default function() {
               "user_id": bypass_customer_id,
               "role_id": role_id,
               "company_id": company_id,
+              "company_name": company_name
             };
             sessionStorage.setItem("bundleb2b_user", JSON.stringify(user_info));
             if (catalog_id) {
               sessionStorage.setItem("catalog_id", catalog_id.toString());
-            } else {
-              //alert("please set a catalog for your company on backedn APP.")
+              console.log(catalog_id.toString());
             }
             if (company_payments) {
               sessionStorage.setItem("company_payments", JSON.stringify(company_payments));
+              console.log(company_payments.toString());
             }
 
 
@@ -128,14 +135,16 @@ export default function() {
 
             if (company_status == "PENDING" || company_status == "REJECTED") {
               nonB2bLoginedinUser();
-              // $(".navUser-section").prepend(`<li class="navUser-item"> <a class="navUser-action" href="/trade-professional-application/">Trade Professional Application</a></li>`);
+              $(".navUser-section").prepend(`<li class="navUser-item">
+                  <a class="navUser-action" href="/trade-professional-application/">Trade Professional Application</a>
+              </li>`);
             } else {
               // data and logic entrance
               $.ajax({
                 type: "GET",
                 url: `${config.apiRootUrl}/hasSaleRepByEmail?store_hash=${bypass_store_hash}&representative_id=${bypass_email}`,
                 success: function(data) {
-                  console.log('salerepdata', data);
+                  console.log('Is salerep', data);
                   if (data.code == 200 && data.response.count > 0) {
                     const user_info = {
                       "user_id": bypass_customer_id,
@@ -156,7 +165,9 @@ export default function() {
                     sessionStorage.removeItem("bundleb2b_sale");
                     displayWishlist();
                     nonB2bLoginedinUser();
-                    // $(".navUser-section").prepend(`<li class="navUser-item"><a class="navUser-action" href="/trade-professional-application/">Trade Professional Application</a></li>`);
+                    $(".navUser-section").prepend(`<li class="navUser-item">
+                      <a class="navUser-action" href="/trade-professional-application/">Trade Professional Application</a>
+                  </li>`);
                   }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -175,29 +186,35 @@ export default function() {
 
     const handleRoleId = function() {
       const bundleb2b_user = JSON.parse(sessionStorage.getItem("bundleb2b_user"));
+      console.log(bundleb2b_user);
       if (bundleb2b_user.role_id == "0") {
+        // role - junior user
         $("#form-action-addToCart").hide();
         $("#user_shoppinglist_nav").show();
-        // const hurl = document.referrer;
-        // if (hurl.indexOf("/login.php") != -1) {
-        //   $(".body").remove();
-        //   window.location.href = "/dashboard/";
-        // }
+        const hurl = document.referrer;
+        if (hurl.indexOf("/login.php") != -1) {
+          $(".body").remove();
+          //window.location.href = "/dashboard/";
+          window.location.href = accountSettingUrl;
+        }
       } else if (bundleb2b_user.role_id == "1" || bundleb2b_user.role_id == "2") {
-        $(".navBar--account .navBar-section").prepend(`<li class="navBar-item">
+        // role -senior buyer & admin user
+        /*$(".navBar--account .navBar-section").prepend(`<li class="navBar-item">
         <a class="navBar-action" href="/dashboard/">Dashboard</a>
-    </li>`);
-        console.log("Admin User");
+    </li>`);*/
         $("#user_management_nav").show();
         $("#user_shoppinglist_nav").show();
-        // $(".navUser-section").prepend(`<li class="navUser-item navUser-item--quickorder"><a class="navUser-action" href="/quick-order-pad/">Quick Order Pad</a></li>`);
-        // const hurl = document.referrer;
-        // if (hurl.indexOf("/login.php") != -1) {
-        //   $(".body").remove();
-        //   window.location.href = "/dashboard/";
-        // }
+        $(".navUser-section").prepend(`<li class="navUser-item navUser-item--quickorder">
+            <a class="navUser-action" href="/quick-order-pad/">Quick Order Pad</a>
+        </li>`);
+        const hurl = document.referrer;
+        if (hurl.indexOf("/login.php") != -1) {
+          $(".body").remove();
+          //window.location.href = "/dashboard/";
+          window.location.href = accountSettingUrl;
+        }
       } else if (bundleb2b_user.role_id == "10") {
-        //salerep
+        // role - salerep
         $(".navBar--account .navBar-section").prepend(`<li class="navBar-item">
                 <a class="navBar-action" href="/salerep/">Dashboard</a>
             </li>`);
@@ -207,7 +224,9 @@ export default function() {
           if (saleInfo.company_id) {
 
             $("#user_shoppinglist_nav").show();
-            // $(".navUser-section").prepend(`<li class="navUser-item navUser-item--quickorder"><a class="navUser-action" href="/quick-order-pad/">Quick Order Pad</a></li>`);
+            $(".navUser-section").prepend(`<li class="navUser-item navUser-item--quickorder">
+              <a class="navUser-action" href="/quick-order-pad/">Quick Order Pad</a>
+          </li>`);
           }
         }
 
@@ -220,11 +239,6 @@ export default function() {
 
       $(".snize-ac-results").addClass("b2b-hidden");
       $("section.quickSearchResults").addClass("b2b-visible");
-
-      $("[b2b-list-add-cart-btn]").each(function() {
-        const product_url = $(this).attr("data-product-url");
-        $(this).attr("href", product_url).text("View Detail");
-      });
     }
 
 
@@ -362,9 +376,8 @@ export default function() {
       $productGallery.each(function() {
         const catalogProductCount = $(this).find("[catalog-product]").length;
         if (catalogProductCount == 0) {
-          //$("[catalog-listing-wrap]").show();
-          $("[catalog-listing-wrap]").remove();
-          //$(this).parents(".page").html("We can't find products matching the selection.");
+          $("[catalog-listing-wrap]").show();
+          $(this).parents(".page").html("We can't find products matching the selection.");
         } else {
           $("[catalog-listing-wrap]").show();
           const $catalogProductCounter = $("[data-catalog-product-counter]");
@@ -461,13 +474,18 @@ export default function() {
         }
       }*/
       const pageUrl = window.location.href;
+      // b2b account setting
+      if (pageUrl.indexOf("/account.php?action=account_details") != -1) {
+        accountSetting(this.context.customer);
+      }
+
+      // b2b order list
       if (pageUrl.indexOf("/account.php?action=order_status") != -1) {
         if (this.context.customer && this.context.customer != null) {
           orderLists(this.context.customer);
         } else {
           window.location = this.context.urls.auth.login;
         }
-
       }
 
       if (page_templete == 'pages/custom/page/order-detail') {
@@ -565,7 +583,7 @@ export default function() {
     }
 
   } else {
-    //not logined in , normal customer
+    // not logined in , normal customer
     $(".productGrid").find(".product").css("display", "inline-block");
     $(".productCarousel").find(".productCarousel-slide").css("display", "inline-block");
     $("[catalog-listing-wrap]").show();
@@ -576,72 +594,35 @@ export default function() {
     sessionStorage.removeItem("company_payments");
     sessionStorage.removeItem("bundleb2b_sale");
 
+    // not logined in , navigation to login pae
     const page_templete = this.context.page_templete.replace(/\\/g, '/');
-
+    console.log(page_templete);
     if (page_templete == 'pages/custom/page/shopping-lists') {
-      if (!this.context.customer) {
-
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
     if (page_templete == 'pages/custom/page/shopping-list') {
-
-      if (this.context.customer && this.context.customer != null) {
-        shippingList(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
     if (page_templete == 'pages/custom/page/user-management') {
-
-      if (this.context.customer && this.context.customer != null) {
-        userManagement(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
-
-    if (page_templete == 'pages/custom/page/order-detail') {
-      if (this.context.customer && this.context.customer != null) {
-        orderDetails(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
-    }
-
     //company register form
     if (page_templete == 'pages/custom/page/company-register') {
-      if (this.context.customer && this.context.customer != null) {
-        companyRegistry(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
     //company register form 2
     if (page_templete == 'pages/custom/page/company-register2') {
-      if (this.context.customer && this.context.customer != null) {
-        companyRegistry2(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
 
     //salesrep page
     if (page_templete == 'pages/custom/page/salerep') {
-      if (this.context.customer && this.context.customer != null) {
-        salerep(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
 
     //quick order pad
     if (page_templete == 'pages/custom/page/quick-order-pad') {
-      if (this.context.customer && this.context.customer != null) {
-        quickOrderPad(this.context.customer);
-      } else {
-        window.location = this.context.urls.auth.login;
-      }
+      window.location = this.context.urls.auth.login;
     }
 
   }

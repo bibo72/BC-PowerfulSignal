@@ -7,160 +7,173 @@
     <div class="b2b-wrap">
     	<div class="title-wrap title-wrap--alt">
 	        <h2 class="page-title" id="shopping_list_name"></h2>
-	        <a href="javascript:void(0);" class="action-link" data-reveal-id="modal-shopping-list-rename-form" data-rename-list>Rename</a>
+	        <a href="javascript:void(0);" class="rename-shopping-list button button--primary button--small action-link" data-reveal-id="modal-shopping-list-rename-form" data-rename-list>Edit List Info</a>
 	        <div class="page-title-desc" id="shopping_list_comment"></div>
+	        <div class="shopping-list-detail" id="shopping_list_detail"></div>
+	        <div class="shopping-list-status">
+	        	<b>Please select a Status: </b>
+	        	<select class="form-select form-select--small" name="shopping_list_status" id="shopping_list_status"></select>
+	        	<button class="button button--primary button--small" data-update-status style="margin-bottom:0;">Confirm</button>
+	        </div>
 
 	    </div>
 	    <p class="list-status" id="shopping_list_status"></p>
 
-	    <div class="alertBox alertBox--error" id="unavailable_info_box" style="display:none;margin-bottom:20px;">
-		    <div class="alertBox-column alertBox-icon">
-		        <icon glyph="ic-error" class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg></icon>
-		    </div>
-		    <p class="alertBox-column alertBox-message">
-		        <span>You have UNAVAILABLE items in you list, </span>
-		        <button href="javascript:void(0);" class="action" id="delete_unavailable_item">Delete All Unavailable Items</button>
-		    </p>
-		</div>
+	    <div class="b2b-column-wrap">
+	    	<div class="b2b-column-right">
+	    		<div class="alertBox alertBox--error" id="unavailable_info_box" style="display:none;margin-bottom:20px;">
+				    <div class="alertBox-column alertBox-icon">
+				        <icon glyph="ic-error" class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg></icon>
+				    </div>
+				    <p class="alertBox-column alertBox-message">
+				        <span>You have UNAVAILABLE items in you list, </span>
+				        <button href="javascript:void(0);" class="action" id="delete_unavailable_item">Delete All Unavailable Items</button>
+				    </p>
+				</div>
 
 
-	    <div class="table-toolbar top">
-    		<div class="number-items">
-    			<span id="num_items">0</span> Items
-    		</div>
-    		<div class="action-links">
-    		    <label class="action-label" for="select_all"><input type="checkbox" name="select_all" id="select_all"> Select all</label>
-    			<a class="action-link" href="javascript:void(0);" id="shopping_item_remove" data-delete-items>Remove Selected</a>
-    		</div>
-    	</div>
-	    <div class="table-wrap">
-	    	<table class="shopping-list-table" id="shopping_list_table">
-	    	    <thead>
-	    	    	<tr>
-		    		    <th colspan="2">Item</th>
-		    		    <th class="t-align-r">Price</th>
-		    		    <th class="t-align-r">Qty</th>
-		    		    <th class="t-align-r">Subtotal</th>
-		    		</tr>
-	    	    </thead>
-		    	<tbody>
+			    <div class="table-toolbar top">
+		    		<div class="number-items">
+		    			<span id="num_items">0</span> Items
+		    		</div>
+		    	</div>
+		    	<div class="table-wrap">
+			    	<table class="shopping-list-table" id="shopping_list_table">
+			    	    <thead>
+			    	    	<tr>
+				    		    <th class="th-checkbox"><label class="action-label" for="select_all"><input type="checkbox" name="select_all" id="select_all"></label><a class="button button--primary button--small button--removeall" href="javascript:void(0);" id="shopping_item_remove" data-delete-items>Delete All</a></th>
+				    		    <th class="th-product-item">Item</th>
+				    		    <th class="t-align-r">Price</th>
+				    		    <th class="t-align-r">Qty</th>
+				    		    <th class="t-align-r">Subtotal</th>
+				    		</tr>
+			    	    </thead>
+				    	<tbody>
 
-		    		<!-- <tr>
-		    		    <td class="col-checkbox"><input type="checkbox"></td>
-		    			<td class="col-product-info">
+				    		<!-- <tr>
+				    		    <td class="col-checkbox"><input type="checkbox"></td>
+				    			<td class="col-product-info">
 
-		    				<div class="product-iamge"><img src="http://mage22ee.silksoftware.net/pub/media/catalog/product/cache/fd4c882ce4b945a790b629f572e4ef93/w/s/ws12-orange_main.jpg" alt=""></div>
-		    				<div class="product-description">
-		    				    <div class="product-title"><a href="#">Radiant Tee</a></div>
-		    				    <div class="product-attribute product-sku"><span>SKU: </span>WS12</div>
-		    				    <div class="product-attribute"><span>Size: </span>M
+				    				<div class="product-iamge"><img src="http://mage22ee.silksoftware.net/pub/media/catalog/product/cache/fd4c882ce4b945a790b629f572e4ef93/w/s/ws12-orange_main.jpg" alt=""></div>
+				    				<div class="product-description">
+				    				    <div class="product-title"><a href="#">Radiant Tee</a></div>
+				    				    <div class="product-attribute product-sku"><span>SKU: </span>WS12</div>
+				    				    <div class="product-attribute"><span>Size: </span>M
 
-		    				    </div>
-		    				    <div class="product-attribute"><span>Color: </span>Orange</div>
-		    				</div>
-		    			</td>
-		    			<td class="t-align-r"><span class="product-price">$22.00</span></td>
-		    			<td class="t-align-r col-product-qty"><input type="text" value="4" class="input-text qty"></td>
-		    			<td class="t-align-r col-action">
-		    					    			<div class="action-wrap">
-		    					    				<div class="product-subtotal">$22.00</div>
-		    					    			    <div class="action-lists">
-		    					    			    	<a class="action-icon" href="#"><i class="fa fa-edit"></i></a>
-		    					    			    	<a class="action-icon" href="#"><i class="fa fa-delete"></i></a>
-		    					    			    </div>
-		    					    			</div>
+				    				    </div>
+				    				    <div class="product-attribute"><span>Color: </span>Orange</div>
+				    				</div>
+				    			</td>
+				    			<td class="t-align-r"><span class="product-price">$22.00</span></td>
+				    			<td class="t-align-r col-product-qty"><input type="text" value="4" class="input-text qty"></td>
+				    			<td class="t-align-r col-action">
+				    					    			<div class="action-wrap">
+				    					    				<div class="product-subtotal">$22.00</div>
+				    					    			    <div class="action-lists">
+				    					    			    	<a class="action-icon" href="#"><i class="fa fa-edit"></i></a>
+				    					    			    	<a class="action-icon" href="#"><i class="fa fa-delete"></i></a>
+				    					    			    </div>
+				    					    			</div>
 
-		    			</td>
-		    		</tr> -->
+				    			</td>
+				    		</tr> -->
 
-		    	</tbody>
-	    	</table>
-	    </div>
+				    	</tbody>
+			    	</table>
+			    </div>
 
-	    <div class="table-toolbar">
-    		<div class="toolbar-actions">
-    			<button href="javascript:void(0);" class="action action--primary" id="add_to_cart">Add to Cart</button>
-    			<button href="javascript:void(0);" class="action" id="update_list_items">Update List</button>
-    			<!-- <button href="javascript:void(0);" class="action" id="apply_approval">Submit for Approval</button> -->
-    			<button href="javascript:void(0);" class="action fright" id="delete_list">Delete Shopping List</button>
-    		</div>
-    	</div>
-
-    	<p>	&nbsp;</p>
-
-    	<div class="form-wrap" id="quick_add_section">
-	    	<div class="title-wrap">
-	    	    <h2 class="page-title">Quick Add</h2>
+			    <!-- <div class="table-toolbar" style="display: none;">
+			    		    		<div class="toolbar-actions">
+			    		    			<button href="javascript:void(0);" class="action action--primary" id="add_to_cart">Add to Cart</button>
+			    		    			<button href="javascript:void(0);" class="action" id="update_list_items">Update List</button>
+			    		    			<button href="javascript:void(0);" class="action" id="apply_approval">Submit for Approval</button>
+			    		    			<button href="javascript:void(0);" class="action fright" id="delete_list">Delete Shopping List</button>
+			    		    		</div>
+			    		    	</div> -->
 	    	</div>
-	    	<div >
-	    		<div class="form-field large">
-	    			<label class="form-label" for="product_search_input">Enter SKU or Product Name
-	    			<small>*</small></label>
-	    			<input class="form-input" type="text" id="product_search_input" name="product_search_input">
-	    		</div>
-	    		<div class="form-field small">
-	    			<label class="form-label" for="product_qty">Qty
-	    			<small>*</small></label>
-	    			<input class="form-input" type="text" id="product_qty" name="product_qty">
-	    		</div>
-	    		<div class="form-field large" id="product_search_results" style="margin-bottom: 0;">
+	    	<div class="b2b-column-left">
+	    		<div class="form-wrap" id="quick_add_section">
+			    	<div class="title-wrap">
+			    	    <h3 class="page-title-small">Add to List</h3>
+			    	</div>
+			    	<div >
+			    		<div class="form-field large">
+			    			<label class="form-label" for="product_search_input">Enter SKU or Product Name</label>
+			    			<input class="form-input" type="text" id="product_search_input" name="product_search_input">
+			    		</div>
+			    		<div class="form-field small">
+			    			<label class="form-label" for="product_qty">Qty</label>
+			    			<input class="form-input" type="text" id="product_qty" name="product_qty">
+			    		</div>
 
-	    		</div>
-	    		<div class="form-field large">
-	    			<label class="form-label" for="product_search_skus">Enter Multiple SKUs</label>
-	    			<input class="form-input" type="text" id="product_search_skus" name="product_search_skus">
-	    			<div class="form-input-desc">Use commas or paragraph to separate SKUs.</div>
-	    		</div>
-	    		<div class="form-field small">
-	    			<label class="form-label" for="">&nbsp;
-	    			</label>
-	    			<input class="button button--primary button--search" type="button" id="search_skus" name="search_skus" value="Search">
-	    		</div>
-	    		<div class="form-field large" id="skus_search_results" style="margin-bottom: 0;">
+			    		<div class="form-field" id="product_search_results" style="margin-bottom: 0;">
 
-	    		</div>
+			    		</div>
 
-	    		<!-- <div class="form-field large">
-	    			<label class="form-label" for="search_product_catalog">Enter SKU or Product Name</label>
-	    			<input class="form-input" type="text" id="search_product_catalog" name="search_product_catalog">
-	    		</div>
-	    		
-	    		<div class="form-field large" id="catalog_search_results" style="margin-bottom: 0;">
-	    				    		<table class="search-product-table">
-	    				    			<tbody></tbody>
-	    				    		</table>
-	    		
-	    		</div> -->
-	    		
-	    		
+			    		<div class="form-field form-field--split"><b>-OR-</b></div>
 
-	    		<div class="form-field large">
-	    			<label class="form-label" for="">Add from File
-	    			</label>
-	    			<div class="form-input-desc" style="margin-bottom: 1rem;">File must be in .csv format and include "variant_sku", "qty" and "options" columns <a href="http://silk-demo-store45.mybigcommerce.com/content/sample_template.csv">Download Sample</a></div>
-	    			<div class="upload-container">
-	    				<a href="javascript:void(0);" class="uploadFile-mockup button button--primary">Choose File</a>
-	    				<input id="customer_sku_csv" type="file" data-reset="true" class="action-upload" name="sku_file" accept=".csv">
-	    			</div>
-	    			<div class="csv-check-info" id="csv_check_info">
-	    				
-	    			</div>
-	    			<div class="csv-product-list" id="csv_products_list">
-	    				
-	    			</div>
-	    			
-	    		</div>
+			    		<div class="form-field larger">
+			    			<label class="form-label" for="product_search_skus">Enter Multiple SKUs</label>
+			    			<input class="form-input" type="text" id="product_search_skus" name="product_search_skus">
+			    			<div class="form-input-desc">Use Commas or paragraphs to separate SKUs <br/>eg. SKU01, SKU 02</div>
+			    		</div>
+			    		<div class="form-field smaller">
+			    			<label class="form-label" for="">&nbsp;</label>
+			    			<button class="button button--primary button--search" type="button" id="search_skus" name="search_skus"><i class="fa fa-search"></i></button>
+			    		</div>
+			    		<div class="form-field large" id="skus_search_results" style="margin-bottom: 0;">
 
-	    		<div class="form-action">
-	    			<a href="javascript:void(0);" class="action" id="add_items_to_list">Add to List</a>
-	    		</div>
+			    		</div>
+
+			    		<div class="form-field form-field--split"><b>-OR-</b></div>
+
+			    		<!-- <div class="form-field large">
+			    			<label class="form-label" for="search_product_catalog">Enter SKU or Product Name</label>
+			    			<input class="form-input" type="text" id="search_product_catalog" name="search_product_catalog">
+			    		</div>
+			    		
+			    		<div class="form-field large" id="catalog_search_results" style="margin-bottom: 0;">
+			    				    		<table class="search-product-table">
+			    				    			<tbody></tbody>
+			    				    		</table>
+			    		
+			    		</div> -->
+			    		
+			    		
+
+			    		<div class="form-field">
+			    			<label class="form-label form-label--mb" for="">Add from File</label>
+			    			
+			    			<div class="upload-container">
+			    				<a href="javascript:void(0);" class="uploadFile-mockup button button--primary">Choose File</a>
+			    				<input id="customer_sku_csv" type="file" data-reset="true" class="action-upload" name="sku_file" accept=".csv">
+			    			</div>
+
+			    			<div class="form-input-desc" style="margin-bottom: 1rem;"><a href="http://silk-demo-store45.mybigcommerce.com/content/sample_template.csv">Download Sample CSV </a></div>
+			    			<div class="csv-file-name" id="csv_file_name"></div>
+			    			<div class="csv-check-info" id="csv_check_info">
+			    				
+			    			</div>
+			    			
+			    			
+			    		</div>
+			    		<div class="form-field large">
+			    		    <div class="csv-product-list" id="csv_products_list"></div>
+
+			    		</div>
+
+			    		<div class="form-action right">
+			    			<a href="javascript:void(0);" class="button button--primary" id="add_items_to_list">Add to List</a>
+			    		</div>
+			    	</div>
+			    </div>
 	    	</div>
 	    </div>
     </div>
 
     <div id="modal-shopping-list-rename-form" class="modal modal--small" data-reveal>
 	    <div class="modal-header">
-	        <h2 class="modal-header-title">Rename Shopping List</h2>
+	        <h2 class="modal-header-title">Edit Shopping List</h2>
 	        <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
 	            <span aria-hidden="true">&#215;</span>
 	        </a>
@@ -193,6 +206,28 @@
 
 	<div class="b2b-loading-overlay" id="b2b_loading_overlay">
 		<img src="{{cdn 'img/loading.gif'}}" alt="">
+	</div>
+
+	<div class="bottom-cart-container" id="page_bottom_cart">
+	    <div class="container">
+	    	<div class="bottom-cart-inner">
+		    	<a href="javascript:void(0);" class="bottom-cart-toggle" id="page_bottom_cart_nav"><span class="cart-quantity">{{cart.quantity}}</span> Item(s) in Your Cart <i class="fa fa-chevron-down"></i><i class="fa fa-chevron-up"></i></a>
+		    	<a href="javascript:void(0);" class="bottom-cart-updatelist button button--primary" id="update_list_items"><i class="fa fa-sync-alt"></i> Update List</a>
+				<div class="bottom-cart-content">
+				    <ul class="cart-info">
+				    	<li><a href="javascript:void(0);" id="clear_cart">Clear Cart</a></li>
+				    	<li><span>|</span></li>
+				    	<li><span>Subtotal: </span><span data-cart-subtotal>{{cart.sub_total.formatted}}</span></li>
+				    	<li>&nbsp;&nbsp;<button class="button button--primary" id="add_to_cart">Add to Cart</button></li>
+				    </ul>
+					
+                    
+					
+				</div>
+	    		
+	    	</div>
+	    </div>
+		
 	</div>
   {{#each cart.items}}
     <p class="cartItems" style="display: none;">

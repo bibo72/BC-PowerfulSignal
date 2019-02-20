@@ -7,8 +7,8 @@ import config from './config';
 import {
 	defaultModal
 } from '../global/modal';
-import './jquery-ui.min.js';
-import './jqPaginator.js';
+import './tools/jquery-ui.min.js';
+import './tools/jqPaginator.js';
 
 export default function(customer) {
 
@@ -54,21 +54,23 @@ export default function(customer) {
 	    	<h3 class="account-heading">Orders</h3>
 	    	<div class="filter-by-date">From:
 				<input type="text" id="orderFromDate" readOnly /> To:
-				<input type="text" id="orderToDate" readOnly /></div>
+				<input type="text" id="orderToDate" readOnly />
+				<a style="display:none;" class="button button--primary button--small" href="javascript:void(0);" data-search-date>Search</a></div>
 		`);
 
 		} else if (gRoleId == "1" || gRoleId == "2" || gRoleId == "10") {
 			$(".account-content").empty().show().append(`
 			<div class="table-toolbar top">
 	    		<div class="action-links">
-	    			<a class="action-link" href="javascript:void(0);" filter-user data-user-value="0" style="display:none;">Show All Company Orders</a>
-	    			<a class="action-link" href="javascript:void(0);" filter-user data-user-value="1">Show My Orders</a>
+	    			<a class="action-link button button--small" href="javascript:void(0);" filter-user data-user-value="0" style="display:none;">Show All Company Orders</a>
+	    			<a class="action-link button button--small" href="javascript:void(0);" filter-user data-user-value="1">Show My Orders</a>
 	    		</div>
 	    	</div>
 	    	<h3 class="account-heading">Orders</h3>
 	    	<div class="filter-by-date">From:
 				<input type="text" id="orderFromDate" readOnly /> To:
-				<input type="text" id="orderToDate" readOnly /></div>
+				<input type="text" id="orderToDate" readOnly />
+				<a style="display:none;" class="button button--primary button--small" href="javascript:void(0);" data-search-date>Search</a></div>
 		`);
 
 		}
@@ -121,7 +123,7 @@ export default function(customer) {
 		var end = $("#orderToDate");
 		start.datepicker({
 			maxDate: 0,
-			minDate: startMinDate,
+			//minDate: startMinDate,
 			onSelect: function(selected) {
 				var dtMax = new Date(selected);
 				var dtMin = new Date(selected);
@@ -183,12 +185,12 @@ export default function(customer) {
 					minDate = now_date;
 				}
 
-				start.datepicker(
+				/*start.datepicker(
 					"option", "maxDate", maxDate
 				);
 				start.datepicker(
 					"option", "minDate", minDate
-				);
+				);*/
 
 				if (end.val() && start.val()) {
 					load_table();
@@ -421,8 +423,8 @@ export default function(customer) {
 	                        <td class="actions-field t-align-r">`;
 			if (isBelongToCatalog) {
 				tr += `
-	                            <a href="javascript:void(0);" class="reorder-button button button--primary button--small" reorder-items>Reorder</a>
-	                            <a href="javascript:void(0);" class="shoppinglist-button button button--small" add-to-shopping-list>Add to New Shopping List</a> 
+	                            <a href="javascript:void(0);" class="reorder-button button button--primary button--small" disabled>Reorder</a>
+	                            <a href="javascript:void(0);" class="shoppinglist-button button button--small" disabled>Add to New Shopping List</a> 
 	                        </td>
 	                    </tr>`;
 
@@ -646,6 +648,16 @@ export default function(customer) {
 
 
 	//bind event
+	// search by date range
+	$("body").on('click', '[data-search-date]', (event) => {
+		var start = $("#orderFromDate");
+		var end = $("#orderToDate");
+		if (end.val() && start.val()) {
+			load_table();
+		}
+
+	});
+
 	//user switch
 	$("body").on("click", '[filter-user]', (event) => {
 		event.preventDefault();
@@ -766,6 +778,7 @@ export default function(customer) {
 	});
 
 	$("body").on("click", '[reorder-items]', (event) => {
+		debugger
 
 		event.preventDefault();
 		const $target = $(event.target);
@@ -799,7 +812,11 @@ export default function(customer) {
 
 				if (data && data.length > 0) {
 					cartId = data[0].id;
-					cartItemIDs = data[0].lineItems.physicalItems;
+					//cartItemIDs = data[0].lineItems.physicalItems;
+					const cartItemIDs_all = data[0].lineItems.physicalItems;
+					cartItemIDs = cartItemIDs_all.filter(function(item) {
+						return item.parentId == null;
+					});
 				}
 
 				console.log("number of items in cart: ", cartItemIDs.length);
@@ -1088,40 +1105,170 @@ export default function(customer) {
 
 	}
 
+	// for simple products
+	const getVariantIdByProductId = function(productId) {
+		let variantId;
+
+		if (catalog_products && catalog_products[productId]) {
+			const variantSkus = catalog_products[productId];
+			variantId = variantSkus[0].variant_id;
+		}
+		return variantId;
+	}
+
+	const handlePickListOptions = function(cartItemObj, cb) {
+		const cartItemId = cartItemObj.item_id;
+		const product_id = cartItemObj.product_id;
+		const variant_id = cartItemObj.variant_id;
+
+		utils.api.productAttributes.configureInCart(cartItemId, {
+			template: 'b2b/configure-product-data',
+		}, (err, response) => {
+			console.log(response.data);
+
+			let selectedPickListOptins = [];
+
+			if (response.data && response.data.options) {
+				const options = response.data.options;
+
+
+
+				for (let i = 0; i < options.length; i++) {
+					const option = options[i];
+
+					if (option.partial == "product-list") {
+						const optionValues = option.values;
+
+						for (let j = 0; j < optionValues.length; j++) {
+							const optionValue = optionValues[j];
+
+							if (optionValue.selected) {
+								selectedPickListOptins.push({
+									"option_id": option.id,
+									"option_value": optionValue.id,
+									"option_data": optionValue.data
+								});
+
+							}
+						}
+					}
+				}
+
+				console.log(selectedPickListOptins);
+			}
+
+			if (selectedPickListOptins) {
+				$.ajax({
+					type: "GET",
+					url: `${config.apiRootUrl}/productvariants?store_hash=${config.storeHash}&product_id=${product_id}&variant_id=${variant_id}`,
+					success: (data) => {
+						console.log(data);
+						let extras_list = [];
+
+
+						for (let k = 0; k < selectedPickListOptins.length; k++) {
+							let showCustomPrice = true;
+
+							if (data && data.option_list) {
+								const options = data.option_list;
+
+
+								for (let j = 0; j < options.length; j++) {
+									const optionId = options[j].option_id;
+									const optionValue = options[j].option_value;
+
+									if (optionId == selectedPickListOptins[k].option_id && optionValue == selectedPickListOptins[k].option_value) {
+										showCustomPrice = false;
+
+
+									}
+
+
+
+								}
+
+								if (showCustomPrice) {
+									const extra_product_id = selectedPickListOptins[k].option_data;
+									const extra_variant_id = getVariantIdByProductId();
+									if (extra_variant_id) {
+										extras_list.push({
+											"extra_product_id": extra_product_id,
+											"extra_variant_id": extra_variant_id
+										});
+									} else {
+										extras_list.push({
+											"extra_product_id": extra_product_id
+										});
+									}
+
+								}
+							}
+
+						}
+
+						if (extras_list) {
+							cartItemObj.extras_list = _.cloneDeep(extras_list);
+						}
+
+						if (cb) {
+							cb();
+						}
+
+
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log("error", JSON.stringify(jqXHR));
+					}
+				});
+			} else {
+				if (cb) {
+					cb();
+				}
+
+			}
+
+
+		});
+
+	}
+
 	const updateCatalogPrice = function(cartItemsArr, cartId) {
 		const cartItemObj = cartItemsArr[cartItemsArr.length - 1];
 		delete cartItemObj.option_text;
 		console.log("putdata", JSON.stringify(cartItemObj));
+		handlePickListOptions(cartItemObj, () => {
+			console.log("putdata2", JSON.stringify(cartItemObj));
 
-		$.ajax({
-			type: "PUT",
-			url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
-			data: JSON.stringify(cartItemObj),
-			success: function(data) {
-				console.log("update catalog price...", data);
+			$.ajax({
+				type: "PUT",
+				url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
+				data: JSON.stringify(cartItemObj),
+				success: function(data) {
+					console.log("update catalog price...", data);
 
-				cartItemsArr.pop();
-				if (cartItemsArr.length == 0) {
-					console.log("update price done.");
+					cartItemsArr.pop();
+					if (cartItemsArr.length == 0) {
+						console.log("update price done.");
+						$overlay.hide();
+
+
+
+						swal({
+							text: "Your list items have been added to cart",
+							type: 'success'
+						});
+
+						//window.location.reload();
+
+					} else {
+						updateCatalogPrice(cartItemsArr, cartId);
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
 					$overlay.hide();
-
-
-
-					swal({
-						text: "Your list items have been added to cart",
-						type: 'success'
-					});
-
-					//window.location.reload();
-
-				} else {
-					updateCatalogPrice(cartItemsArr, cartId);
+					alert("update catalog price error");
 				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				$overlay.hide();
-				alert("update catalog price error");
-			}
+			});
 		});
 
 	}

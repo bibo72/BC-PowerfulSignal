@@ -32,6 +32,7 @@ export default function(customer) {
 	let catalogProductsLoaded = false;
 	let gListObj = {};
 	let csvFileData;
+	let gTierPrice = {};
 
 	//define list status
 	const gListStatusObj = {
@@ -59,6 +60,7 @@ export default function(customer) {
 
 	const $selectAll = $("#select_all");
 	const $shoppingListTable = $("#shopping_list_table");
+	const $statusSelect = $("#shopping_list_status");
 
 	//list current cart items
 	/*let cartItemIDs = new Array();
@@ -100,7 +102,7 @@ export default function(customer) {
 		const $modal = $target.parents(".modal");
 		const itemIndex = $("#index_container", $modal).attr("data-index");
 		const itemVariantId = $("#variant_id_container", $modal).attr("data-variant-id");
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		let productsArr = postData.products;
 		const editItem = productsArr[itemIndex] || {};
 
@@ -157,11 +159,27 @@ export default function(customer) {
 
 	//define events
 
+	//scroll to table after load table
 	const scrollToTable = function() {
 		const height = $(".b2b-wrap").offset().top;
 		$('html, body').animate({
 			scrollTop: height,
 		}, 100);
+	}
+
+	// format date
+	// date_string: 2019-01-23 08:48:57
+	// return: 01/23/2019
+	const getFormatDate = function(date_string) {
+		let formatDate = "";
+		if (date_string) {
+			const d_year = date_string.substring(0, 4);
+			const d_month = date_string.substring(5, 7);
+			const d_date = date_string.substring(8, 10);
+			formatDate = `${d_month}/${d_date}/${d_year}`;
+		}
+
+		return formatDate;
 	}
 
 	const load_table = function() {
@@ -195,6 +213,8 @@ export default function(customer) {
 
 								listStatus = listData.status;
 
+								setStatusSelector(listStatus);
+
 								if (listData.customer_id != bypass_customer_id) {
 									isOwn = false;
 
@@ -221,11 +241,55 @@ export default function(customer) {
 								} else {
 									listOriginalStatus = listStatus;
 								}
+
+
 */
 
+
+								let listInfo_html = "";
+								if (listData.created_date) {
+									listInfo_html += `
+                                	<div>
+								        <b>Date Created: </b><span>${getFormatDate(listData.created_date)}</span>
+								    </div>`;
+								}
+								if (listData.updated_date) {
+									listInfo_html += `
+                                	<div>
+								        <b>Last Updated: </b><span>${getFormatDate(listData.updated_date)}</span>
+								    </div>`;
+								}
+								if (listData.customer_info) {
+									let createdBy;
+									if (listData.customer_info.first_name) {
+										createdBy = `${listData.customer_info.first_name} `;
+									}
+									if (listData.customer_info.last_name) {
+										createdBy += listData.customer_info.last_name;
+									}
+
+									listInfo_html += `
+                                	<div>
+								        <b>Created By: </b><span>${createdBy}</span>
+								    </div>`;
+								}
+
+								/*if (listData.status) {
+									listInfo_html += `
+                                	<div>
+								        <b>Status: </b><span>${gListStatusObj[listData.status]}</span>
+								    </div>`;
+								}*/
+
+								$("#shopping_list_detail").html(listInfo_html);
+
 								$("#shopping_list_name").text(listData.name);
-								$("#shopping_list_comment").text(listData.description);
-								$("#shopping_list_status").text("Status: " + gListStatusObj[listData.status]);
+								if (listData.description && listData.description.trim() != "") {
+									$("#shopping_list_comment").html(`<b>Descriptions: </b>${listData.description}`);
+								}
+
+								//$("#shopping_list_status").text("Status: " + gListStatusObj[listData.status]);
+
 
 								if (listData.products && listData.products.length > 0) {
 									listItems = listData.products;
@@ -233,15 +297,15 @@ export default function(customer) {
 									$("#num_items").text(listItemsData.length);
 									console.log("list item", listItemsData);
 
-									for (let i = 0; i < listItemsData.length; i++) {
-										const listItemData = listItemsData[i];
+									for (let pi = 0; pi < listItemsData.length; pi++) {
+										const listItemData = listItemsData[pi];
 										const product_id = listItemData.product_id;
 										const variant_id = listItemData.variant_id;
 										const product_quantity = listItemData.qty;
 										const options_list = listItemData.options_list || [];
 										const options_list_data = JSON.stringify(options_list);
 
-										const indexI = i;
+										const indexI = pi;
 
 										let in_catalog = true;
 
@@ -292,25 +356,25 @@ export default function(customer) {
 
 										let tr;
 										if (in_catalog) {
-											tr = `<tr data-index="${i}" data-index-${i} data-product-${product_id} data-product-id="${product_id}" data-variant-id="${variant_id}" data-in-catalog="${in_catalog}" data-product-options='${options_list_data}'>
+											tr = `<tr data-index="${indexI}" data-index-${indexI} data-product-${product_id} data-product-id="${product_id}" data-variant-id="${variant_id}" data-in-catalog="${in_catalog}" data-product-options='${options_list_data}'>
 									    		    <td class="col-checkbox"><input type="checkbox"></td>
 									    			<td class="col-product-info">
 
 									    				<div class="product-iamge"><img src="${product_image}" alt="${product_title}"></div>
 									    				<div class="product-description">
 									    				    <div class="product-title"><a href="${product_url}">${product_title}</a></div>
-									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}</div>
 									    				    <div class="product-options"></div>
+									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}</div>
 									    				</div>
 									    			</td>
-									    			<td class="t-align-r col-product-price" data-product-priceValue="${product_priceValue}"><span class="mobile-td-lable">Price:</span><span class="product-price">${product_price}</span></td>
+									    			<td class="t-align-r col-product-price" data-product-priceValue="${product_priceValue}"><span class="mobile-td-lable">Price:</span><span class="product-price" data-main-price="${product_priceValue}" >${product_price}</span></td>
 									    			<td class="t-align-r col-product-qty" data-product-quantity><span class="mobile-td-lable">Qty:</span><input type="text" value="${product_quantity}" class="input-text qty"></td>
 									    			<td class="t-align-r col-action">
 										    			<div class="action-wrap">
-										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span>${product_subTotal}</div>
+										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span><span class="product-subtotal-span">${product_subTotal}</span></div>
 										    			    <div class="action-lists">
-										    			    	<a class="action-icon" product-url href="${product_url}"><i class="fa fa-edit"></i></a>
-										    			    	<a class="action-icon" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
+					
+										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
 										    			    </div>
 										    			</div>
 
@@ -318,25 +382,25 @@ export default function(customer) {
 									    		</tr>`;
 
 										} else {
-											tr = `<tr data-index="${i}" data-index-${i} data-product-${product_id} data-product-id="${product_id}" data-in-catalog="${in_catalog}" data-product-options='${options_list_data}'>
+											tr = `<tr data-index="${indexI}" data-index-${indexI} data-product-${product_id} data-product-id="${product_id}" data-variant-id="${variant_id}" data-in-catalog="${in_catalog}" data-product-options='${options_list_data}'>
 									    		    <td class="col-checkbox"><input type="checkbox" disabled></td>
 									    			<td class="col-product-info">
 
 									    				<div class="product-iamge"><img src="${product_image}" alt="${product_title}"></div>
 									    				<div class="product-description">
 									    				    <div class="product-title">${product_title}</div>
-									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}<br/><i class="label-unviable">Unavailable</i></div>
 									    				    <div class="product-options" style="display:none;"></div>
+									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}<br/><i class="label-unviable">Unavailable</i></div>
 									    				</div>
 									    			</td>
-									    			<td class="t-align-r" data-product-priceValue="${product_priceValue}"><span class="product-price">${product_price}</span></td>
+									    			<td class="t-align-r" data-product-priceValue="${product_priceValue}"><span data-main-price="${product_priceValue}" class="product-price">${product_price}</span></td>
 									    			<td class="t-align-r col-product-qty" data-product-quantity><input disabled type="text" value="${product_quantity}" class="input-text qty"></td>
 									    			<td class="t-align-r col-action">
 										    			<div class="action-wrap">
-										    				<div class="product-subtotal">${product_subTotal}</div>
+										    				<div class="product-subtotal"><span class="product-subtotal-span">${product_subTotal}</span></div>
 										    			    <div class="action-lists">
 
-										    			    	<a class="action-icon" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
+										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
 										    			    </div>
 										    			</div>
 
@@ -349,7 +413,7 @@ export default function(customer) {
 											template: 'b2b/product-view-data'
 										}, (err, response) => {
 											const tep_product_id = product_id;
-											const tmp_index = i;
+											const tmp_index = indexI;
 											const $productInfo = $(response);
 											const product_url = $productInfo.attr("data-product-url");
 											$(`[data-product-${tep_product_id}]`).find(".product-title a").attr("href", product_url);
@@ -366,22 +430,60 @@ export default function(customer) {
 												//console.log(selected_options_arr);
 
 												let optionHtml = "";
+												let pickListArr = [];
+												let productIds = [];
+
+
 												for (let oi = 0; oi < optionsArr.length; oi++) {
 													const option = optionsArr[oi];
 													const option_id = `attribute[${option.id}]`;
+													const option_required = option.required;
+													let option_exist = false;
 													for (let oj = 0; oj < selected_options_arr.length; oj++) {
 														const selectedOption = selected_options_arr[oj];
 														if (option_id == selectedOption.option_id) {
+															option_exist = true;
+
+
 															if (option.partial == "input-text") {
 																optionHtml += `<span class="option-name">${option.display_name}:</span> ${selectedOption.option_value} </br>`;
 
 															} else {
 																if (option.values) {
 																	const optionValues = option.values;
+
+
 																	for (let ok = 0; ok < optionValues.length; ok++) {
 
 																		if (optionValues[ok].id == selectedOption.option_value) {
 																			optionHtml += `<span class="option-name">${option.display_name}:</span> ${optionValues[ok].label} </br>`;
+
+																			if (option.partial == "product-list") {
+
+																				const pickedOptionId = option.id;
+																				const pickedOptionValue = optionValues[ok].id;
+																				const pickedProductId = optionValues[ok].data;
+																				//const $priceSpan = $(`[data-index-${tmp_index}]`).find(".product-price");
+																				pickListArr.push({
+																					"pickedOptionId": pickedOptionId,
+																					"pickedOptionValue": pickedOptionValue,
+																					"pickedProductId": pickedProductId
+																				});
+
+																				productIds.push(pickedProductId);
+
+																				/*if (!gTierPrice[pickedProductId]) {
+																					getTierPriceByProductId(pickedProductId, product_quantity, function() {
+																						getVariantOptions($priceSpan, product_id, variant_id, pickedOptionId, pickedProductId);
+																						
+																					});
+																				} else {
+																					getVariantOptions($priceSpan, product_id, variant_id, pickedOptionId, pickedProductId);
+
+																				}*/
+
+
+																			}
 																		}
 																	}
 																}
@@ -389,12 +491,26 @@ export default function(customer) {
 															}
 
 														}
+													}
 
+													// has required option, and this option not exist
+													if (option_required && !option_exist) {
+														optionHtml += `<span class="option-name">${option.display_name}:</span> <i class="no-option-value-tip" no-option-value>Click 'Edit Options' to set a value for this option.</i> </br>`;
 
 													}
 
 
 												}
+
+												const $priceSpan = $(`[data-index-${tmp_index}]`).find(".product-price");
+
+												console.log("list pick list option", pickListArr);
+
+												getTierPriceByProductId_multi(productIds, product_quantity, function() {
+													getVariantOptions($priceSpan, product_id, variant_id, pickListArr);
+												});
+
+
 
 												//console.log(tep_product_id);
 												//console.log(optionHtml);
@@ -402,11 +518,12 @@ export default function(customer) {
 
 												//console.log(options_list);
 
-												if (listStatus != "40") {
-													$(`tr[data-index-${tmp_index}]`).find(".product-options").append(`<div><a href="#" data-edit-option>Change</a></div>`);
+												if (listStatus != "40" && gRoleId != "0") {
+													$(`tr[data-index-${tmp_index}]`).find(".action-lists").prepend(`<a class="button button--primary button--small" href="#" data-edit-option><i class="fa fa-edit"></i> Edit Options</a>`);
 												}
-
-
+												if (listStatus == "30" && gRoleId == "0") {
+													$(`tr[data-index-${tmp_index}]`).find(".action-lists").prepend(`<a class="button button--primary button--small" href="#" data-edit-option><i class="fa fa-edit"></i> Edit Options</a>`);
+												}
 
 											}
 
@@ -416,7 +533,6 @@ export default function(customer) {
 										$shoppingListTable.find("tbody").append(tr);
 
 										if (listStatus == "40") {
-											debugger
 											$(".col-action .action-lists").hide();
 											$shoppingListTable.find("tbody input").prop("disabled", true);
 										}
@@ -464,7 +580,7 @@ export default function(customer) {
 
 									if (listStatus == "30") {
 										if ($("#apply_approval").length == 0) {
-											$("#update_list_items").after(`<button href="javascript:void(0);" class="action" id="apply_approval">Submit for Approval</button>`);
+											//$("#update_list_items").after(`<button href="javascript:void(0);" class="action" id="apply_approval">Submit for Approval</button>`);
 										}
 
 									} else {
@@ -491,6 +607,53 @@ export default function(customer) {
 				console.log("error", JSON.stringify(jqXHR));
 			}
 		});
+	}
+
+	const setStatusSelector = function(listStatus) {
+
+		if (gRoleId == 0) {
+			// junior buyer
+			if (listStatus == 30) {
+				$statusSelect.html(`
+					<option value="${listStatus}" selected>${gListStatusObj[listStatus]}</option>
+					<option value="40">${gListStatusObj["40"]}</option>
+				`);
+				$statusSelect.val(listStatus);
+
+			} else {
+				$statusSelect.html(`<option value="${listStatus}">${gListStatusObj[listStatus]}</option>`);
+				$statusSelect.val(listStatus);
+				$("[data-update-status]").remove();
+				$("#select_all").remove();
+				$("[data-delete-items]").remove();
+				$("#update_list_items").remove();
+				$(".b2b-column-right").css("width", "100%");
+			}
+
+		} else if (gRoleId == 1 || gRoleId == 2) {
+			// admin & senior buyer
+			if (listStatus == 40) {
+				$statusSelect.html(`
+					<option value="${listStatus}" selected>${gListStatusObj[listStatus]}</option>
+					<option value="0">${gListStatusObj["0"]}</option>
+					<option value="30">${gListStatusObj["30"]}</option>
+				`);
+
+				$("#select_all").remove();
+				$("[data-delete-items]").remove();
+				$("#update_list_items").remove();
+				$(".b2b-column-right").css("width", "100%");
+
+			} else {
+				$statusSelect.html(`<option value="${listStatus}">${gListStatusObj[listStatus]}</option>`);
+				$("[data-update-status]").remove();
+			}
+
+		} else if (gRoleId == 10) {
+			$statusSelect.html(`<option value="${listStatus}">${gListStatusObj[listStatus]}</option>`);
+			$("[data-update-status]").remove();
+		}
+
 	}
 
 	const update_list = function(listData, _callback) {
@@ -531,42 +694,6 @@ export default function(customer) {
 		});
 	}
 
-	const addCsvProductsToList = function(csvBase64Data, _callback) {
-
-		let productArr = listData.products;
-
-		for (var x = 0; x < productArr.length; x++) {
-			delete productArr[x].name;
-			delete productArr[x].price;
-			delete productArr[x].primary_image;
-			delete productArr[x].sku;
-		}
-		console.log("listPutData", productArr);
-		//return;
-
-		$overlay.show();
-
-		$.ajax({
-			type: "PUT",
-			url: `${config.apiRootUrl}/importrequisitionlist?store_hash=${bypass_store_hash}&id=${listID}&customer_id=${bypass_customer_id}`,
-			data: JSON.stringify(listData),
-			success: function(data) {
-				if (data) {
-					console.log(data);
-					$overlay.hide();
-
-					if (_callback) {
-						_callback();
-					}
-				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				$overlay.hide();
-				console.log("error", JSON.stringify(jqXHR));
-
-			}
-		});
-	}
 
 	const getIdsByVariantSku = function(variantSku) {
 		//debugger
@@ -664,7 +791,7 @@ export default function(customer) {
 		//console.log("loading icon is on",isLoadingOn);
 	}, 100);
 
-	$.ajax({
+	/*$.ajax({
 		type: "GET",
 		url: "../api/storefront/carts",
 		contentType: "application/json",
@@ -687,15 +814,15 @@ export default function(customer) {
 				text: "There has some error, please try again."
 			});
 		}
-	});
+	});*/
 
 
 	//open edit list modal
 	$("[data-rename-list]").on('click', function() {
 		const $form = $renameListModal.find("form");
 
-		$("#list_name", $form).val($("#shopping_list_name").text());
-		$("#list_comment", $form).val($("#shopping_list_comment").text());
+		$("#list_name", $form).val(gListObj.name);
+		$("#list_comment", $form).val(gListObj.description);
 	});
 
 
@@ -705,7 +832,7 @@ export default function(customer) {
 		const list_name = $("#list_name", $form).val();
 		const list_comment = $("#list_comment", $form).val() || " ";
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 
 		postData.name = list_name;
 		postData.description = list_comment;
@@ -715,7 +842,15 @@ export default function(customer) {
 		$overlay.show();
 		update_list(postData, function() {
 			$("#shopping_list_name").text(list_name);
-			$("#shopping_list_comment").text(list_comment);
+			gListObj.name = list_name;
+			gListObj.description = list_comment;
+			if (list_comment && list_comment.trim() != "") {
+				$("#shopping_list_comment").html(`<b>Descriptions: </b>${list_comment}`);
+			} else {
+				$("#shopping_list_comment").empty();
+			}
+
+
 			$renameListModal.find(".modal-close").eq(0).click();
 		});
 	});
@@ -746,7 +881,7 @@ export default function(customer) {
 			return;
 		}
 
-		let products_arr = gListObj.products.splice(0) || [];
+		let products_arr = _.cloneDeep(gListObj.products) || [];
 		let hasInvalidQty = false;
 		let hasInvalidOption = false;
 
@@ -822,7 +957,7 @@ export default function(customer) {
 			return;
 		}
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		postData.products = products_arr;
 		//test data
 		/*postData.products = [{
@@ -880,7 +1015,7 @@ export default function(customer) {
 			return;
 		}
 
-		let products_arr = gListObj.products.splice(0) || [];
+		let products_arr = _.cloneDeep(gListObj.products) || [];
 		let hasInvalidQty = false;
 		let hasInvalidOption = false;
 
@@ -1028,7 +1163,7 @@ export default function(customer) {
 			return;
 		}
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		postData.products = products_arr;
 		//test data
 		/*postData.products = [{
@@ -1066,7 +1201,7 @@ export default function(customer) {
 		const options_list = $target.parents("tr").attr("data-product-options");
 		//const product_ids = `["${product_id}"]`;
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		let products_arr = [];
 		for (let i = 0; i < postData.products.length; i++) {
 			if (postData.products[i].product_id != product_id || postData.products[i].variant_id != variant_id || options_list != JSON.stringify(postData.products[i].options_list)) {
@@ -1095,7 +1230,7 @@ export default function(customer) {
 		}
 
 		const $trCheckboxInputs = $shoppingListTable.find("tbody tr input[type=checkbox]");
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		let products_arr = [];
 		$trCheckboxInputs.each(function(index, item) {
 			if ($(item).prop("checked") == false) {
@@ -1139,7 +1274,7 @@ export default function(customer) {
 		}
 
 		const $trCheckboxInputs = $shoppingListTable.find("tbody tr input[type=checkbox]");
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		let products_arr = [];
 		$trCheckboxInputs.each(function(index, item) {
 
@@ -1196,7 +1331,7 @@ export default function(customer) {
 
 
 		//const product_quantity_str = JSON.stringify(product_quantity_obj);
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		postData.products = products_arr;
 
 		console.log(postData);
@@ -1330,7 +1465,7 @@ export default function(customer) {
 						$("#product_search_results").html(`<table class="search-product-table" id="product_search_result_table" product-search-result-table style="margin-bottom:1.5rem;"><tbody>${resultTrs}</tbody></table>`);
 						if (variant_id) {
 							$("#product_search_results #product_search_result_table tbody tr").attr("data-variant-id", variant_id);
-							$("#product_search_results #product_search_result_table tbody tr input[type=checkbox]").attr("data-variant-id", variant_id);
+							$("#product_search_results #product_search_result_table tbody tr input[type=checkbox]").attr("data-variant-id", variant_id).prop("disabled", false);
 						}
 						if (catalog_price) {
 							$("#product_search_results #product_search_result_table tbody tr").find("[data-product-price]").text("$" + parseFloat(catalog_price).toFixed(2));;
@@ -1338,7 +1473,7 @@ export default function(customer) {
 
 						$("#product_search_results #product_search_result_table").find(".product-qty-col input").remove();
 
-						const $optionLabels = $("#product_search_results #product_search_result_table").find("label.form-option");
+						const $optionLabels = $("#product_search_results #product_search_result_table").find("label[data-product-attribute-value]");
 						$optionLabels.each(function() {
 							const $optionLabel = $(this);
 							const $optionInput = $optionLabel.prev();
@@ -1348,6 +1483,8 @@ export default function(customer) {
 							$optionInput.attr("id", new_optionId);
 
 						});
+
+						initProductListOptionPrice();
 					} else {
 						$("#product_search_results").html(`<table class="search-product-table" id="product_search_result_table" product-search-result-table style="margin-bottom:1.5rem;"><tbody><tr><td>No products found.</td></tr></tbody></table>`);
 					}
@@ -1517,7 +1654,7 @@ export default function(customer) {
 								$("#skus_search_results").find(`[product-search-result-table] tbody tr[data-product-id="${product_id}"] [data-product-price]`).text("$" + parseFloat(catalog_price).toFixed(2));;
 							}
 
-							const $optionLabels = $("#skus_search_results").find("label.form-option");
+							const $optionLabels = $("#skus_search_results").find("label[data-product-attribute-value]");
 							$optionLabels.each(function() {
 								const $optionLabel = $(this);
 								const $optionInput = $optionLabel.prev();
@@ -1527,6 +1664,9 @@ export default function(customer) {
 								$optionInput.attr("id", new_optionId);
 
 							});
+
+
+							initProductListOptionPrice();
 						} else {
 							$("#skus_search_results").find("[product-search-result-table] tbody").append(`<tr><td colspan="5">No products found for "${searchQuery}".</td></tr>`);
 						}
@@ -1549,7 +1689,7 @@ export default function(customer) {
 
 	//not use, will delete later
 	const productOptionsChanged = (event) => {
-		debugger
+		//debugger
 
 		const $changedOption = $(event.target);
 		const $form = $changedOption.parents('form');
@@ -1687,7 +1827,7 @@ export default function(customer) {
 
 	//init csv products options
 	const onOptionChange = function(product_id, $form) {
-		debugger
+		//debugger
 		utils.api.productAttributes.optionChange(product_id, $form.serialize(), (err, result) => {
 			const data = result.data || {};
 
@@ -1839,7 +1979,7 @@ export default function(customer) {
 				}
 
 				//required text field
-				debugger
+
 				const $textInputs = $tr.find("input.form-input[required]");
 
 				let validInput = true;
@@ -1881,7 +2021,7 @@ export default function(customer) {
 
 	//after user click an option
 	utils.hooks.on('product-option-change', (event, option) => {
-		debugger
+		//debugger
 
 		const $changedOption = $(option);
 		const $form = $changedOption.parents('form');
@@ -2007,8 +2147,51 @@ export default function(customer) {
 				if (data.price.without_tax) {
 					base_price = data.price.without_tax.value;
 				}
-				const catalog_price = getCatalogPrice(base_price, tier_price_arr, 1);
-				$priceSpan.text("$" + parseFloat(catalog_price).toFixed(2));
+
+				if (variant_id) {
+
+
+					const tierPriceValue = getCatalogPrice(base_price, tier_price_arr, 1);;
+					if (tierPriceValue) {
+						$priceSpan.attr("data-main-price", tierPriceValue);
+					}
+
+					const $selectPickListOption = $('[data-product-attribute="product-list"] input.form-radio:checked', $form)
+					if ($selectPickListOption.length > 0) {
+						let pickListArr = [];
+						$.each($selectPickListOption, (index, picklist) => {
+							const pickedOptionId = $(picklist).attr("name").replace("attribute[", "").replace("]", "");
+							const pickedOptionValue = $(picklist).attr("value");
+							const pickedProductId = $(picklist).attr("data-product-id");
+							pickListArr.push({
+								"pickedOptionId": pickedOptionId,
+								"pickedOptionValue": pickedOptionValue,
+								"pickedProductId": pickedProductId
+							});
+
+						});
+
+						getVariantOptions($priceSpan, product_id, variant_id, pickListArr);
+					} else {
+
+						if (tierPriceValue) {
+							$priceSpan.text("$" + parseFloat(tierPriceValue).toFixed(2));
+						}
+					}
+				} else {
+					if (_.isObject(data.price)) {
+						if (data.price.with_tax) {
+							$priceSpan.text(data.price.with_tax.formatted);
+						}
+
+						if (data.price.without_tax) {
+							$priceSpan.text(data.price.without_tax.formatted);
+						}
+					}
+				}
+
+				/*const catalog_price = getCatalogPrice(base_price, tier_price_arr, 1);
+				$priceSpan.text("$" + parseFloat(catalog_price).toFixed(2));*/
 
 				let allValid = true;
 				if (data.purchasing_message) {
@@ -2029,7 +2212,7 @@ export default function(customer) {
 					//$checkbox.prop('checked', false);
 					allValid = false;
 				}
-				debugger
+
 				if (variant_id) {
 					$tr.attr("data-variant-id", variant_id);
 					$checkbox.attr("data-variant-id", variant_id);
@@ -2108,40 +2291,172 @@ export default function(customer) {
 		}
 	});
 
+	// for simple products
+	const getVariantIdByProductId = function(productId) {
+		let variantId;
+
+		if (catalog_products && catalog_products[productId]) {
+			const variantSkus = catalog_products[productId];
+			variantId = variantSkus[0].variant_id;
+		}
+		return variantId;
+	}
+
+	const handlePickListOptions = function(cartItemObj, cb) {
+		const cartItemId = cartItemObj.item_id;
+		const product_id = cartItemObj.product_id;
+		const variant_id = cartItemObj.variant_id;
+
+		utils.api.productAttributes.configureInCart(cartItemId, {
+			template: 'b2b/configure-product-data',
+		}, (err, response) => {
+			console.log(response.data);
+
+			let selectedPickListOptins = [];
+
+			if (response.data && response.data.options) {
+				const options = response.data.options;
+
+
+
+				for (let i = 0; i < options.length; i++) {
+					const option = options[i];
+
+					if (option.partial == "product-list") {
+						const optionValues = option.values;
+
+						for (let j = 0; j < optionValues.length; j++) {
+							const optionValue = optionValues[j];
+
+							if (optionValue.selected) {
+								selectedPickListOptins.push({
+									"option_id": option.id,
+									"option_value": optionValue.id,
+									"option_data": optionValue.data
+								});
+
+							}
+						}
+					}
+				}
+
+				console.log(selectedPickListOptins);
+			}
+
+			if (selectedPickListOptins) {
+				$.ajax({
+					type: "GET",
+					url: `${config.apiRootUrl}/productvariants?store_hash=${config.storeHash}&product_id=${product_id}&variant_id=${variant_id}`,
+					success: (data) => {
+						console.log(data);
+						let extras_list = [];
+
+
+						for (let k = 0; k < selectedPickListOptins.length; k++) {
+							let showCustomPrice = true;
+
+							if (data && data.option_list) {
+								const options = data.option_list;
+
+
+								for (let j = 0; j < options.length; j++) {
+									const optionId = options[j].option_id;
+									const optionValue = options[j].option_value;
+
+									if (optionId == selectedPickListOptins[k].option_id && optionValue == selectedPickListOptins[k].option_value) {
+										showCustomPrice = false;
+
+
+									}
+
+
+
+								}
+
+								if (showCustomPrice) {
+									const extra_product_id = selectedPickListOptins[k].option_data;
+									const extra_variant_id = getVariantIdByProductId();
+									if (extra_variant_id) {
+										extras_list.push({
+											"extra_product_id": extra_product_id,
+											"extra_variant_id": extra_variant_id
+										});
+									} else {
+										extras_list.push({
+											"extra_product_id": extra_product_id
+										});
+									}
+
+								}
+							}
+
+						}
+
+						if (extras_list) {
+							cartItemObj.extras_list = _.cloneDeep(extras_list);
+						}
+
+						if (cb) {
+							cb();
+						}
+
+
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log("error", JSON.stringify(jqXHR));
+					}
+				});
+			} else {
+				if (cb) {
+					cb();
+				}
+
+			}
+
+
+		});
+
+	}
+
 	const updateCatalogPrice = function(cartItemsArr, cartId) {
 		const cartItemObj = cartItemsArr[cartItemsArr.length - 1];
 		delete cartItemObj.option_text;
 		console.log("putdata", JSON.stringify(cartItemObj));
 
-		$.ajax({
-			type: "PUT",
-			url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
-			data: JSON.stringify(cartItemObj),
-			success: function(data) {
-				console.log("update catalog price...", data);
+		handlePickListOptions(cartItemObj, () => {
+			console.log("putdata2", JSON.stringify(cartItemObj));
 
-				cartItemsArr.pop();
-				if (cartItemsArr.length == 0) {
-					console.log("update price done.");
+			$.ajax({
+				type: "PUT",
+				url: `${config.apiRootUrl}/cart?store_hash=${bypass_store_hash}&cart_id=${cartId}`,
+				data: JSON.stringify(cartItemObj),
+				success: function(data) {
+					console.log("update catalog price...", data);
+
+					cartItemsArr.pop();
+					if (cartItemsArr.length == 0) {
+						console.log("update price done.");
+						$overlay.hide();
+						$("[data-cart-subtotal]").text("$" + parseFloat(data.data.base_amount).toFixed(2));
+
+						$shoppingListTable.find(".col-checkbox input[type=checkbox]").prop("checked", false);
+
+						swal({
+							text: "Your list items have been added to cart",
+							type: 'success'
+						});
+
+						//window.location.reload();
+
+					} else {
+						updateCatalogPrice(cartItemsArr, cartId);
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
 					$overlay.hide();
-
-					$shoppingListTable.find(".col-checkbox input[type=checkbox]").prop("checked", false);
-
-					swal({
-						text: "Your list items have been added to cart",
-						type: 'success'
-					});
-
-					//window.location.reload();
-
-				} else {
-					updateCatalogPrice(cartItemsArr, cartId);
+					alert("update catalog price error");
 				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				$overlay.hide();
-				alert("update catalog price error");
-			}
+			});
 		});
 
 	}
@@ -2323,6 +2638,7 @@ export default function(customer) {
 
 						$cartCounter.addClass('cart-count--positive');
 						$body.trigger('cart-quantity-update', cartQuantity);
+
 						console.log("cartItems", cartItemsArr);
 
 						//$overlay.hide();
@@ -2338,6 +2654,7 @@ export default function(customer) {
 
 								if (data && data.length > 0) {
 									cartId = data[0].id;
+									$("[data-cart-subtotal]").text("$" + parseFloat(data[0].baseAmount).toFixed(2));
 
 								}
 							}
@@ -2440,7 +2757,10 @@ export default function(customer) {
 				if (data && data.length > 0) {
 					const cartId = data[0].id;
 					console.log("cartId", cartId);
-					const cartItems = data[0].lineItems.physicalItems;
+					const cartItems_all = data[0].lineItems.physicalItems;
+					const cartItems = cartItems_all.filter(function(item) {
+						return item.parentId == null;
+					});
 
 
 
@@ -2574,15 +2894,20 @@ export default function(customer) {
 		//console.log(cartItemIDs);
 		//let itemArr = listItems;
 		let itemArr = [];
+		let allOptionsValid = true;
 		let $checkedItems = $shoppingListTable.find(".col-checkbox input[type=checkbox]:checked");
 		$checkedItems.each(function(index, item) {
 			const productObj = {};
-			productObj.product_id = $(item).parents("tr").attr("data-product-id");
-			productObj.variant_id = $(item).parents("tr").attr("data-variant-id");
-			productObj.quantity = $(item).parents("tr").find("[data-product-quantity] input").val();
-			let options_list = $(item).parents("tr").attr("data-product-options");
+			const $tr = $(item).parents("tr");
+			productObj.product_id = $tr.attr("data-product-id");
+			productObj.variant_id = $tr.attr("data-variant-id");
+			productObj.quantity = $tr.find("[data-product-quantity] input").val();
+			let options_list = $tr.attr("data-product-options");
 			if (options_list) {
 				productObj.options_list = JSON.parse(options_list);
+			}
+			if ($tr.find("[no-option-value]").length) {
+				allOptionsValid = false;
 			}
 
 			itemArr.push(productObj);
@@ -2601,6 +2926,11 @@ export default function(customer) {
 			return;
 		}
 
+		if (!allOptionsValid) {
+			alert("Please fill out product options first.");
+			return;
+		}
+
 		$overlay.show();
 
 		let cartItemIDs = [];
@@ -2615,8 +2945,12 @@ export default function(customer) {
 			success: (data) => {
 				if (data && data.length > 0) {
 					cartId = data[0].id;
-					cartItemIDs = data[0].lineItems.physicalItems;
+					const cartItemIDs_all = data[0].lineItems.physicalItems;
+					cartItemIDs = cartItemIDs_all.filter(function(item) {
+						return item.parentId == null;
+					});
 				}
+				console.log(cartItemIDs);
 				console.log("number of items in cart: ", cartItemIDs.length);
 
 				if (cartItemIDs.length > 0) { //if there are items in cart notify user
@@ -2709,7 +3043,7 @@ export default function(customer) {
 		}
 		$overlay.show();
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		postData.status = "40";
 
 		console.log(postData);
@@ -2724,7 +3058,7 @@ export default function(customer) {
 
 		$overlay.show();
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		postData.status = "0";
 
 		console.log(postData);
@@ -2738,7 +3072,7 @@ export default function(customer) {
 	$("body").on('click', "#reject_approval", () => {
 		$overlay.show();
 
-		let postData = gListObj;
+		let postData = _.cloneDeep(gListObj);
 		postData.status = "30";
 
 		console.log(postData);
@@ -2746,6 +3080,87 @@ export default function(customer) {
 		update_list(postData, function() {
 			window.location.href = "/shopping-lists/";
 		});
+	});
+
+	// change list status
+	$("body").on('click', '[data-update-status]', () => {
+		// if is junior user, and list is null, return
+		const $trs = $shoppingListTable.find("tbody tr");
+		if (gRoleId == "0" && $trs.length == 0) {
+			alert("You have no items in your list.");
+			return;
+		}
+
+		// if status not changed, dont do anything
+		const new_status = $statusSelect.val();
+		if (gListObj.status == new_status) {
+			return;
+		}
+
+		$overlay.show();
+
+		let postData = _.cloneDeep(gListObj);
+		postData.status = new_status;
+
+		console.log(postData);
+
+		update_list(postData, function() {
+
+			if (gRoleId == "0" && new_status == "40") {
+				// pedding for approval
+				//load_table();
+				window.location.reload();
+			} else if ((gRoleId == 1 || gRoleId == "2") && new_status == "0") {
+				// submit for approval
+				window.location.reload();
+			} else if ((gRoleId == 1 || gRoleId == "2") && new_status == "30") {
+				//reject submit
+				window.location.href = "/shopping-lists/";
+			}
+		});
+	});
+
+	$("body").on('click', "#clear_cart", () => {
+		$overlay.show();
+
+		$.ajax({
+			type: "GET",
+			url: "../api/storefront/carts",
+			contentType: "application/json",
+			accept: "application/json",
+			async: true,
+			success: (data) => {
+
+				if (data && data.length > 0) {
+
+					//const cartItems = data[0].lineItems.physicalItems;
+					const cartItems_all = data[0].lineItems.physicalItems;
+					const cartItems = cartItems_all.filter(function(item) {
+						return item.parentId == null;
+					});
+					// return cartItemIDs
+					clearCart(cartItems)
+				} else {
+					// no cart
+					$overlay.hide();
+				}
+
+
+			},
+			error: () => {
+				$overlay.hide();
+				swal({
+					type: "error",
+					text: "There has some error, please try again."
+				});
+			}
+		});
+	});
+
+	//reject pending list, for Senior buyer and Admin,change status from 40->30
+	$("body").on('click', "#page_bottom_cart_nav", () => {
+		$("#page_bottom_cart_nav").toggleClass("is-open");
+		$("#page_bottom_cart").toggleClass("is-open");
 	});
 
 
@@ -2783,6 +3198,7 @@ export default function(customer) {
 	});
 
 
+	// after upload the csv file, display products in csv file
 	//sample data: [244, 287, "SKU100", "SKU-9BB3516E", "1", empty]
 	const displayCsvProducts = function(products) {
 		let csvProdcutsArr = [];
@@ -2813,7 +3229,7 @@ export default function(customer) {
 				const $response = $(response);
 
 				//change input id and label "for" attribute
-				const $optionLabels = $response.find("label.form-option");
+				const $optionLabels = $response.find("label[data-product-attribute-value]");
 				$optionLabels.each(function() {
 					const $optionLabel = $(this);
 					const $optionInput = $optionLabel.prev();
@@ -2822,6 +3238,8 @@ export default function(customer) {
 					$optionLabel.attr("for", new_optionId);
 					$optionInput.attr("id", new_optionId);
 				});
+
+				initProductListOptionPrice();
 
 				const $form = $response.find("form.option-form");
 				const $checkBox = $form.parents("tr").find("[data-results-check-box]");
@@ -2912,13 +3330,188 @@ export default function(customer) {
 
 	}
 
-	//file upload
+
+	// after upload csv file, directly add csv products to list
+	const addCsvProductsToList = function(products) {
+		let csvProdcutsArr = [];
+		const productCount = products.length;
+		let finishedCount = 0;
+		let products_arr = _.cloneDeep(gListObj.products) || [];
+
+		$overlay.show();
+
+		for (let i = 0; i < productCount; i++) {
+			const product_id = products[i][0];
+			const variant_id = products[i][1];
+			const variant_sku = products[i][2];
+			const product_qty = products[i][3];
+			const product_options = products[i][4];
+
+			//shopping-list-csv-product-item
+			utils.api.product.getById(product_id, {
+				template: 'b2b/shopping-list-csv-product-item'
+			}, (err, response) => {
+				if (err) {
+					console.log(err);
+					$overlay.show();
+					return swal({
+						text: response.data.errors.join('\n'),
+						type: 'error',
+					});
+				}
+
+				const tmpIndex = i;
+				const $response = $(response);
+
+				const $form = $response.find("form.option-form");
+				const hasOptions = $form.find("[data-product-option-change]").html().trim().length;
+				const $inputOptions = $form.find("[data-product-option-change] .form-input");
+
+				$.ajax({
+					type: "GET",
+					url: `${config.apiRootUrl}/productvariants?store_hash=${bypass_store_hash}&product_id=${product_id}&variant_id=${variant_id}`,
+					success: function(data) {
+						//console.log(data);
+						finishedCount++;
+						let options_list = [];
+						if (data && data.option_list) {
+							const options = data.option_list;
+
+							for (let j = 0; j < options.length; j++) {
+								const optionId = options[j].option_id;
+								const optionValue = options[j].option_value;
+
+
+								const optionObj = {
+									"option_id": `attribute[${optionId}]`,
+									"option_value": optionValue
+								}
+
+								options_list.push(optionObj);
+
+
+
+							}
+						}
+
+						const product_options_arr = product_options.split(";");
+						if ($inputOptions.length > 0 && product_options_arr.length > 0) {
+							if (product_options && product_options.trim() != "") {
+								$inputOptions.each((index, item) => {
+									if (product_options_arr.length >= index + 1) {
+										//$(item).val(product_options_arr[index]);
+										const optionId = $(item).attr("name")
+										const optionObj = {
+											"option_id": optionId,
+											"option_value": product_options_arr[index]
+										}
+
+										options_list.push(optionObj);
+									}
+								});
+							}
+						}
+
+						//if has duplicated products
+						let isExist = false;
+						for (let k = 0; k < products_arr.length; k++) {
+							const sameOption = (JSON.stringify(options_list) == JSON.stringify(products_arr[k].options_list));
+							const sameProductId = (products_arr[k].product_id == product_id);
+							const sameVariantId = (products_arr[k].variant_id == variant_id);
+							if (sameProductId && sameVariantId && sameOption) {
+								products_arr[k].qty = parseInt(products_arr[k].qty) + parseInt(product_qty);
+								isExist = true;
+							}
+						}
+						if (!isExist) {
+							products_arr.push({
+								"product_id": product_id,
+								"variant_id": variant_id,
+								"qty": product_qty,
+								"options_list": options_list
+							});
+						}
+
+						// after get all product options
+						if (finishedCount == productCount) {
+							// all products options getted, add to list
+							let postData = _.cloneDeep(gListObj);
+							postData.products = products_arr;
+							//test data
+							/*postData.products = [{
+								"product_id": "234",
+								"variant_id": "266",
+								"qty": "2"
+							}];*/
+
+
+							//console.log(JSON.stringify(postData));
+							console.log(postData);
+							//return;
+
+							$overlay.show();
+							update_list(postData, function() {
+								scrollToTable();
+								load_table();
+								//clear search input
+								$("#product_search_input").val("");
+								$("#product_qty").val("");
+								$("#product_search_results").html("");
+								$("#product_search_skus").val("");
+								$("#skus_search_results").html("");
+
+								resetCsvFileUpload();
+
+								swal({
+									text: "Your products have been added to list successfully.",
+									type: 'success',
+								});
+							});
+
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						$overlay.show();
+						console.log("error", JSON.stringify(jqXHR));
+					}
+				});
+
+
+
+			});
+
+		}
+
+	}
+
+	// csv file upload
 
 	const resetCsvFileUpload = function() {
 		$("#csv_check_info").html("");
 		$("#csv_products_list").html("");
 		$("#customer_sku_csv").val("");
+		$("#csv_file_name").text("");
 	}
+
+	// get product options by product id and variant id
+	const getProductOptions = function(cb) {
+		$.ajax({
+			type: "GET",
+			url: `${config.apiRootUrl}/productvariants?store_hash=${bypass_store_hash}&product_id=${product_id}&variant_id=${variant_id}`,
+			success: function(data) {
+				console.log(data);
+				if (data && data.option_list) {
+					const options = data.option_list;
+					//$tr.attr("data-product-options", JSON.stringify(options));
+					cb();
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log("error", JSON.stringify(jqXHR));
+			}
+		});
+	}
+
 	const uploadDealcsv = function() {};
 	/*------ Method for read uploded csv file ------*/
 	uploadDealcsv.prototype.getCsv = function(e) {
@@ -2928,11 +3521,12 @@ export default function(customer) {
 
 			if (this.files && this.files[0]) {
 				var uploadFile = this.files[0];
+				resetCsvFileUpload();
+				$("#csv_file_name").text(uploadFile.name);
+
 				var reader = new FileReader();
 
 				reader.addEventListener('load', function(e) {
-					resetCsvFileUpload();
-
 					let csvdata = e.target.result;
 					console.log(csvdata);
 					const data = parseCsv.validation(csvdata);
@@ -3032,7 +3626,7 @@ export default function(customer) {
 
 			if (errorInfo.trim() != "") {
 				errorCounter++;
-				$csvCheckInfoContainer.append(`<div>#ROW ${i+1}: ${errorInfo}</div>`);
+				$csvCheckInfoContainer.append(`<div class="error-info-line"><i class="fa fa-exclamation-triangle"></i> Error: Line ${i+1} - ${errorInfo}</div>`);
 			}
 			const productDataArr = productIdsArr.concat(dataItem);
 
@@ -3043,10 +3637,11 @@ export default function(customer) {
 
 		if (errorCounter == 0) {
 			$csvCheckInfoContainer.html(`<div>File check passed.</div>`);
-			displayCsvProducts(parsedata);
+			//displayCsvProducts(parsedata);
+			addCsvProductsToList(parsedata);
 
 		} else {
-			$csvCheckInfoContainer.append(`<div style="font-weight:600;">Your file has ${errorCounter} errors, please correct them and upload the file again.</div>`);
+			$csvCheckInfoContainer.append(`<div class="csv-error-summary">Your file has ${errorCounter} errors, please correct them and upload the file again.</div>`);
 			$csvCheckInfoContainer.find(".checking-tips").remove();
 		}
 		return parsedata;
@@ -3074,6 +3669,299 @@ export default function(customer) {
 	}
 	var parseCsv = new uploadDealcsv();
 	parseCsv.getCsv();
+
+	//clear cart contents
+	const clearCart = function(cartItemArr) {
+		const cartitem = cartItemArr[cartItemArr.length - 1];
+		$overlay.show();
+		utils.api.cart.itemRemove(cartitem.id, (err, response) => {
+			if (response.data.status === 'succeed') {
+				cartItemArr.pop();
+
+				if (cartItemArr.length > 0) {
+					clearCart(cartItemArr);
+				} else {
+					$overlay.hide();
+					$('body').trigger('cart-quantity-update', 0);
+					$("[data-cart-subtotal]").text("$0.00");
+				}
+			} else {
+				$overlay.hide();
+				swal({
+					text: response.data.errors.join('\n'),
+					type: 'error',
+				});
+			}
+
+		});
+
+	}
+
+	const getMainProductTierPrice = function(variantSku, qty) {
+		let tier_price;
+
+		if (!variantSku) {
+			return false;
+		}
+
+		const productId = $('[name="product_id"]', this.$scope).val();
+
+		if (catalog_products && catalog_products[productId]) {
+			/*const $price = $("[data-product-price-without-tax]", this.$scope) || $("[data-product-price-with-tax]", this.$scope);
+			const base_price = $price.text().trim();
+			const base_price_symbol = base_price.substring(0, 1);
+			const base_price_value = base_price.replace("$", "");*/
+			const base_price_value = this.getMainProductBasePrice();
+			console.log(base_price_value);
+
+			const variantSkus = catalog_products[productId];
+			let tier_price_array = [];
+			for (let i = 0; i < variantSkus.length; i++) {
+				if (variantSkus[i].variant_sku == variantSku) {
+					tier_price_array = variantSkus[i].tier_price;
+				}
+			}
+
+			tier_price = base_price_value;
+			for (let j = 0; j < tier_price_array.length; j++) {
+				const price_type = tier_price_array[j].type;
+				const tier_qty = tier_price_array[j].qty;
+				const price = tier_price_array[j].price;
+
+				if (qty >= tier_qty) {
+					if (price_type == "fixed") {
+						tier_price = price;
+
+					} else {
+						tier_price = base_price_value - base_price_value * price / 100;
+					}
+				}
+			}
+
+			if (tier_price) {
+				tier_price = parseFloat(tier_price).toFixed(2);
+			}
+		}
+
+		return tier_price;
+	}
+
+	// for bundleb2b
+	const getVariantOptions = function($priceSpan, product_id, variant_id, pickListArr) {
+		const bypass_store_hash = `${config.storeHash}`;
+
+		$.ajax({
+			type: "GET",
+			url: `${config.apiRootUrl}/productvariants?store_hash=${bypass_store_hash}&product_id=${product_id}&variant_id=${variant_id}`,
+			success: (data) => {
+				console.log(data);
+
+				const gMasterPrcie = $priceSpan.attr("data-main-price");
+
+				let productPrice = parseFloat(gMasterPrcie).toFixed(2);
+				console.log("price start -------");
+				console.log(productPrice);
+
+				if (data && data.option_list) {
+					const options = data.option_list;
+
+					for (let i = 0; i < pickListArr.length; i++) {
+						const pickedOptionId = pickListArr[i].pickedOptionId;
+						const pickedOptionValue = pickListArr[i].pickedOptionValue;
+						const pickedProductId = pickListArr[i].pickedProductId;
+
+						let showCustomPrice = true;
+
+						for (let j = 0; j < options.length; j++) {
+							const optionId = options[j].option_id;
+							const optionValue = options[j].option_value;
+
+							if (pickedOptionId == optionId && pickedOptionValue == optionValue) {
+								showCustomPrice = false;
+							}
+						}
+
+						if (showCustomPrice) {
+							const pickListProductPrice = gTierPrice[pickedProductId] || 0;
+							productPrice = parseFloat(parseFloat(productPrice) + parseFloat(pickListProductPrice)).toFixed(2);
+							console.log("+" + pickListProductPrice);
+
+						}
+					}
+				}
+
+				console.log(productPrice);
+				console.log("price end -------");
+
+				$priceSpan.text("$" + parseFloat(productPrice).toFixed(2));
+				// for list
+				if ($priceSpan.parents("tr").find(".product-subtotal-span").length > 0) {
+					const qty = $priceSpan.parents("tr").find("input.qty").val();
+					const totlePriceValue = parseFloat(qty * productPrice).toFixed(2);
+					$priceSpan.parents("tr").find(".product-subtotal-span").text("$" + totlePriceValue);
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log("error", JSON.stringify(jqXHR));
+			}
+		});
+	}
+
+
+	// for bundleb2b
+	// for simple products
+	const getTierPriceByProductId = function(productId, qty, cb) {
+		if (!productId) {
+			return;
+		}
+
+		utils.api.product.getById(productId, {
+			template: 'b2b/product-view-data'
+		}, (err, response) => {
+			let tier_price;
+			const base_price = $(response).attr("data-product-priceValue");
+
+			if (catalog_products && catalog_products[productId]) {
+				const variantSkus = catalog_products[productId];
+				const tier_price_array = variantSkus[0].tier_price;
+				const base_price_value = base_price;
+
+				for (let j = 0; j < tier_price_array.length; j++) {
+					const price_type = tier_price_array[j].type;
+					const tier_qty = tier_price_array[j].qty;
+					const price = tier_price_array[j].price;
+
+					if (qty >= tier_qty) {
+						if (price_type == "fixed") {
+							tier_price = price;
+
+						} else {
+
+							if (base_price_value) {
+								tier_price = base_price_value - base_price_value * price / 100;
+							} else {
+								tier_price = new_price;
+							}
+						}
+					}
+				}
+
+				if (tier_price) {
+					tier_price = parseFloat(tier_price).toFixed(2);
+				}
+			} else {
+				tier_price = base_price;
+			}
+
+			gTierPrice[productId] = tier_price;
+
+			if (cb) {
+				cb();
+			}
+		});
+
+	}
+
+	// for simple products
+	const getTierPriceByProductId_multi = function(productIds, qty, cb) {
+		const productId = productIds[productIds.length - 1];
+		if (gTierPrice[productId]) {
+			productIds.pop();
+			if (productIds.length == 0) {
+				if (cb) {
+					cb();
+				}
+			} else {
+				getTierPriceByProductId_multi(productIds, qty, cb);
+			}
+
+		} else {
+			utils.api.product.getById(productId, {
+				template: 'b2b/product-view-data'
+			}, (err, response) => {
+				let tier_price;
+				const base_price = $(response).attr("data-product-priceValue");
+
+				if (catalog_products && catalog_products[productId]) {
+					const variantSkus = catalog_products[productId];
+					const tier_price_array = variantSkus[0].tier_price;
+					const base_price_value = base_price;
+
+					for (let j = 0; j < tier_price_array.length; j++) {
+						const price_type = tier_price_array[j].type;
+						const tier_qty = tier_price_array[j].qty;
+						const price = tier_price_array[j].price;
+
+						if (qty >= tier_qty) {
+							if (price_type == "fixed") {
+								tier_price = price;
+
+							} else {
+
+								if (base_price_value) {
+									tier_price = base_price_value - base_price_value * price / 100;
+								} else {
+									tier_price = new_price;
+								}
+							}
+						}
+					}
+
+					if (tier_price) {
+						tier_price = parseFloat(tier_price).toFixed(2);
+					}
+				} else {
+					tier_price = base_price;
+				}
+
+				gTierPrice[productId] = tier_price;
+
+				productIds.pop();
+				if (productIds.length == 0) {
+					if (cb) {
+						cb();
+					}
+				} else {
+					getTierPriceByProductId_multi(productIds, qty, cb);
+				}
+
+
+			});
+
+		}
+
+
+
+	}
+
+
+	const initProductListOptionPrice = function() {
+		const $form = $('form[data-cart-item-add]');
+		const $pickListOptions = $('.form-field[data-product-attribute="product-list"]');
+		if ($pickListOptions.length > 0) {
+			$.each($pickListOptions, (index, option) => {
+				const $formRadios = $(option).find("input.form-radio");
+				$.each($formRadios, (i, radio) => {
+					const productId = $(radio).attr("data-product-id");
+					console.log(productId);
+					if (!gTierPrice[productId]) {
+						getTierPriceByProductId(productId, 1);
+					}
+
+				});
+
+			});
+		}
+		console.log(gTierPrice);
+	}
+
+	const getMainProductBasePrice = function() {
+		const $price = $("[data-product-price-without-tax]", this.$scope) || $("[data-product-price-with-tax]", this.$scope);
+		const base_price = $price.text().trim();
+		const base_price_symbol = base_price.substring(0, 1);
+		const base_price_value = base_price.replace("$", "");
+		return base_price_value;
+	}
 
 
 

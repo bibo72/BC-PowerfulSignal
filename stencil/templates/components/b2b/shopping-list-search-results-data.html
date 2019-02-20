@@ -1,5 +1,5 @@
 {{#if product_results.products}}
-    {{#each  (limit product_results.products 1)}}
+    {{#each (limit product_results.products 1)}}
 
     <div data-product-id="{{id}}" data-product-name="{{name}}" data-product-image="{{getImage image 'productview_thumb_size' (cdn theme_settings.default_image_product)}}" data-product-price-value="{{#if price.with_tax}}{{price.with_tax.value}}{{/if}}{{#if price.without_tax}}{{price.without_tax.value}}{{/if}}" data-product-price="{{#if price.with_tax}}{{price.with_tax.formatted}}{{/if}}{{#if price.without_tax}}{{price.without_tax.formatted}}{{/if}}" data-product-option="{{has_options}}"></div>
     {{/each}}

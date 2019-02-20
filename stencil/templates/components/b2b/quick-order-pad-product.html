@@ -1,0 +1,13 @@
+<div data-product-priceValue="{{product.price.without_tax.value}}{{product.price.with_tax.value}}" {{#if product.options}}has-options="true"{{/if}}>
+	<div class="productInfo-name">{{product.title}}</div>
+	<div class="productInfo-price"><span data-price>{{product.price.without_tax.formatted}}{{product.price.with_tax.formatted}}</span></div>
+	{{#any product.options type='Configurable_Entry_Text'}}
+	<div class="productInfo-options">
+		{{#each product.options}}
+		{{#if type '===' 'Configurable_Entry_Text'}}
+		{{{dynamicComponent 'components/products/options'}}}
+		{{/if}}
+		{{/each}}
+	</div>
+	{{/any}}
+</div>

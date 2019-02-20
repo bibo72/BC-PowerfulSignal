@@ -5,3 +5,55 @@ $fonts: $fontFamily-sans $fontFamily-serif $fontFamily-mono $fontFamily-headings
 @if contains($fonts, "'Clear Sans', sans-serif") {
     @include clear-sans;
 }
+
+@font-face {
+    font-family: "fontawesome";
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/fontawesome/fa-regular-400.eot');
+    src: url('../fonts/fontawesome/fa-regular-400.eot?#iefix') format("embedded-opentype"), 
+    url('../fonts/fontawesome/fa-regular-400.woff2') format("woff2"), 
+    url('../fonts/fontawesome/fa-regular-400.woff') format("woff"), 
+    url('../fonts/fontawesome/fa-regular-400.ttf') format("truetype"), 
+    url('../fonts/fontawesome/fa-regular-400.svg#fontawesome') format("svg")
+}
+@font-face {
+    font-family: "fontawesome";
+    font-style: normal;
+    font-weight: 900;
+    src: url('../fonts/fontawesome/fa-solid-900.eot');
+    src: url('../fonts/fontawesome/fa-solid-900.eot?#iefix') format("embedded-opentype"), 
+    url('../fonts/fontawesome/fa-solid-900.woff2') format("woff2"), 
+    url('../fonts/fontawesome/fa-solid-900.woff') format("woff"), 
+    url('../fonts/fontawesome/fa-solid-900.ttf') format("truetype"), 
+    url('../fonts/fontawesome/fa-solid-900.svg#fontawesome') format("svg")
+}
+
+.fa {
+    font-family: "fontawesome";
+    font-style: normal;
+    font-size: inherit;
+    font-weight: 900
+}
+
+.fa-delete:before {
+    content: "\f2ed";
+}
+.fa-edit:before {
+    content: "\f303";
+}
+.fa-search:before {
+    content: "\f002";
+}
+.fa-sync-alt:before {
+    content: "\f2f1";
+}
+.fa-chevron-up:before {
+    content: "\f077";
+}
+.fa-chevron-down:before {
+    content: "\f078";
+}
+.fa-exclamation-triangle:before {
+    content: "\f071";
+}

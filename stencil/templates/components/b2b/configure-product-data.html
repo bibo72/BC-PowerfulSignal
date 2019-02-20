@@ -1,0 +1,12 @@
+<ul data-product-options="{{#if options}}{{#each options}}
+    {{#if partial '===' 'product-list'}}{{id}}
+    {{#each values}}
+    {{#if selected}}
+    {{../../id}}-{{data}}
+    {{/if}}
+    {{/each}}
+    
+    {{/if}}
+{{/each}}{{/if}}"></ul>
+
+

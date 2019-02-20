@@ -1,0 +1,39 @@
+
+    <tr data-product-id="{{product.id}}" class="optionView">
+        <td class="col-checkbox"><input type="checkbox" data-results-check-box data-product-id="{{product.id}}"></td>
+        <td class="col-product-figure"><img src="{{#if product.main_image}}{{getImage product.main_image 'shopping_list_size' (cdn theme_settings.default_image_product)}}{{/if}}" alt="{{product.image.alt}}" title="{{product.image.alt}}"></td>
+        <td class="col-product-info">{{product.title}}
+        	<div class="product-options">
+        	    <span data-product-sku>{{#if product.sku}}<b>SKU:</b> {{product.sku}}{{/if}}</span>
+            <form class="form option-form" method="post" action="{{product.cart_url}}" enctype="multipart/form-data" data-option-form>
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="product_id" value="{{product.id}}"/>
+                    
+                <div data-product-option-change>
+                    {{#each product.options}}
+                        {{{dynamicComponent 'components/products/options'}}}
+                    {{/each}}
+                </div>
+                
+                {{#if product.out_of_stock}}
+                    {{#if product.out_of_stock_message}}
+                        {{> components/common/alert-error product.out_of_stock_message}}
+                    {{else}}
+                        {{> components/common/alert-error (lang 'products.sold_out')}}
+                    {{/if}}
+                {{/if}}
+            </form>
+            <div class="alertMessageBox" hidden>
+                    {{> components/common/alert-info}}
+                </div>
+            
+            
+
+        </div></td>
+        <td class="col-product-price" data-product-price data-product-price-value="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{/if}}{{#if product.price.without_tax}}{{product.price.without_tax.value}}{{/if}}">{{#if product.price.with_tax}}{{product.price.with_tax.formatted}}{{/if}}{{#if product.price.without_tax}}{{product.price.without_tax.formatted}}{{/if}}</td>
+        {{!#if multi}}
+        <td class="product-qty-col"><input class="form-input" type="text" id="product_qty_id" name="product_qty_id"></td>
+        {{!/if}}
+    </tr>
+
+

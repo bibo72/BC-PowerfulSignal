@@ -2,29 +2,32 @@ import config from './config';
 import swal from 'sweetalert2';
 
 export default function(customer) {
-	//store hash
+	// store hash
 	const bypass_store_hash = `${config.storeHash}`;
-	//login user
-	//const bypass_email = "bibo72@outlook.com";
+	// logged in user
 	const bypass_email = customer.email;
-	let bypass_company_id;
 	const bypass_customer_id = customer.id;
 
+	// list status obj
 	const gListStatus = {
 		"0": "Approved",
 		"20": "Deleted",
 		"30": "Draft",
 		"40": "Ready for Approval",
 	};
-	let gRoleId = "";
-	const $overlay = $("#b2b_loading_overlay");
 
-	//const $shoppingListForm = ;
+	// user role id
+	let gRoleId = "";
+	// user conpamy id
+	let bypass_company_id;
+
+	// define jquery dom $ele
+	const $overlay = $("#b2b_loading_overlay");
 	const $newShoppingListModal = $("#modal-shopping-list-new-form");
 	const $shoppingListsTable = $("#shopping_lists_table");
 
 
-	//status switch
+	// list status switch
 	const $statusSwitchBtn = $("[filter-status]");
 	$statusSwitchBtn.on("click", function(event) {
 		event.preventDefault();
@@ -47,6 +50,7 @@ export default function(customer) {
 		$shoppingListsTable.find("tbody").html("");
 		$overlay.show();
 
+		// table head
 		if (gRoleId == "1" || gRoleId == "2" || gRoleId == "10") {
 			$shoppingListsTable.find("thead").html(`<tr>
 		    		    <th>Name &amp; Description</th>
@@ -83,6 +87,10 @@ export default function(customer) {
 							let latestDate = listData.created_date;
 							let createBy = "";
 							let comment = "";
+							let isOwn = false;
+							if (listData.customer_id == bypass_customer_id) {
+								isOwn = true;
+							}
 
 							if (listData.description) {
 								comment = listData.description;
@@ -116,6 +124,16 @@ export default function(customer) {
 							let tr;
 							let ths;
 
+							let deleteBtn = "";
+							// own list(for all user) and not the ready for approval status(for junior buyer)
+							const notReadyForApproval = (listData.status != "40");
+							const notJuniorApproval = !(gRoleId == "0" && listData.status != "30");
+							if (isOwn && notReadyForApproval && notJuniorApproval) {
+								deleteBtn = `<a class="button button--small" href="javascript:void(0);" data-delete-list data-list-id="${listData.id}">Delete</a>`;
+							} else {
+								deleteBtn = `<a class="button button--small" href="javascript:void(0);" disabled>Delete</a>`;
+							}
+
 							if (gRoleId == 1 || gRoleId == 2 || gRoleId == 10) {
 								if (listData.status != "30") {
 									tr = `<tr data-status="${listData.status}" data-list="${JSON.stringify(listsData[i])}">
@@ -127,7 +145,7 @@ export default function(customer) {
 				    			<td class="t-align-r"><span class="mobile-td-lable">Items:</span>${listItemNum}</td>
 				    			<td><span class="mobile-td-lable">Latest Activity:</span>${latestDate}</td>
 				    			<td><span class="mobile-td-lable">Status:</span>${gListStatus[listData.status] ||""}</td>
-				    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?list_id=${listData.id}">View</a></td>
+				    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?list_id=${listData.id}">View</a>${deleteBtn}</td>
 				    		</tr>`;
 								}
 
@@ -140,7 +158,7 @@ export default function(customer) {
 				    			<td class="t-align-r"><span class="mobile-td-lable">Items:</span>${listItemNum}</td>
 				    			<td><span class="mobile-td-lable">Latest Activity:</span>${latestDate}</td>
 				    			<td><span class="mobile-td-lable">Status:</span>${gListStatus[listData.status] || ""}</td>
-				    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?list_id=${listData.id}">View</a></td>
+				    			<td class="t-align-r actions-field"><a class="button button--primary button--small" href="/shopping-list/?list_id=${listData.id}">View</a>${deleteBtn}</td>
 				    		</tr>`;
 
 							}
@@ -250,6 +268,36 @@ export default function(customer) {
 			}
 		});
 
+	});
+
+	// delete shopping list
+	$("body").on('click', '[data-delete-list]', function() {
+		if (confirm("Are you sure you want to delete this shopping list?") == false) {
+			return;
+		}
+
+		$overlay.show();
+		const listID = $(this).attr("data-list-id");
+
+		$.ajax({
+			type: "DELETE",
+			url: `${config.apiRootUrl}/requisitionlist?id=${listID}&customer_id=${bypass_customer_id}`,
+			success: function(data) {
+				console.log("delete list", data);
+				$overlay.hide();
+				swal({
+					text: "The list has been removed successfully.",
+					type: 'success',
+				});
+
+				//window.location.href = "/shopping-lists/";
+				load_table();
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$overlay.hide();
+				console.log("error", JSON.stringify(jqXHR));
+			}
+		});
 	});
 
 }
