@@ -30,28 +30,28 @@ export default function(customer) {
 			const result = val.length;
 			cb(result);
 		},
-		errorMessage: "This field can't be null.",
+		errorMessage: "This field can't be empty.",
 	}, {
-		selector: `${companyFormSelector} input[name="company_user_firstName"]`,
+		selector: `${companyFormSelector} input[name="company_business_type"]`,
 		validate: (cb, val) => {
 			const result = val.length;
 			cb(result);
 		},
-		errorMessage: "This field can't be null.",
+		errorMessage: "This field can't be empty.",
 	}, {
-		selector: `${companyFormSelector} input[name="company_user_lastName"]`,
+		selector: `${companyFormSelector} input[name="company_website"]`,
 		validate: (cb, val) => {
 			const result = val.length;
 			cb(result);
 		},
-		errorMessage: "This field can't be null.",
+		errorMessage: "This field can't be empty.",
 	}, {
 		selector: `${companyFormSelector} input[name="company_user_phone"]`,
 		validate: (cb, val) => {
 			const result = val.length;
 			cb(result);
 		},
-		errorMessage: "This field can't be null.",
+		errorMessage: "This field can't be empty.",
 	}, {
 		selector: `${companyFormSelector} input[name="company_user_email"]`,
 		validate: (cb, val) => {
@@ -59,6 +59,41 @@ export default function(customer) {
 			cb(result);
 		},
 		errorMessage: "Please enter a valid email.",
+	}, {
+		selector: `${companyFormSelector} input[name="company_address_street"]`,
+		validate: (cb, val) => {
+			const result = val.length;
+			cb(result);
+		},
+		errorMessage: "This field can't be empty.",
+	}, {
+		selector: `${companyFormSelector} input[name="company_address_city"]`,
+		validate: (cb, val) => {
+			const result = val.length;
+			cb(result);
+		},
+		errorMessage: "This field can't be empty.",
+	}, {
+		selector: `${companyFormSelector} input[name="company_address_state"]`,
+		validate: (cb, val) => {
+			const result = val.length;
+			cb(result);
+		},
+		errorMessage: "This field can't be empty.",
+	}, {
+		selector: `${companyFormSelector} input[name="company_address_zip"]`,
+		validate: (cb, val) => {
+			const result = val.length;
+			cb(result);
+		},
+		errorMessage: "This field can't be empty.",
+	}, {
+		selector: `${companyFormSelector} input[name="company_tax_id_number"]`,
+		validate: (cb, val) => {
+			const result = val.length;
+			cb(result);
+		},
+		errorMessage: "This field can't be empty.",
 	}]);
 
 	$companyForm.on("submit", (event) => {
@@ -79,8 +114,8 @@ export default function(customer) {
 			const company_address_state = $("#company_address_state", $companyForm).val();
 			const company_address_zip = $("#company_address_zip", $companyForm).val();
 			//const company_tax_id = $("#company_tax_id", $companyForm).val();
-			const company_user_firstName = $("#company_user_firstName", $companyForm).val();
-			const company_user_lastName = $("#company_user_lastName", $companyForm).val();
+			//const company_user_firstName = $("#company_user_firstName", $companyForm).val();
+			//const company_user_lastName = $("#company_user_lastName", $companyForm).val();
 			const company_user_phone = $("#company_user_phone", $companyForm).val();
 			const company_user_email = $("#company_user_email", $companyForm).val();
 
@@ -106,10 +141,10 @@ export default function(customer) {
 					"id": company_id,
 					"store_hash": bypass_store_hash,
 					"company_name": company_name,
-					"manager_info": {
+					/*"manager_info": {
 						"first_name": company_user_firstName,
 						"last_name": company_user_lastName
-					},
+					},*/
 					"customers": [{
 						"role": company_customer_role,
 						"id": company_customer_id
@@ -180,10 +215,10 @@ export default function(customer) {
 				const postData = {
 					"store_hash": bypass_store_hash,
 					"company_name": company_name,
-					"manager_info": {
+					/*"manager_info": {
 						"first_name": company_user_firstName,
 						"last_name": company_user_lastName
-					},
+					},*/
 					"city": company_address_city,
 					"zip_code": company_address_zip,
 					"address": company_address_street,
@@ -287,12 +322,12 @@ export default function(customer) {
 					/*if (data.tax_no) {
 						$("#company_tax_id", $companyForm).val(data.tax_no);
 					}*/
-					if (data.manager_info && data.manager_info.first_name) {
+					/*if (data.manager_info && data.manager_info.first_name) {
 						$("#company_user_firstName", $companyForm).val(data.manager_info.first_name);
 					}
 					if (data.manager_info && data.manager_info.last_name) {
 						$("#company_user_lastName", $companyForm).val(data.manager_info.last_name);
-					}
+					}*/
 					if (data.phone) {
 						$("#company_user_phone", $companyForm).val(data.phone);
 					}
