@@ -371,13 +371,19 @@ export default function() {
         $(this).slick('slickGoTo', 0);
       });
 
+      $("[b2b-list-add-cart-btn]").each(function() {
+        const product_url = $(this).attr("data-product-url");
+        $(this).attr("href", product_url).text("View Detail");
+      });
+
       //product Gallery, for listing page
       const $productGallery = $("[b2b-products-gallery]");
       $productGallery.each(function() {
         const catalogProductCount = $(this).find("[catalog-product]").length;
         if (catalogProductCount == 0) {
-          $("[catalog-listing-wrap]").show();
-          $(this).parents(".page").html("We can't find products matching the selection.");
+          //$("[catalog-listing-wrap]").show();
+          $("[catalog-listing-wrap]").remove();
+          //$(this).parents(".page").html("We can't find products matching the selection.");
         } else {
           $("[catalog-listing-wrap]").show();
           const $catalogProductCounter = $("[data-catalog-product-counter]");

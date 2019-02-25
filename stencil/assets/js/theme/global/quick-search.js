@@ -90,8 +90,8 @@ export default function() {
         return true;
     });
     const handleCatalogProducts = function() {
-        if (sessionStorage.getItem("catalog_products")) {
-            const catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
+        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+            const catalog_products = JSON.parse(sessionStorage.getItem("catalog_products") || "[]");
             const products = $(".quickSearchResults .product");
 
             for (var product_id in catalog_products) {

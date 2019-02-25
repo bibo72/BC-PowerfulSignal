@@ -74,6 +74,7 @@ export default class Search extends CatalogPage {
         } else {
             this.onSortBySubmit = this.onSortBySubmit.bind(this);
             hooks.on('sortBy-submitted', this.onSortBySubmit);
+            this.handleCatalogProducts();
         }
 
         // Init collapsibles
@@ -127,12 +128,18 @@ export default class Search extends CatalogPage {
 
         if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
             $(".body").addClass("b2b-products");
+
+            $("[b2b-list-add-cart-btn]").each(function() {
+                const product_url = $(this).attr("data-product-url");
+                $(this).attr("href", product_url).text("View Detail");
+            });
         } else {
             $(".navList-item .product-count").show();
         }
         /*if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") == "none") {
             $(".navList-item .product-count").show();
         }*/
+
     }
 
     loadTreeNodes(node, cb) {
@@ -248,7 +255,7 @@ export default class Search extends CatalogPage {
         return false;
     }
     handleCatalogProducts() {
-        const catalog_products = JSON.parse(sessionStorage.getItem("catalog_products"));
+        const catalog_products = JSON.parse(sessionStorage.getItem("catalog_products") || "[]");
         const products = $(".product");
         for (var product_id in catalog_products) {
             const productSelector = `[catalog-product-${product_id}]`;
@@ -274,15 +281,13 @@ export default class Search extends CatalogPage {
             $productGallery.find(".product[catalog-product='true']").show();
 
             const catalogProductCount = $(this).find("[catalog-product]").length;
+            $("[catalog-listing-wrap]").show();
             if (catalogProductCount == 0) {
-                $("[catalog-listing-wrap]").show();
                 $(this).parents(".page").html("We can't find products matching the selection.");
-            } else {
-                $("[catalog-listing-wrap]").show();
-                const $catalogProductCounter = $("[data-catalog-product-counter]");
-                if ($catalogProductCounter.length > 0) {
-                    $catalogProductCounter.text(catalogProductCount);
-                }
+            }
+            const $catalogProductCounter = $("[data-catalog-product-counter]");
+            if ($catalogProductCounter.length > 0) {
+                $catalogProductCounter.text(catalogProductCount);
             }
         });
     }
