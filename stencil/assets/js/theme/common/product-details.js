@@ -39,9 +39,11 @@ export default class ProductDetails {
         this.gTierPrice = {};
         this.gMasterPrcie;
         this.gPriceSymbol = "$";
+        this.bypass_company_id;
+        this.gRoleId;
 
 
-        if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
+        if ((sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none")) {
 
             const $product_sku = $("[data-product-sku]", $scope);
             if ($product_sku.length > 0) {
@@ -68,6 +70,9 @@ export default class ProductDetails {
             if (bundleb2b_user.role_id == "0") {
                 $(".button.add-to-cart").remove();
             }
+
+            this.gRoleId = bundleb2b_user.role_id;
+            this.bypass_company_id = bundleb2b_user.company_id;
 
             this.getLists();
 
@@ -247,6 +252,7 @@ export default class ProductDetails {
 
     //for bundleb2b
     getLists() {
+        debugger
         const bypass_store_hash = `${config.storeHash}`;
         const bypass_email = this.context.customer.email;
         const bypass_customer_id = this.context.customer.id;
@@ -258,9 +264,11 @@ export default class ProductDetails {
 
         }
 
+        this.$shoppinglistContainer.show();
+
         this.$shoppinglistContainer.find(">.button").addClass("loading disabled").attr("disabled", true);
 
-        $.ajax({
+        /*$.ajax({
             type: "GET",
             url: `${config.apiRootUrl}/company?store_hash=${bypass_store_hash}&customer_id=${bypass_customer_id}`,
             success: (data) => {
@@ -280,49 +288,66 @@ export default class ProductDetails {
                         this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
                         return;
                     }
+                    debugger
 
-                    this.$shoppinglistContainer.show();
+                    this.$shoppinglistContainer.show();*/
 
-                    $.ajax({
-                        type: "GET",
-                        url: `${config.apiRootUrl}/requisitionlist?store_hash=${bypass_store_hash}&company_id=${bypass_company_id}&customer_id=${bypass_customer_id}`,
-                        success: (data) => {
-                            console.log(data);
-                            const $shoppinglistDropdown = this.$shoppinglistContainer.find("#shoppinglist-dropdown");
+        $.ajax({
+            type: "GET",
+            url: `${config.apiRootUrl}/requisitionlist?store_hash=${bypass_store_hash}&company_id=${this.bypass_company_id}&customer_id=${bypass_customer_id}`,
+            success: (data) => {
+                console.log(data);
+                const $shoppinglistDropdown = this.$shoppinglistContainer.find("#shoppinglist-dropdown");
 
-                            if (data) {
-                                if (data.length > 0) {
-                                    const listsData = data;
-                                    for (let i = 0; i < listsData.length; i++) {
-                                        const listData = listsData[i];
-                                        if (gRoleId == 0 && listData.status == "30") {
-                                            $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
-                                        }
-                                        if (gRoleId != 0 && listData.status == "0") {
-                                            $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
-
-                                        }
-
-
-                                    }
-
+                if (data) {
+                    if (data.length > 0) {
+                        const listsData = data;
+                        for (let i = 0; i < listsData.length; i++) {
+                            const listData = listsData[i];
+                            /*if (this.gRoleId == 0 && listData.status == "30") {
+                                $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                            }
+                            if (this.gRoleId != 0 && listData.status == "0") {
+                                $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                            }*/
+                            if (this.gRoleId == 0) {
+                                // junior buyer
+                                if (listData.status == "30") {
+                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
                                 }
 
-                                $shoppinglistDropdown.append(`<li data-list-id><a href="/shopping-lists/" class="button">Create a new list</a></li>`);
-                                //this.$overlay_product.hide();
-                                this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
+                            } else if (this.gRoleId == 10) {
+                                // salerep
+                                if (listData.status == "0" && listData.customer_id == bypass_customer_id) {
+                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                                }
+                            } else if (this.gRoleId == 1 || this.gRoleId == 2) {
+                                // admin and Senior buyer
+                                if (listData.status == "0") {
+                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                                }
                             }
 
-                        },
-                        error: (jqXHR, textStatus, errorThrown) => {
-                            //this.$overlay_product.hide();
-                            this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
-                            console.log(JSON.stringify(jqXHR));
+
                         }
-                    });
+
+                    }
+
+                    $shoppinglistDropdown.append(`<li data-list-id><a href="/shopping-lists/" class="button">Create a new list</a></li>`);
+                    //this.$overlay_product.hide();
+                    this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
+                }
+
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                //this.$overlay_product.hide();
+                this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
+                console.log(JSON.stringify(jqXHR));
+            }
+        });
 
 
-                } else {
+        /*} else {
                     this.$wishlistContainer.show();
                     //this.$overlay_product.hide();
                     this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
@@ -333,7 +358,7 @@ export default class ProductDetails {
                 this.$shoppinglistContainer.find(">.button").removeClass("disabled loading").removeAttr("disabled");
                 console.log(JSON.stringify(jqXHR));
             }
-        });
+        });*/
 
 
 
