@@ -41,6 +41,8 @@ export default function(customer) {
 	const $accountCompany = $accountForm.find('input#account_companyname').parents(".form-field");
 	const $accountPassword = $accountForm.find('[data-field-type="Password"]').parents(".form-field");
 
+	const $accountBilling = $accountForm.find('[data-label="Billing Phone Number"]').parents(".form-field");
+
 	if ($accountPhone.length > 0) {
 		$accountPhone.addClass("form-field--right");
 	}
@@ -51,6 +53,8 @@ export default function(customer) {
 		$('<div class="form-field b2b-account-form-heading" >Password Reset</div>').insertBefore($accountPassword);
 	}
 	if ($accountEmail.length > 0) {
+		$accountBilling.insertAfter($accountEmail);
+
 		$(`<div class="form-field form-field--input form-field--inputText">
                 <label class="form-label">
                     Company Name

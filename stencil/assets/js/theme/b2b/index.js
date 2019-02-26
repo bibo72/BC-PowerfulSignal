@@ -11,9 +11,12 @@ import companyRegistry2 from './company-register2';
 import quickOrderPad from './quick-order-pad';
 import accountSetting from './account-setting';
 import config from './config';
+import swal from 'sweetalert2';
 
 export default function() {
   const accountSettingUrl = this.context.urls.account.details;
+  const gPartnerLink = "/become-a-partner/";
+  const gPartnerName = "Become a Partner";
 
   //hide wishlist and account settings when user belongs to a company
   function hideWishlist() {
@@ -136,7 +139,7 @@ export default function() {
             if (company_status == "PENDING" || company_status == "REJECTED") {
               nonB2bLoginedinUser();
               $(".navUser-section").prepend(`<li class="navUser-item">
-                  <a class="navUser-action" href="/trade-professional-application/">Trade Professional Application</a>
+                  <a class="navUser-action" href="${gPartnerLink}">${gPartnerName}</a>
               </li>`);
             } else {
               // data and logic entrance
@@ -166,8 +169,9 @@ export default function() {
                     displayWishlist();
                     nonB2bLoginedinUser();
                     $(".navUser-section").prepend(`<li class="navUser-item">
-                      <a class="navUser-action" href="/trade-professional-application/">Trade Professional Application</a>
+                      <a class="navUser-action" href="${gPartnerLink}">${gPartnerName}</a>
                   </li>`);
+
                   }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -235,6 +239,9 @@ export default function() {
       handleCatalogProducts();
       initCompanyMessage();
       goToPage();
+
+      // if b2b user, remove become a partner link under about us
+      $(`.navPage-subMenu-action[href*="${gPartnerLink}"]`).parents("li.navPage-subMenu-item-child").remove();
 
 
       $(".snize-ac-results").addClass("b2b-hidden");
@@ -618,7 +625,15 @@ export default function() {
     }
     //company register form 2
     if (page_templete == 'pages/custom/page/company-register2') {
-      window.location = this.context.urls.auth.login;
+      $(".company-form-wrap2").empty();
+      return swal({
+        allowOutsideClick: false,
+        type: "info",
+        text: 'Please login first.'
+      }).then(() => {
+        window.location = this.context.urls.auth.login;
+      });
+
     }
 
     //salesrep page
