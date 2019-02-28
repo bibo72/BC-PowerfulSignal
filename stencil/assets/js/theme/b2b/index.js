@@ -629,7 +629,8 @@ export default function() {
       return swal({
         allowOutsideClick: false,
         type: "info",
-        text: 'Please login first.'
+        text: 'To become a partner, please sign in to your account.',
+        confirmButtonText: 'Sign in'
       }).then(() => {
         window.location = this.context.urls.auth.login;
       });

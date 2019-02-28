@@ -191,7 +191,7 @@ export default function(customer) {
 									swal({
 										allowOutsideClick: false,
 										type: 'success',
-										text: "Your application has been resubmitted successfully. \nPlease waiting for approval.",
+										text: "Please wait at least 24 hours for approval. Expect a verification email in your inbox.",
 										showCancelButton: false,
 									}).then(() => {
 										window.location.reload();
@@ -243,7 +243,7 @@ export default function(customer) {
 						swal({
 							allowOutsideClick: false,
 							type: 'success',
-							text: "Your application has been submitted successfully. \nPlease waiting for approval.",
+							text: "Please wait at least 24 hours for approval. Expect a verification email in your inbox.",
 							showCancelButton: false,
 						}).then(() => {
 							window.location.reload();
