@@ -74,7 +74,6 @@ export default class Search extends CatalogPage {
         } else {
             this.onSortBySubmit = this.onSortBySubmit.bind(this);
             hooks.on('sortBy-submitted', this.onSortBySubmit);
-            this.handleCatalogProducts();
         }
 
         // Init collapsibles
@@ -133,6 +132,8 @@ export default class Search extends CatalogPage {
                 const product_url = $(this).attr("data-product-url");
                 $(this).attr("href", product_url).text("View Detail");
             });
+
+            this.handleCatalogProducts();
         } else {
             $(".navList-item .product-count").show();
         }
@@ -217,8 +218,13 @@ export default class Search extends CatalogPage {
 
             this.handleCatalogProducts();
             if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") == "none") {
+                //for b2b user
+                this.handleCatalogProducts();
+            } else {
+                //for non b2b user
                 $(".navList-item .product-count").show();
             }
+
             $('html, body').animate({
                 scrollTop: 0,
             }, 100);
