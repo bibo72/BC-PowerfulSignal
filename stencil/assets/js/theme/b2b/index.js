@@ -481,7 +481,7 @@ export default function() {
         console.log("enter lists all");
 
         if (this.context.customer && this.context.customer != null) {
-          orderLists(this.context.customer);
+          orderLists(this.context);
         } else {
           window.location = this.context.urls.auth.login;
         }
@@ -495,7 +495,7 @@ export default function() {
       // b2b order list
       if (pageUrl.indexOf("/account.php?action=order_status") != -1) {
         if (this.context.customer && this.context.customer != null) {
-          orderLists(this.context.customer);
+          orderLists(this.context);
         } else {
           window.location = this.context.urls.auth.login;
         }
@@ -503,7 +503,7 @@ export default function() {
 
       if (page_templete == 'pages/custom/page/order-detail') {
         if (this.context.customer && this.context.customer != null) {
-          orderDetails(this.context.customer);
+          orderDetails(this.context);
         } else {
           window.location = this.context.urls.auth.login;
         }

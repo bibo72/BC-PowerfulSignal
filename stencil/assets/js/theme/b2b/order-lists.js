@@ -10,7 +10,12 @@ import {
 import './tools/jquery-ui.min.js';
 import './tools/jqPaginator.js';
 
-export default function(customer) {
+export default function(context) {
+
+	const customer = context.customer;
+	const store_settings = context.b2bSettings;
+	const store_time_zone = store_settings.store_time_zone;
+	const store_currency_token = store_settings.money.currency_token;
 
 	console.log("order lists page");
 	//store hash
@@ -112,17 +117,17 @@ export default function(customer) {
 		}
 
 
-		let defaultStartDate = new Date();
-		let defaultEndDate = new Date();
-		let startMinDate = new Date();
+		let defaultStartDate = getStoreZoneDate();
+		let defaultEndDate = getStoreZoneDate();
+		let startMinDate = getStoreZoneDate();
 		defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
-		startMinDate.setMonth(startMinDate.getMonth() - 2);
+		startMinDate.setMonth(startMinDate.getMonth() - 12);
 
 
 		var start = $("#orderFromDate");
 		var end = $("#orderToDate");
 		start.datepicker({
-			maxDate: 0,
+			maxDate: defaultEndDate,
 			//minDate: startMinDate,
 			onSelect: function(selected) {
 				var dtMax = new Date(selected);
@@ -130,9 +135,9 @@ export default function(customer) {
 				var dtMaxDate = getDateDay(dtMax);
 				var dtMinDate = getDateDay(dtMin);
 				dtMin.setDate(dtMin.getDate());
-				dtMax.setMonth(dtMax.getMonth() + 2);
+				dtMax.setMonth(dtMax.getMonth() + 12);
 
-				var now = new Date();
+				var now = getStoreZoneDate();
 				var now_date = getDateDay(now);
 				var date_n = new Date(now_date);
 
@@ -161,17 +166,17 @@ export default function(customer) {
 		start.datepicker('setDate', defaultStartDate);
 
 		end.datepicker({
-			maxDate: 0,
+			maxDate: defaultEndDate,
 			minDate: defaultStartDate,
 			onSelect: function(selected) {
 				var dtMax = new Date(selected);
 				var dtMin = new Date(selected);
 				var dtMaxDate = getDateDay(dtMax);
 				var dtMinDate = getDateDay(dtMin);
-				dtMin.setMonth(dtMax.getMonth() - 2);
+				dtMin.setMonth(dtMax.getMonth() - 12);
 				dtMax.setMonth(dtMax.getMonth());
 
-				var now = new Date();
+				var now = getStoreZoneDate();
 				var now_date = getDateDay(now);
 				var date_n = new Date(now_date);
 
@@ -199,6 +204,96 @@ export default function(customer) {
 		});
 		end.datepicker('setDate', defaultEndDate);
 	};
+
+	// get utc time
+	const getGMTDate = function() {
+		// local date
+		const localDate = new Date();
+		const localTime = localDate.getTime();
+		// local offset
+		const localOffset = localDate.getTimezoneOffset() * 60000;
+		// 8*60*60*1000
+		// UTC Time
+		const utcTime = localTime + localOffset;
+
+		// store setting date
+		const utcDate = new Date(utcTime);
+		return utcDate;
+	}
+
+	// for init date picker, new Date()
+	const getStoreZoneDate = function(date) {
+		// local date
+		const localDate = date || new Date();
+		const localTime = localDate.getTime();
+		// local offset
+		const localOffset = localDate.getTimezoneOffset() * 60000;
+		// 8*60*60*1000
+		// UTC Time
+		const utcTime = localTime + localOffset;
+		// store setting time zone
+		const time_zone = store_time_zone;
+		// store setting time
+		const zonetime = utcTime + (3600000 * time_zone);
+		// store setting date
+		const zoneDate = new Date(zonetime);
+		return zoneDate;
+	}
+
+	// for date picker search
+	// date - 03/06/2019 - mm/dd/yyyy
+	const getUtcTime = function(date) {
+		const dateArr = date.split("/");
+		const localDate = getStoreZoneDate();
+		localDate.setFullYear(dateArr[2]);
+		localDate.setMonth(parseInt(dateArr[0]) - 1);
+		localDate.setDate(dateArr[1]);
+
+		// store setting time zone
+		const time_zone = store_time_zone;
+		const localTime = localDate.getTime();
+		const offset = time_zone * 3600000;
+		const utcTime = localTime - offset;
+
+		const utcDate = new Date(utcTime);
+		const utcDate_month = utcDate.getMonth() + 1;
+		const utcDateString = utcDate.getFullYear() + "-" + utcDate_month + "-" + utcDate.getDate();
+		return utcDateString;
+	}
+
+	const getFormatDate = function(date, split) {
+		let formatDate = "";
+		const year = date.getFullYear();
+		let month = date.getMonth() + 1;
+		month = month > 9 ? month : "0" + month;
+		let day = date.getDate() > 9 ? date.getDate() : "0" + date.getDate();
+
+		if (split === "/") {
+			formatDate = `${month}/${day}/${year}`;
+		} else {
+			formatDate = `${year}-${month}-${day}`;
+		}
+		return formatDate;
+	}
+
+
+	const getStoreSettingTimeByUtc = function(date) {
+		const dateArr = date.split("/"); //03/06/2019 - mm/dd/yyyy
+		const localDate = new Date();
+		localDate.setFullYear(dateArr[2]);
+		localDate.setMonth(dateArr[0]);
+		localDate.setDate(dateArr[1]);
+
+		const len = localDate.getTime();
+		const offset = localDate.getTimezoneOffset() * 60000;
+		const utcTime = len + offset;
+
+		//store_time_zone*3600000
+
+		const utcDate = new Date(utcTime + store_time_zone * 3600000);
+		const utcDateString = utcDate.getMonth() + "/" + utcDate.getDate() + "/" + utcDate.getFullYear();
+		return utcDateString;
+	}
 
 	const getProductsInfo = function() {
 		const $trs = $(".order-lists-table tbody tr");
@@ -308,14 +403,13 @@ export default function(customer) {
 
 			//"date_modified": "Wed, 19 Dec 2018 06:22:19 +0000"
 			//"date_created": "2018-12-19 06:22:19"
-			//const order_created_date = new Date(order.date_created);
-			const order_created_date = order.date_created;
-			const order_created_date_arr = order_created_date.split(" ");
-			const order_modified_date = new Date(order.date_modified);
-			const order_created_date_arr2 = order_created_date_arr[0].split("-");
-			//const order_created_date_formatted = `${order_created_date.getUTCMonth() + 1}/${order_created_date.getUTCDate()}/${order_created_date.getUTCFullYear()}`;
-			const order_created_date_formatted = `${order_created_date_arr2[1]}/${order_created_date_arr2[2]}/${order_created_date_arr2[0]}`;
-			const order_modified_date_formatted = `${order_modified_date.getUTCMonth() + 1}/${order_modified_date.getUTCDate()}/${order_modified_date.getUTCFullYear()}`;
+			let order_created_date_utc = order.date_created + " +0000";
+			order_created_date_utc = order_created_date_utc.replace(/-/g, "/");
+			const order_created_date = getStoreZoneDate(new Date(order_created_date_utc));
+			const order_created_date_formatted = getFormatDate(order_created_date, "/");
+
+			const order_modified_date = getStoreZoneDate(new Date(order.date_modified));
+			const order_modified_date_formatted = getFormatDate(order_modified_date, "/");
 
 
 			let createdBy_first_name = "";
@@ -470,15 +564,18 @@ export default function(customer) {
 		var $start = $("#orderFromDate");
 		var $end = $("#orderToDate");
 		if ($start.length && $end.length && $start.val() && $end.val()) {
-			const startDateArr = $start.val().split("/"); //12/02/2018
+			/*const startDateArr = $start.val().split("/"); //12/02/2018
 			const startDate = `${startDateArr[2]}-${startDateArr[0]}-${startDateArr[1]}`; //2018-12-02
 
 			const endDateArr = $end.val().split("/"); //12/02/2018
 			const endDate = `${endDateArr[2]}-${endDateArr[0]}-${endDateArr[1]}`; //2018-12-02
 
-			url += `&begin_date=${startDate.trim()}&end_date=${endDate.trim()}`;
+			url += `&begin_date=${startDate.trim()}&end_date=${endDate.trim()}`;*/
 			//url += `&begin_date=2018-12-01&end_date=2018-12-19`;
 
+			const utcStartDate = getUtcTime($start.val());
+			const utcEndDate = getUtcTime($end.val());
+			url += `&begin_date=${utcStartDate.trim()}&end_date=${utcEndDate.trim()}`;
 		}
 
 		$.ajax({

@@ -8,11 +8,16 @@ import {
 	defaultModal
 } from '../global/modal';
 
-export default function(customer) {
+export default function(context) {
+	const customer = context.customer;
+	const store_settings = context.b2bSettings;
+	const store_time_zone = store_settings.store_time_zone;
+	const store_currency_token = store_settings.money.currency_token;
+
 	const url = Url.parse(window.location.href, true);
 	const orderID = url.query["id"] || '';
 	if (!orderID) {
-		window.location.href = "/shopping-lists/";
+		window.location.href = "/account.php?action=order_status";
 		return;
 	}
 
@@ -32,6 +37,40 @@ export default function(customer) {
 
 	const $overlay = $("#b2b_loading_overlay");
 
+	// for init date picker, new Date()
+	const getStoreZoneDate = function(date) {
+		// local date
+		const localDate = date || new Date();
+		const localTime = localDate.getTime();
+		// local offset
+		const localOffset = localDate.getTimezoneOffset() * 60000;
+		// 8*60*60*1000
+		// UTC Time
+		const utcTime = localTime + localOffset;
+		// store setting time zone
+		const time_zone = store_time_zone;
+		// store setting time
+		const zonetime = utcTime + (3600000 * time_zone);
+		// store setting date
+		const zoneDate = new Date(zonetime);
+		return zoneDate;
+	}
+
+	const getFormatDate = function(date, split) {
+		let formatDate = "";
+		const year = date.getFullYear();
+		let month = date.getMonth() + 1;
+		month = month > 9 ? month : "0" + month;
+		let day = date.getDate() > 9 ? date.getDate() : "0" + date.getDate();
+
+		if (split === "/") {
+			formatDate = `${month}/${day}/${year}`;
+		} else {
+			formatDate = `${year}-${month}-${day}`;
+		}
+		return formatDate;
+	}
+
 	const load_data = function() {
 		$overlay.show();
 
@@ -50,10 +89,10 @@ export default function(customer) {
 
 					//"date_modified": "Wed, 19 Dec 2018 06:22:19 +0000"
 					//"date_created": "Wed, 19 Dec 2018 06:22:19 +0000"
-					const order_created_date = new Date(order.date_created);
-					const order_modified_date = new Date(order.date_modified);
-					const order_created_date_formatted = `${order_created_date.getUTCMonth() + 1}/${order_created_date.getUTCDate()}/${order_created_date.getUTCFullYear()}`;
-					const order_modified_date_formatted = `${order_modified_date.getUTCMonth() + 1}/${order_modified_date.getUTCDate()}/${order_modified_date.getUTCFullYear()}`;
+					const order_created_date = getStoreZoneDate(new Date(order.date_created));
+					const order_modified_date = getStoreZoneDate(new Date(order.date_modified));
+					const order_created_date_formatted = getFormatDate(order_created_date, "/");
+					const order_modified_date_formatted = getFormatDate(order_modified_date, "/");
 
 					const order_products = order.products || [];
 
