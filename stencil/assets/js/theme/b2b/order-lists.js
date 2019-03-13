@@ -9,6 +9,7 @@ import {
 } from '../global/modal';
 import './tools/jquery-ui.min.js';
 import './tools/jqPaginator.js';
+import pricesStyle from './prices-style';
 
 export default function(context) {
 
@@ -509,7 +510,7 @@ export default function(context) {
 							<tr data-order-id="${order_id}">
 	                        <td class="col-thumbnail"><img src="${imageThumbail}" alt=""></td>
 	                        <td class="t-align-c"><a href="/orderdetail/?id=${order_id}">#${order_id}</a></td>
-	                        <td class="t-align-c">$${parseFloat(order_total).toFixed(2)}</td>
+	                        <td class="t-align-c">$${pricesStyle(order_total, 2)}</td>
 	                        <td class="t-align-c">${order_created_date_formatted}</td>
 	                        <td class="t-align-c">${order_modified_date_formatted}</td>
 	                        <td class="t-align-c">${createdBy_first_name} ${createdBy_last_name}</td>
@@ -1286,7 +1287,7 @@ export default function(context) {
 
 								if (showCustomPrice) {
 									const extra_product_id = selectedPickListOptins[k].option_data;
-									const extra_variant_id = getVariantIdByProductId();
+									const extra_variant_id = getVariantIdByProductId(extra_product_id);
 									if (extra_variant_id) {
 										extras_list.push({
 											"extra_product_id": extra_product_id,

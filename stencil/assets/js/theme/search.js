@@ -10,6 +10,8 @@ import collapsibleFactory from './common/collapsible';
 import 'jstree';
 import nod from './common/nod';
 import './custom-category';
+import pricesStyle from './b2b/prices-style';
+
 export default class Search extends CatalogPage {
     formatCategoryTreeForJSTree(node) {
         const nodeData = {
@@ -276,8 +278,8 @@ export default class Search extends CatalogPage {
                     catalog_price = this.getCatalogPrice(base_price, tier_price, 1);
                 }
                 if (catalog_price) {
-                    $(`${productSelector}`).find(".price.price--withoutTax").text("$" + parseFloat(catalog_price).toFixed(2));
-                    $(`${productSelector}`).find(".price.price--withTax").text("$" + parseFloat(catalog_price).toFixed(2));
+                    $(`${productSelector}`).find(".price.price--withoutTax").text("$" + pricesStyle(catalog_price, 2));
+                    $(`${productSelector}`).find(".price.price--withTax").text("$" + pricesStyle(catalog_price, 2));
                 }
             }
         }

@@ -2,6 +2,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import utils from '@bigcommerce/stencil-utils';
 import StencilDropDown from './stencil-dropdown';
+import pricesStyle from '../b2b/prices-style';
 
 export default function() {
     const TOP_STYLING = 'top: 49px;';
@@ -107,8 +108,8 @@ export default function() {
                         catalog_price = getCatalogPrice(base_price, tier_price, 1);
                     }
                     if (catalog_price) {
-                        $(`${productSelector}`).find(".price.price--withoutTax").text("$" + parseFloat(catalog_price).toFixed(2));
-                        $(`${productSelector}`).find(".price.price--withTax").text("$" + parseFloat(catalog_price).toFixed(2));
+                        $(`${productSelector}`).find(".price.price--withoutTax").text("$" + pricesStyle(catalog_price, 2));
+                        $(`${productSelector}`).find(".price.price--withTax").text("$" + pricesStyle(catalog_price, 2));
                     }
                 }
             }

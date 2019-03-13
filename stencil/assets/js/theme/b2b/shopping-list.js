@@ -8,6 +8,7 @@ import ProductDetails from '../common/product-details';
 import {
 	defaultModal
 } from '../global/modal';
+import pricesStyle from './prices-style';
 
 export default function(customer) {
 
@@ -367,11 +368,11 @@ export default function(customer) {
 									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}</div>
 									    				</div>
 									    			</td>
-									    			<td class="t-align-r col-product-price" data-product-priceValue="${product_priceValue}"><span class="mobile-td-lable">Price:</span><span class="product-price" data-main-price="${product_priceValue}" >${product_price}</span></td>
+									    			<td class="t-align-r col-product-price" data-product-priceValue="${product_priceValue}"><span class="mobile-td-lable">Price:</span><span class="product-price" data-main-price="${product_priceValue}" >$${pricesStyle(product_price,2)}</span></td>
 									    			<td class="t-align-r col-product-qty" data-product-quantity><span class="mobile-td-lable">Qty:</span><input type="text" value="${product_quantity}" class="input-text qty"></td>
 									    			<td class="t-align-r col-action">
 										    			<div class="action-wrap">
-										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span><span class="product-subtotal-span">${product_subTotal}</span></div>
+										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span><span class="product-subtotal-span">${pricesStyle(product_subTotal,2)}</span></div>
 										    			    <div class="action-lists">
 					
 										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
@@ -393,11 +394,11 @@ export default function(customer) {
 									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}<br/><i class="label-unviable">Unavailable</i></div>
 									    				</div>
 									    			</td>
-									    			<td class="t-align-r" data-product-priceValue="${product_priceValue}"><span data-main-price="${product_priceValue}" class="product-price">${product_price}</span></td>
+									    			<td class="t-align-r" data-product-priceValue="${product_priceValue}"><span data-main-price="${product_priceValue}" class="product-price">$${pricesStyle(product_price,2)}</span></td>
 									    			<td class="t-align-r col-product-qty" data-product-quantity><input disabled type="text" value="${product_quantity}" class="input-text qty"></td>
 									    			<td class="t-align-r col-action">
 										    			<div class="action-wrap">
-										    				<div class="product-subtotal"><span class="product-subtotal-span">${product_subTotal}</span></div>
+										    				<div class="product-subtotal"><span class="product-subtotal-span">$${pricesStyle(product_subTotal,2)}</span></div>
 										    			    <div class="action-lists">
 
 										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
@@ -1413,7 +1414,7 @@ export default function(customer) {
 						    <td class="col-checkbox"><input type="checkbox" data-results-check-box data-product-id="${product_id}" data-variant-id="${variant_id}"></td>
 					        <td class="col-product-figure"><img src="${product_image}" alt="${product_name}" title="${product_name}"></td>
 					        <td class="col-product-info">${product_name}<br/><b>SKU:</b> ${variant_sku}</td>
-					        <td class="col-product-price">${price_symbol}${parseFloat(catalog_price).toFixed(2)}</td></tr>`;
+					        <td class="col-product-price">${price_symbol}${pricesStyle(parseFloat(catalog_price).toFixed(2),2)}</td></tr>`;
 				}
 
 				$("#product_search_results").html(`<table class="search-product-table" id="product_search_result_table" product-search-result-table style="margin-bottom:1.5rem;"><tbody>${resultTrs}</tbody></table>`);
@@ -1468,7 +1469,7 @@ export default function(customer) {
 							$("#product_search_results #product_search_result_table tbody tr input[type=checkbox]").attr("data-variant-id", variant_id).prop("disabled", false);
 						}
 						if (catalog_price) {
-							$("#product_search_results #product_search_result_table tbody tr").find("[data-product-price]").text("$" + parseFloat(catalog_price).toFixed(2));;
+							$("#product_search_results #product_search_result_table tbody tr").find("[data-product-price]").text("$" + pricesStyle(catalog_price, 2));
 						}
 
 						$("#product_search_results #product_search_result_table").find(".product-qty-col input").remove();
@@ -1583,7 +1584,7 @@ export default function(customer) {
 				const product = catalog_products[searchproductId];
 				const product_id = searchproductId;
 				const product_name = product.product_name;
-				const product_price = "$" + parseFloat(product_price_value).toFixed(2);
+				const product_price = "$" + pricesStyle(parseFloat(product_price_value).toFixed(2), 2);
 				const product_image = product.primary_image ? product.primary_image.thumbnail_url : "";
 				const product_variants = product.variants || [];
 
@@ -1651,7 +1652,7 @@ export default function(customer) {
 								$("#skus_search_results").find(`[product-search-result-table] tbody tr[data-product-id="${product_id}"] input[type=checkbox]`).attr("data-variant-id", variant_id);
 							}
 							if (catalog_price) {
-								$("#skus_search_results").find(`[product-search-result-table] tbody tr[data-product-id="${product_id}"] [data-product-price]`).text("$" + parseFloat(catalog_price).toFixed(2));;
+								$("#skus_search_results").find(`[product-search-result-table] tbody tr[data-product-id="${product_id}"] [data-product-price]`).text("$" + pricesStyle(parseFloat(catalog_price).toFixed(2), ));
 							}
 
 							const $optionLabels = $("#skus_search_results").find("label[data-product-attribute-value]");
@@ -1786,7 +1787,7 @@ export default function(customer) {
 					base_price = data.price.without_tax.value;
 				}
 				const catalog_price = getCatalogPrice(base_price, tier_price_arr, 1);
-				$priceSpan.text("$" + parseFloat(catalog_price).toFixed(2));
+				$priceSpan.text("$" + pricesStyle(parseFloat(catalog_price).toFixed(2), 2));
 
 				if (data.purchasing_message) {
 					$('p.alertBox-message', $messageBox).text(data.purchasing_message);
@@ -1944,7 +1945,7 @@ export default function(customer) {
 					base_price = data.price.without_tax.value;
 				}
 				const catalog_price = getCatalogPrice(base_price, tier_price_arr, 1);
-				$priceSpan.text("$" + parseFloat(catalog_price).toFixed(2));
+				$priceSpan.text("$" + pricesStyle(catalog_price, 2));
 
 				let allValid = true;
 				if (data.purchasing_message) {
@@ -2175,7 +2176,7 @@ export default function(customer) {
 					} else {
 
 						if (tierPriceValue) {
-							$priceSpan.text("$" + parseFloat(tierPriceValue).toFixed(2));
+							$priceSpan.text("$" + pricesStyle(tierPriceValue, 2));
 						}
 					}
 				} else {
@@ -2375,7 +2376,7 @@ export default function(customer) {
 
 								if (showCustomPrice) {
 									const extra_product_id = selectedPickListOptins[k].option_data;
-									const extra_variant_id = getVariantIdByProductId();
+									const extra_variant_id = getVariantIdByProductId(extra_product_id);
 									if (extra_variant_id) {
 										extras_list.push({
 											"extra_product_id": extra_product_id,
@@ -2437,7 +2438,7 @@ export default function(customer) {
 					if (cartItemsArr.length == 0) {
 						console.log("update price done.");
 						$overlay.hide();
-						$("[data-cart-subtotal]").text("$" + parseFloat(data.data.base_amount).toFixed(2));
+						$("[data-cart-subtotal]").text("$" + pricesStyle(data.data.base_amount, 2));
 
 						$shoppingListTable.find(".col-checkbox input[type=checkbox]").prop("checked", false);
 
@@ -2654,7 +2655,7 @@ export default function(customer) {
 
 								if (data && data.length > 0) {
 									cartId = data[0].id;
-									$("[data-cart-subtotal]").text("$" + parseFloat(data[0].baseAmount).toFixed(2));
+									$("[data-cart-subtotal]").text("$" + pricesStyle(data[0].baseAmount, 2));
 
 								}
 							}
@@ -3793,12 +3794,12 @@ export default function(customer) {
 				console.log(productPrice);
 				console.log("price end -------");
 
-				$priceSpan.text("$" + parseFloat(productPrice).toFixed(2));
+				$priceSpan.text("$" + pricesStyle(productPrice, 2));
 				// for list
 				if ($priceSpan.parents("tr").find(".product-subtotal-span").length > 0) {
 					const qty = $priceSpan.parents("tr").find("input.qty").val();
 					const totlePriceValue = parseFloat(qty * productPrice).toFixed(2);
-					$priceSpan.parents("tr").find(".product-subtotal-span").text("$" + totlePriceValue);
+					$priceSpan.parents("tr").find(".product-subtotal-span").text("$" + pricesStyle(totlePriceValue, 2));
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {

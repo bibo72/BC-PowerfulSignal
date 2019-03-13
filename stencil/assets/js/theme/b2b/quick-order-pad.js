@@ -11,6 +11,7 @@ import {
 import {
     get
 } from 'https';
+import pricesStyle from './prices-style';
 
 export default function(customer) {
     console.log("quick order pad");
@@ -143,9 +144,9 @@ export default function(customer) {
                 </div>`);
             $skuInput.remove();
             const $priceContainer = $tr.find('[data-price]');
-            $priceContainer.text(`${gPriceSymbol}${tier_price}`);
+            $priceContainer.text(`${gPriceSymbol}${pricesStyle(tier_price,2)}`);
             if ($qtyInput.val()) {
-                $totalPriceContainer.text(`${gPriceSymbol}${parseFloat(tier_price*qty).toFixed(2)}`);
+                $totalPriceContainer.text(`${gPriceSymbol}${pricesStyle(parseFloat(tier_price*qty).toFixed(2),2)}`);
             }
 
             const hasOptions = $(response).attr("has-options");
@@ -207,8 +208,8 @@ export default function(customer) {
         $(this).removeClass("error");
         if (product_id && variant_id) {
             const tier_price = getCatalogPrice(base_price, product_id, variant_id, qty);
-            $priceContainer.text(`${gPriceSymbol}${tier_price}`);
-            $totalPriceContainer.text(`${gPriceSymbol}${parseFloat(tier_price*qty).toFixed(2)}`);
+            $priceContainer.text(`${gPriceSymbol}${pricesStyle(tier_price,2)}`);
+            $totalPriceContainer.text(`${gPriceSymbol}${pricesStyle(parseFloat(tier_price*qty).toFixed(2),2)}`);
         }
     });
 
@@ -578,7 +579,7 @@ export default function(customer) {
                                 ${response}
                         </td>
                         <td class="col-qty"><span data-qty>${product_qty}</span></td>
-                        <td class="col-price"><span data-total-price>${gPriceSymbol}${parseFloat(tierPrice*product_qty).toFixed(2)}</span></td>
+                        <td class="col-price"><span data-total-price>${gPriceSymbol}${pricesStyle(parseFloat(tierPrice*product_qty).toFixed(2),2)}</span></td>
                     </tr>`;
 
                 $csvProdcutsTbody.append(tr);

@@ -7,6 +7,7 @@ import modalFactory from '../global/modal';
 import _ from 'lodash';
 import swal from 'sweetalert2';
 import config from '../b2b/config';
+import pricesStyle from '../b2b/prices-style';
 
 export default class ProductDetails {
     constructor($scope, context, productAttributesData = {}) {
@@ -438,7 +439,7 @@ export default class ProductDetails {
 
                                 if (showCustomPrice) {
                                     const extra_product_id = selectedPickListOptins[k].option_data;
-                                    const extra_variant_id = this.getVariantIdByProductId();
+                                    const extra_variant_id = this.getVariantIdByProductId(extra_product_id);
                                     if (extra_variant_id) {
                                         extras_list.push({
                                             "extra_product_id": extra_product_id,
@@ -531,7 +532,7 @@ export default class ProductDetails {
                                 $("#previewModal").find(".productView").html(responseHtml);
                                 const productPrice = $("#previewModal").find(".productView .productView-price").text();
                                 const productPriceArr = productPrice.split(" × ");
-                                $("#previewModal").find(".productView .productView-price").html(`${productPriceArr[0]} × $${catalog_priceValue}`);
+                                $("#previewModal").find(".productView .productView-price").html(`${productPriceArr[0]} × $${pricesStyle(catalog_priceValue,2)}`);
 
                                 // Update cart counter
                                 const $body = $('body');
@@ -1497,12 +1498,12 @@ export default class ProductDetails {
 
                         let priceSavedText = "";
                         if (tier_price[j].type == "fixed") {
-                            priceSavedText = `pay only ${this.gPriceSymbol}${parseFloat(price).toFixed(2)} each`;
+                            priceSavedText = `pay only ${this.gPriceSymbol}${pricesStyle(price,2)} each`;
 
                         } else {
                             //priceSavedText = `get ${price}% off`;
                             const priceValue = base_price - base_price * price / 100;
-                            priceSavedText = `pay only ${this.gPriceSymbol}${parseFloat(priceValue).toFixed(2)} each`;
+                            priceSavedText = `pay only ${this.gPriceSymbol}${pricesStyle(priceValue,2)} each`;
 
                         }
 
@@ -1775,7 +1776,7 @@ export default class ProductDetails {
     // for bundleb2b
     setProductPriceText(priceValue) {
         const $price = $("[data-product-price-without-tax]", this.$scope) || $("[data-product-price-with-tax]", this.$scope);
-        $price.text(`${this.gPriceSymbol}${priceValue}`);
+        $price.text(`${this.gPriceSymbol}${pricesStyle(priceValue, 2)}`);
     }
 
     // for bundleb2b

@@ -12,6 +12,7 @@ import quickOrderPad from './quick-order-pad';
 import accountSetting from './account-setting';
 import config from './config';
 import swal from 'sweetalert2';
+import priceStyle from './prices-style';
 
 export default function() {
   const accountSettingUrl = this.context.urls.account.details;
@@ -355,8 +356,8 @@ export default function() {
             catalog_price = getCatalogPrice(base_price, tier_price, 1);
           }
           if (catalog_price) {
-            $(`${productSelector}`).find(".price.price--withoutTax").text("$" + parseFloat(catalog_price).toFixed(2));
-            $(`${productSelector}`).find(".price.price--withTax").text("$" + parseFloat(catalog_price).toFixed(2));
+            $(`${productSelector}`).find(".price.price--withoutTax").text("$" + priceStyle(parseFloat(catalog_price).toFixed(2), 2));
+            $(`${productSelector}`).find(".price.price--withTax").text("$" + priceStyle(parseFloat(catalog_price).toFixed(2), 2));
           }
         }
       }

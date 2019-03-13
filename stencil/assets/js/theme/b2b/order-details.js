@@ -7,6 +7,7 @@ import config from './config';
 import {
 	defaultModal
 } from '../global/modal';
+import pricesStyle from './prices-style';
 
 export default function(context) {
 	const customer = context.customer;
@@ -211,7 +212,7 @@ export default function(context) {
 							                         title="${item.name}">
 							            </figure>
 							            <div class="account-product-body">
-							                <span class="account-product-price">${gCurrency}${parseFloat(item.base_price).toFixed(2)}</span>
+							                <span class="account-product-price">${gCurrency}${pricesStyle(item.base_price, 2)}</span>
 							                <h5 class="account-product-title">${item.quantity} &#215; ${item.name}</h5>
 							                
 							                ${brandHtml}
@@ -228,18 +229,18 @@ export default function(context) {
 					let orderTotalHtml = `<dl class="account-orderTotal">`;
 					if (order.subtotal_ex_tax) {
 						orderTotalHtml += `<dt class="account-orderTotal-key">Subtotal:</dt>
-                        <dd class="account-orderTotal-value">${gCurrency}${parseFloat(order.subtotal_ex_tax).toFixed(2)}`;
+                        <dd class="account-orderTotal-value">${gCurrency}${pricesStyle(order.subtotal_ex_tax,2)}`;
 					}
 					if (order.discount_amount && order.discount_amount > 0) {
 						orderTotalHtml += `<dt class="account-orderTotal-key">Discount:</dt>
-                        <dd class="account-orderTotal-value">${gCurrency}${parseFloat(order.discount_amount).toFixed(2)}`;
+                        <dd class="account-orderTotal-value">${gCurrency}${pricesStyle(order.discount_amount,2)}`;
 					}
 					if (order.coupons && order.coupons.length > 0) {
 						const coupons = order.coupons;
 						const couponCode = coupons[0].code;
 						const couponAmount = coupons[0].discount;
 						orderTotalHtml += `<dt class="account-orderTotal-key">Coupon Code (${couponCode}):</dt>
-                        <dd class="account-orderTotal-value">${gCurrency}${parseFloat(couponAmount).toFixed(2)}`;
+                        <dd class="account-orderTotal-value">${gCurrency}${pricesStyle(couponAmount,2)}`;
 					}
 					if (order.shipping_cost_inc_tax && order.shipping_cost_inc_tax > 0) {
 						orderTotalHtml += `<dt class="account-orderTotal-key">Shipping:</dt>
@@ -247,11 +248,11 @@ export default function(context) {
 					}
 					if (order.total_tax && order.total_tax > 0) {
 						orderTotalHtml += `<dt class="account-orderTotal-key">Tax:</dt>
-                        <dd class="account-orderTotal-value">${gCurrency}${parseFloat(order.total_tax).toFixed(2)}`;
+                        <dd class="account-orderTotal-value">${gCurrency}${pricesStyle(order.total_tax,2)}`;
 					}
 					if (order.total_inc_tax) {
 						orderTotalHtml += `<dt class="account-orderTotal-key">Grand Total:</dt>
-                        <dd class="account-orderTotal-value">${gCurrency}${parseFloat(order.total_inc_tax).toFixed(2)}`;
+                        <dd class="account-orderTotal-value">${gCurrency}${pricesStyle(order.total_inc_tax,2)}`;
 					}
 					orderTotalHtml += `</dl>`;
 					$(".account-content").html(`${orderItemsHtml}${orderTotalHtml}`);
@@ -266,7 +267,7 @@ export default function(context) {
 				                    <dt class="definitionList-key">Order date:</dt>
 				                    <dd class="definitionList-value">${order_created_date_formatted}</dd>
 				                    <dt class="definitionList-key">Order total:</dt>
-				                    <dd class="definitionList-value">${gCurrency}${parseFloat(order_total).toFixed(2)}</dd>
+				                    <dd class="definitionList-value">${gCurrency}${pricesStyle(order_total,2)}</dd>
 				                    <dt class="definitionList-key">Payment method:</dt>
 				                    <dd class="definitionList-value">${order.payment_method}</dd>
 				                </dl>`;
@@ -892,7 +893,7 @@ export default function(context) {
 
 								if (showCustomPrice) {
 									const extra_product_id = selectedPickListOptins[k].option_data;
-									const extra_variant_id = getVariantIdByProductId();
+									const extra_variant_id = getVariantIdByProductId(extra_product_id);
 									if (extra_variant_id) {
 										extras_list.push({
 											"extra_product_id": extra_product_id,

@@ -456,7 +456,7 @@ export default class Cart extends PageManager {
 
                                 if (showCustomPrice) {
                                     const extra_product_id = selectedPickListOptins[k].option_data;
-                                    const extra_variant_id = this.getVariantIdByProductId();
+                                    const extra_variant_id = this.getVariantIdByProductId(extra_product_id);
                                     if (extra_variant_id) {
                                         extras_list.push({
                                             "extra_product_id": extra_product_id,
