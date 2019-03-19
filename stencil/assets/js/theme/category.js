@@ -41,7 +41,6 @@ export default class Category extends CatalogPage {
     }
 
     getAllProducts() {
-        debugger
         //const paginations = this.context.paginationCategory || [];
         const $productListingContainer = $('#product-listing-container');
         const catalogProducts = JSON.parse(sessionStorage.getItem("catalog_products") || "{}");
@@ -132,7 +131,6 @@ export default class Category extends CatalogPage {
                 });
             }
         } else {
-            debugger
             $(".product").hide();
             $("[catalog-product='true']").show();
 

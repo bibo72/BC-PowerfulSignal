@@ -13,6 +13,10 @@ import accountSetting from './account-setting';
 import config from './config';
 import swal from 'sweetalert2';
 import priceStyle from './prices-style';
+import category from '../category'
+import Url from "url";
+import urlUtils from "../common/url-utils";
+import {api} from "@bigcommerce/stencil-utils";
 
 export default function() {
   const accountSettingUrl = this.context.urls.account.details;
@@ -564,6 +568,19 @@ export default function() {
 
     if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
       const bundleb2b_user = JSON.parse(sessionStorage.getItem("bundleb2b_user"));
+
+      /*
+      When the user hasn't got the `catalog_products` data yet, he clicks on other b2b pages.
+      Regain `catalog_products` data
+       */
+      if(!sessionStorage.getItem("catalog_products")) {
+        if (sessionStorage.getItem("catalog_id")) {
+          getCatalogProducts(sessionStorage.getItem("catalog_id"), function() {
+            window.location.reload();
+          });
+        }
+      }
+
       if (bypass_customer_id != bundleb2b_user.user_id) {
 
         sessionStorage.setItem("bundleb2b_user", "none");
