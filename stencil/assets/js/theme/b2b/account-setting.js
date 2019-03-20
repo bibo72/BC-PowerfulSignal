@@ -114,7 +114,7 @@ export default function(customer) {
 						}
 
 						console.log("catalog products", catalog_products);
-						// sessionStorage.setItem("catalog_products", JSON.stringify(catalog_products));
+						sessionStorage.setItem("catalog_products", JSON.stringify(catalog_products));
 
 
 					}

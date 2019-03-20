@@ -1706,9 +1706,12 @@ div.kb li:nth-of-type(even) {
         white-space: nowrap;
     }
 }
+.product-compare div {
+    text-align: center;
+}
 .product-compare img {
     width: 250px;
-    margin: 0 2rem 2rem;
+    margin: .5rem 1rem;
 }
 .top-banner-background-clear {
     width: 100%;
