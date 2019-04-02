@@ -41,7 +41,7 @@ export default function(context) {
 	//	    {"product_id": ,
 	//	     "variant_id": ,
 	//	     "qty": ,
-	//	     "options_list": 
+	//	     "options_list":
 	//      }
 	//	]
 	//}
@@ -498,9 +498,9 @@ export default function(context) {
 					                <ul aria-hidden="false" class="dropdown-menu" data-dropdown-content="" id="shoppinglist-dropdown-${order_id}" tabindex="-1">
 						                <li><a href="#" class="button" add-to-new-list>Add to New Shopping List</a></li>
 					                </ul>
-	                                
+
 	                            </div>
-	                            
+
 	                        </td>
 	                    </tr>`;*/
 
@@ -545,7 +545,7 @@ export default function(context) {
 
 	}
 
-	// sort: Object 
+	// sort: Object
 	// -- name
 	// -- value
 	// sort_filter_name
@@ -917,33 +917,9 @@ export default function(context) {
 					});
 				}
 
-				console.log("number of items in cart: ", cartItemIDs.length);
-
-				if (cartItemIDs.length > 0) { //if there are items in cart notify user
-					$overlay.hide();
-					swal({
-						title: "The shopping cart isn't empty",
-						html: "<div class='nonempty-cart'><p>You have items in your shopping cart. Would you like to merge items in this order with items of this shopping cart or replace them?</p>" +
-							"<p>Select Cancel to stay on the current page.</p></div>",
-						showCancelButton: true,
-						confirmButtonText: 'Merge',
-						cancelButtonText: 'Cancel'
-					})
-					$(".swal2-confirm.button").after('<button type="button" class="button replace-button">Replace</button>');
-				} else {
-					$overlay.show();
-					addProductToCart(itemArr);
-				}
-				$(".swal2-confirm.button").on("click", function() {
-					$overlay.show();
-					addProductToCart(itemArr);
-				});
-				$(".replace-button").on("click", function() {
-					swal.close();
-					$overlay.show();
-					replaceCart(cartItemIDs, itemArr);
-					//replaceCart(cartItemIDs, cartId, itemArr);
-				});
+				// Customer Requirements Direct Merger
+				$overlay.show();
+				addProductToCart(itemArr);
 			},
 			error: () => {
 				$overlay.hide();

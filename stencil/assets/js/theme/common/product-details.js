@@ -1043,34 +1043,9 @@ export default class ProductDetails {
                     });
                 }
 
-                console.log(cartItemIDs);
-
-                console.log("number of items in cart: ", cartItemIDs.length);
-                if (cartItemIDs.length > 0) { //if there are items in cart notify user
-                    this.$overlay_b2b.hide();
-                    swal({
-                        title: "The shopping cart isn't empty",
-                        html: "<div class='nonempty-cart'><p>You have items in your shopping cart. Would you like to merge items in this order with items of this shopping cart or replace them?</p>" +
-                            "<p>Select Cancel to stay on the current page.</p></div>",
-                        showCancelButton: true,
-                        confirmButtonText: 'Merge',
-                        cancelButtonText: 'Cancel'
-                    });
-                    $(".swal2-confirm.button").after('<button type="button" class="button replace-button">Replace</button>');
-                } else {
-                    this.$overlay_b2b.show();
-                    this.addProductToCartBundleb2b(itemArr);
-                }
-                $(".swal2-confirm.button").unbind().bind("click", () => {
-                    this.$overlay_b2b.show();
-                    this.addProductToCartBundleb2b(itemArr);
-                });
-                $(".replace-button").unbind().bind("click", () => {
-                    swal.close();
-                    this.$overlay_b2b.show();
-                    this.replaceCart(cartItemIDs, itemArr);
-                    //this.replaceCart(cartItemIDs, cartId, itemArr);
-                });
+                // Customer Requirements Direct Merger
+                this.$overlay_b2b.show();
+                this.addProductToCartBundleb2b(itemArr);
             },
             error: (jqXHR, textStatus, errorThrown) => {
                 this.$overlay_b2b.hide();

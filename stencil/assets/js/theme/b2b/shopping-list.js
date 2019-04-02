@@ -476,7 +476,7 @@ export default function(customer) {
 																				/*if (!gTierPrice[pickedProductId]) {
 																					getTierPriceByProductId(pickedProductId, product_quantity, function() {
 																						getVariantOptions($priceSpan, product_id, variant_id, pickedOptionId, pickedProductId);
-																						
+
 																					});
 																				} else {
 																					getVariantOptions($priceSpan, product_id, variant_id, pickedOptionId, pickedProductId);
@@ -2951,34 +2951,10 @@ export default function(customer) {
 						return item.parentId == null;
 					});
 				}
-				console.log(cartItemIDs);
-				console.log("number of items in cart: ", cartItemIDs.length);
 
-				if (cartItemIDs.length > 0) { //if there are items in cart notify user
-					$overlay.hide();
-					swal({
-						title: "The shopping cart isn't empty",
-						html: "<div class='nonempty-cart'><p>You have items in your shopping cart. Would you like to merge items in this order with items of this shopping cart or replace them?</p>" +
-							"<p>Select Cancel to stay on the current page.</p></div>",
-						showCancelButton: true,
-						confirmButtonText: 'Merge',
-						cancelButtonText: 'Cancel'
-					})
-					$(".swal2-confirm.button").after('<button type="button" class="button replace-button">Replace</button>');
-				} else {
-					$overlay.show();
-					addProductToCart(itemArr);
-				}
-				$(".swal2-confirm.button").on("click", function() {
-					$overlay.show();
-					addProductToCart(itemArr);
-				});
-				$(".replace-button").on("click", function() {
-					swal.close();
-					$overlay.show();
-					replaceCart(cartItemIDs, itemArr);
-					//replaceCart(cartItemIDs, cartId, itemArr);
-				});
+				// Customer Requirements Direct Merger
+				$overlay.show();
+				addProductToCart(itemArr);
 			},
 			error: () => {
 				$overlay.hide();
@@ -3537,7 +3513,7 @@ export default function(customer) {
 						console.log(csvTobase64Data);
 						csvFileData = csvTobase64Data;
 
-						
+
 						window.csvTobase64 = csvTobase64Data;
 					}*/
 				});
@@ -3563,7 +3539,7 @@ export default function(customer) {
 			",3,,,",
 			"SKU-9BB3516E,4,,,",
 			"SKU-9BB3516E,,,,",
-			",,,,", 
+			",,,,",
 			""
 		];*/
 		/*originArr = [

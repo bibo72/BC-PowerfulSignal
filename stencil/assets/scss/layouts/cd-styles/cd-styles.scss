@@ -2154,3 +2154,101 @@ img.appstore {
     margin: .5rem;
     width: 200px;
 }
+div.documentation h2 {
+	margin-top: 5rem;
+	border-bottom: solid #d1d1d1 1px;
+}
+div.documentation h4 {
+	padding-top: 2rem;
+}
+div.documentation-img {
+	background-color: #f1f1f1;
+	text-align: center;
+	margin: 1rem auto;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+div.documentation-img img {
+	display: inline-block;
+	max-width: 95%;
+	max-height: 100%;
+	margin-right: .5rem;
+}
+div.documentation-indent {
+	margin-left: 3rem;
+}
+div.page-menu {
+	background-color: #f1f1f1;
+}
+ul.sublist li {
+	margin-left: 1.5rem;
+}
+@media only screen and (max-width: 768px) {
+	div.page-menu {
+		display: block;
+		border: solid black 1px;
+		padding: 1rem;
+	}
+	div.page-menu h3 {
+		line-height: .8;
+	}
+	div.page-menu p {
+		margin: 0 auto;
+		line-height: 1.1;
+		margin-top: .5rem;
+	}
+	div.page-menu a.light {
+		font-weight: normal;
+		font-style: italic;
+	}
+	div.page-menu ul {
+		margin-bottom: 0;
+	}
+	div.page-menu li {
+		list-style-type: none;
+		line-height: normal;
+	}
+	div.page-menu li > a {
+		font-weight: normal;
+		font-style: italic;
+	}
+}
+@media only screen and (min-width: 768px) {
+	div.documentation-main {
+		margin-left: 240px;
+	}
+	.page-menu-wrapper {
+        width: 240px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+	div.page-menu {
+		height: 100%;
+		width: 220px;
+		position: fixed;
+		padding: 1rem;
+        box-shadow: 0 0 8px -1px rgba(0,0,0,.25);
+	}
+	div.page-menu h3 {
+		font-weight: normal;
+		font-size: 1.7rem;
+	    border-bottom: solid #cacbcb 1px;
+	}
+	div.page-menu p {
+		margin: 0 auto;
+		font-size: 1.1rem;
+	}
+	div.page-menu ul {
+		margin-bottom: 0;
+	}
+	div.page-menu li {
+		list-style-type: none;
+		font-size: 1.1rem;
+	}
+	div.page-menu li > a {
+		font-weight: normal;
+		font-style: italic;
+	}
+}

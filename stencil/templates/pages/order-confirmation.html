@@ -24,12 +24,39 @@
         </h2>
     </div>
 </header>
-<script type="text/javascript"> 
+<script type="text/javascript">
     var sa_order_name = '%%GLOBAL_CustomerName%%';
     sa_order_name = $.trim(sa_order_name.replace(/,/g, '').replace(/!/g, ''));
     var sa_values = { 'site':24837, 'orderid':'%%GLOBAL_OrderId%%', 'name':sa_order_name, 'email':sa_order_email, 'forcecomments':1 };  function saLoadScript(src) { var js = window.document.createElement("script"); js.src = src; js.type = "text/javascript"; document.getElementsByTagName("head")[0].appendChild(js); } var d = new Date(); if (d.getTime() - 172800000 > 1445569126000) saLoadScript("//www.shopperapproved.com/thankyou/rate/24837.js"); else saLoadScript("//direct.shopperapproved.com/thankyou/rate/24837.js?d=" + d.getTime());
 </script>
 {{{ checkout.order_confirmation_content }}}
 {{{footer.scrips}}}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script>
+    // save po number to our database
+    if(sessionStorage.getItem("po_number")) {
+        const po_number = sessionStorage.getItem("po_number");
+        const postData = {
+            'store_hash':'{{settings.store_hash}}',
+            'order_id':'{{checkout.order.id}}',
+            'user_id':'{{customer.id}}',
+            'po_number': po_number
+        };
+
+        $.ajax({
+            type: "POST",
+            url: 'https://8l6t4dsd6e.execute-api.us-west-2.amazonaws.com/prod/purchaseOrderNumber',
+            contentType: "application/json",
+            data: JSON.stringify(postData),
+            success: function(data) {
+                console.log(data);
+                sessionStorage.removeItem("po_number");
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            }
+        });
+    }
+</script>
+<!-- for bundleb2b end-->
 {{/partial}}
 {{> layout/empty}}
