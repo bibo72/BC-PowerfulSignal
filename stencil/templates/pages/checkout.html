@@ -99,6 +99,11 @@
         const company_payments = JSON.parse(sessionStorage.getItem("company_payments"));
         //console.log(company_payments);
         var interval = setInterval(function(){
+            // hide free shipping price spend & spent
+            if($("discount-banners")) {
+                $("discount-banners").hide();
+            }
+
             if($(".checkout-step--payment .checkout-form .form-checklist .form-checklist-item").length > 0) {
                 clearInterval(interval);
                 if (sessionStorage.getItem("bundleb2b_user") == "none") {
