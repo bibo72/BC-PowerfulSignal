@@ -1180,14 +1180,14 @@ h4 {
         display:none;
     }
 }
-.discontinued, .refurbished {
+.discontinued, .refurbished, .newmodel, .amponly {
     color: #F6F6F6!important;
     background-color: #ed8127;
-    margin-bottom: 30px;
+    margin: 30px auto;
     padding: 5px;
     font-size: 18pt;
 }
-.discontinued a, .refurbished a {
+.discontinued a, .refurbished a, .newmodel a, .amponly a {
     font-size: 18pt;
     color: #f6f6f6!important;
     text-decoration: underline;
