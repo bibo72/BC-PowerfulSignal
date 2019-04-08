@@ -677,6 +677,7 @@ export default class Cart extends PageManager {
     hideCuponCode() {
         if (sessionStorage.getItem("bundleb2b_user") && sessionStorage.getItem("bundleb2b_user") != "none") {
             $(".coupon-code-add").parents(".cart-total").remove();
+            $(".alertBox").hide(); // hide free shipping price spend & spent
         }
     }
 }
