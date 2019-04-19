@@ -16,7 +16,9 @@ import priceStyle from './prices-style';
 import category from '../category'
 import Url from "url";
 import urlUtils from "../common/url-utils";
-import {api} from "@bigcommerce/stencil-utils";
+import {
+  api
+} from "@bigcommerce/stencil-utils";
 
 export default function() {
   const accountSettingUrl = this.context.urls.account.details;
@@ -573,7 +575,7 @@ export default function() {
       When the user hasn't got the `catalog_products` data yet, he clicks on other b2b pages.
       Regain `catalog_products` data
        */
-      if(!sessionStorage.getItem("catalog_products")) {
+      if (!sessionStorage.getItem("catalog_products")) {
         if (sessionStorage.getItem("catalog_id")) {
           getCatalogProducts(sessionStorage.getItem("catalog_id"), function() {
             window.location.reload();
@@ -645,7 +647,8 @@ export default function() {
     if (page_templete == 'pages/custom/page/company-register2') {
       $(".company-form-wrap2").empty();
       return swal({
-        allowOutsideClick: false,
+        allowOutsideClick: true,
+        showCloseButton: true,
         type: "info",
         text: 'To become a partner, please sign in to your account.',
         confirmButtonText: 'Sign in'

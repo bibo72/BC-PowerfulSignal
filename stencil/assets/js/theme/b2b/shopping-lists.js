@@ -73,7 +73,7 @@ export default function(customer) {
 
 		$.ajax({
 			type: "GET",
-			url: `${config.apiRootUrl}/requisitionlist?store_hash=${bypass_store_hash}&company_id=${bypass_company_id}&customer_id=${bypass_customer_id}`,
+			url: `${config.apiRootUrl}/getListRequistionListNew?store_hash=${bypass_store_hash}&company_id=${bypass_company_id}&customer_id=${bypass_customer_id}`,
 			success: function(data) {
 				console.log("list Shopping lists", data);
 				$overlay.hide();

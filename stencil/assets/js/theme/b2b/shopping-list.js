@@ -192,6 +192,428 @@ export default function(customer) {
 
 		$.ajax({
 			type: "GET",
+			url: `${config.apiRootUrl}/getRequistionListDetail?store_hash=${bypass_store_hash}&company_id=${bypass_company_id}&customer_id=${bypass_customer_id}&id=${listID}`,
+			success: function(data) {
+				if (data && data != null) {
+					console.log("shopping list", data);
+
+
+					const listData = data;
+
+
+					//current list data - for post
+					gListObj.store_hash = listData.store_hash;
+					gListObj.company_id = listData.company_id;
+					gListObj.customer_id = listData.customer_id;
+					gListObj.name = listData.name;
+					gListObj.description = listData.description;
+					gListObj.status = listData.status;
+					gListObj.products = [];
+
+					listStatus = listData.status;
+
+					setStatusSelector(listStatus);
+
+					if (listData.customer_id != bypass_customer_id) {
+						isOwn = false;
+
+						if ($("#delete_list").length > 0) {
+							$("#delete_list").remove();
+						}
+						/*if ($("[data-rename-list]").length > 0) {
+							$("[data-rename-list]").remove();
+						}
+						if ($("#update_list").length > 0) {
+							$("#update_list").remove();
+						}
+						if ($("#shopping_item_remove").length > 0) {
+							$("#shopping_item_remove").remove();
+						}
+						if ($("#quick_add_section").length > 0) {
+							$("#quick_add_section").remove();
+						}*/
+
+					}
+
+					/*if (listData.ht.original_status) {
+									listOriginalStatus = listData.ht.original_status;
+								} else {
+									listOriginalStatus = listStatus;
+								}
+
+
+*/
+
+
+					let listInfo_html = "";
+					if (listData.created_date) {
+						listInfo_html += `
+                                	<div>
+								        <b>Date Created: </b><span>${getFormatDate(listData.created_date)}</span>
+								    </div>`;
+					}
+					if (listData.updated_date) {
+						listInfo_html += `
+                                	<div>
+								        <b>Last Updated: </b><span>${getFormatDate(listData.updated_date)}</span>
+								    </div>`;
+					}
+					if (listData.customer_info) {
+						let createdBy;
+						if (listData.customer_info.first_name) {
+							createdBy = `${listData.customer_info.first_name} `;
+						}
+						if (listData.customer_info.last_name) {
+							createdBy += listData.customer_info.last_name;
+						}
+
+						listInfo_html += `
+                                	<div>
+								        <b>Created By: </b><span>${createdBy}</span>
+								    </div>`;
+					}
+
+					/*if (listData.status) {
+									listInfo_html += `
+                                	<div>
+								        <b>Status: </b><span>${gListStatusObj[listData.status]}</span>
+								    </div>`;
+								}*/
+
+					$("#shopping_list_detail").html(listInfo_html);
+
+					$("#shopping_list_name").text(listData.name);
+					if (listData.description && listData.description.trim() != "") {
+						$("#shopping_list_comment").html(`<b>Descriptions: </b>${listData.description}`);
+					}
+
+					//$("#shopping_list_status").text("Status: " + gListStatusObj[listData.status]);
+
+
+					if (listData.products && listData.products.length > 0) {
+						listItems = listData.products;
+						const listItemsData = listData.products;
+						$("#num_items").text(listItemsData.length);
+						console.log("list item", listItemsData);
+
+						for (let pi = 0; pi < listItemsData.length; pi++) {
+							const listItemData = listItemsData[pi];
+							const product_id = listItemData.product_id;
+							const variant_id = listItemData.variant_id;
+							const product_quantity = listItemData.qty;
+							const options_list = listItemData.options_list || [];
+							const options_list_data = JSON.stringify(options_list);
+
+							const indexI = pi;
+
+							let in_catalog = true;
+
+							/*const $productInfo = $(response);
+							const product_title = $productInfo.attr("data-product-title");
+							const product_image = $productInfo.attr("data-product-image");
+							const product_sku = $productInfo.attr("data-product-sku");
+							let product_price = $productInfo.attr("data-product-price");
+							let product_priceValue = $productInfo.attr("data-product-priceValue");
+							const product_url = $productInfo.attr("data-product-url");*/
+
+							const product_title = listItemData.name;
+							let product_image = "";
+							if (listItemData.primary_image && listItemData.primary_image.thumbnail_url) {
+								product_image = listItemData.primary_image.thumbnail_url;
+							}
+
+							const product_sku = listItemData.variant_sku;
+
+							let product_priceValue = parseFloat(listItemData.base_price).toFixed(2);
+							let product_price = "$" + product_priceValue;
+							const product_url = listItemData.url;
+
+
+							gListObj.products.push({
+								"product_id": product_id,
+								"variant_id": variant_id,
+								"qty": parseInt(product_quantity),
+								"options_list": options_list
+							});
+
+
+
+							//console.log(catalog_products);
+							if (catalog_products[product_id]) {
+								//product_priceValue = parseFloat(catalog_products[product_id]).toFixed(2);
+
+								//product_priceValue = getCatalogPrice(product_priceValue, catalog_products[product_id], product_quantity);
+								//product_price = product_price.toString().substring(0, 1) + parseFloat(product_priceValue).toFixed(2);
+							} else {
+								in_catalog = false;
+								$("#unavailable_info_box").show();
+
+							}
+
+							const product_subTotalValue = product_priceValue * product_quantity;
+							const product_subTotal = product_price.toString().substring(0, 1) + product_subTotalValue.toFixed(2);
+
+							let tr;
+							if (in_catalog) {
+								tr = `<tr data-index="${indexI}" data-index-${indexI} data-product-${product_id} data-product-id="${product_id}" data-variant-id="${variant_id}" data-in-catalog="${in_catalog}" data-product-options='${options_list_data}'>
+									    		    <td class="col-checkbox"><input type="checkbox"></td>
+									    			<td class="col-product-info">
+
+									    				<div class="product-iamge"><img src="${product_image}" alt="${product_title}"></div>
+									    				<div class="product-description">
+									    				    <div class="product-title"><a href="${product_url}">${product_title}</a></div>
+									    				    <div class="product-options"></div>
+									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}</div>
+									    				</div>
+									    			</td>
+									    			<td class="t-align-r col-product-price" data-product-priceValue="${product_priceValue}"><span class="mobile-td-lable">Price:</span><span class="product-price" data-main-price="${product_priceValue}" >$${pricesStyle(product_price,2)}</span></td>
+									    			<td class="t-align-r col-product-qty" data-product-quantity><span class="mobile-td-lable">Qty:</span><input type="text" value="${product_quantity}" class="input-text qty"></td>
+									    			<td class="t-align-r col-action">
+										    			<div class="action-wrap">
+										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span><span class="product-subtotal-span">$${pricesStyle(product_subTotal,2)}</span></div>
+										    			    <div class="action-lists">
+					
+										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
+										    			    </div>
+										    			</div>
+
+									    			</td>
+									    		</tr>`;
+
+							} else {
+								tr = `<tr data-index="${indexI}" data-index-${indexI} data-product-${product_id} data-product-id="${product_id}" data-variant-id="${variant_id}" data-in-catalog="${in_catalog}" data-product-options='${options_list_data}'>
+									    		    <td class="col-checkbox"><input type="checkbox" disabled></td>
+									    			<td class="col-product-info">
+
+									    				<div class="product-iamge"><img src="${product_image}" alt="${product_title}"></div>
+									    				<div class="product-description">
+									    				    <div class="product-title">${product_title}</div>
+									    				    <div class="product-options" style="display:none;"></div>
+									    				    <div class="product-attribute product-sku"><span>SKU: </span>${product_sku}<br/><i class="label-unviable">Unavailable</i></div>
+									    				</div>
+									    			</td>
+									    			<td class="t-align-r" data-product-priceValue="${product_priceValue}"><span data-main-price="${product_priceValue}" class="product-price">$${pricesStyle(product_price,2)}</span></td>
+									    			<td class="t-align-r col-product-qty" data-product-quantity><input disabled type="text" value="${product_quantity}" class="input-text qty"></td>
+									    			<td class="t-align-r col-action">
+										    			<div class="action-wrap">
+										    				<div class="product-subtotal"><span class="product-subtotal-span">$${pricesStyle(product_subTotal,2)}</span></div>
+										    			    <div class="action-lists">
+
+										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
+										    			    </div>
+										    			</div>
+
+									    			</td>
+									    		</tr>`;
+
+							}
+
+							utils.api.product.getById(product_id, {
+								template: 'b2b/product-view-data'
+							}, (err, response) => {
+								const tep_product_id = product_id;
+								const tmp_index = indexI;
+								const $productInfo = $(response);
+								const product_url = $productInfo.attr("data-product-url");
+								$(`[data-product-${tep_product_id}]`).find(".product-title a").attr("href", product_url);
+								$(`[data-product-${tep_product_id}]`).find("[product-url]").attr("href", product_url);
+
+								//hundle options
+								const optionsStr = $productInfo.attr("data-product-options");
+
+								//console.log(optionsStr);
+								if (optionsStr && optionsStr != "[]") {
+									const optionsArr = JSON.parse(optionsStr);
+									//console.log(optionsArr);
+									const selected_options_arr = options_list;
+									//console.log(selected_options_arr);
+
+									let optionHtml = "";
+									let pickListArr = [];
+									let productIds = [];
+
+
+									for (let oi = 0; oi < optionsArr.length; oi++) {
+										const option = optionsArr[oi];
+										const option_id = `attribute[${option.id}]`;
+										const option_required = option.required;
+										let option_exist = false;
+										for (let oj = 0; oj < selected_options_arr.length; oj++) {
+											const selectedOption = selected_options_arr[oj];
+											if (option_id == selectedOption.option_id) {
+												option_exist = true;
+
+
+												if (option.partial == "input-text") {
+													optionHtml += `<span class="option-name">${option.display_name}:</span> ${selectedOption.option_value} </br>`;
+
+												} else if (option.partial == "input-checkbox") {
+													optionHtml += `<span class="option-name">${option.display_name}:</span> Yes </br>`;
+
+												} else {
+													if (option.values) {
+														const optionValues = option.values;
+
+
+														for (let ok = 0; ok < optionValues.length; ok++) {
+
+															if (optionValues[ok].id == selectedOption.option_value) {
+																optionHtml += `<span class="option-name">${option.display_name}:</span> ${optionValues[ok].label} </br>`;
+
+																if (option.partial == "product-list") {
+
+																	const pickedOptionId = option.id;
+																	const pickedOptionValue = optionValues[ok].id;
+																	const pickedProductId = optionValues[ok].data;
+																	//const $priceSpan = $(`[data-index-${tmp_index}]`).find(".product-price");
+																	pickListArr.push({
+																		"pickedOptionId": pickedOptionId,
+																		"pickedOptionValue": pickedOptionValue,
+																		"pickedProductId": pickedProductId
+																	});
+
+																	productIds.push(pickedProductId);
+
+																	/*if (!gTierPrice[pickedProductId]) {
+																		getTierPriceByProductId(pickedProductId, product_quantity, function() {
+																			getVariantOptions($priceSpan, product_id, variant_id, pickedOptionId, pickedProductId);
+																			
+																		});
+																	} else {
+																		getVariantOptions($priceSpan, product_id, variant_id, pickedOptionId, pickedProductId);
+
+																	}*/
+
+
+																}
+															}
+														}
+													}
+
+												}
+
+											}
+										}
+
+										// has required option, and this option not exist
+										if (option_required && !option_exist) {
+											optionHtml += `<span class="option-name">${option.display_name}:</span> <i class="no-option-value-tip" no-option-value>Click 'Edit Options' to set a value for this option.</i> </br>`;
+
+										}
+
+
+									}
+
+									const $priceSpan = $(`[data-index-${tmp_index}]`).find(".product-price");
+
+									console.log("list pick list option", pickListArr);
+
+									getTierPriceByProductId_multi(productIds, product_quantity, function() {
+										getVariantOptions($priceSpan, product_id, variant_id, pickListArr);
+									});
+
+
+
+									//console.log(tep_product_id);
+									//console.log(optionHtml);
+									$(`tr[data-index-${tmp_index}]`).find(".product-options").html(optionHtml);
+
+									//console.log(options_list);
+
+									if (listStatus != "40" && gRoleId != "0") {
+										$(`tr[data-index-${tmp_index}]`).find(".action-lists").prepend(`<a class="button button--primary button--small" href="#" data-edit-option><i class="fa fa-edit"></i> Edit Options</a>`);
+									}
+									if (listStatus == "30" && gRoleId == "0") {
+										$(`tr[data-index-${tmp_index}]`).find(".action-lists").prepend(`<a class="button button--primary button--small" href="#" data-edit-option><i class="fa fa-edit"></i> Edit Options</a>`);
+									}
+
+								}
+
+							});
+
+
+							$shoppingListTable.find("tbody").append(tr);
+
+							if (listStatus == "40") {
+								$(".col-action .action-lists").hide();
+								$shoppingListTable.find("tbody input").prop("disabled", true);
+							}
+
+							if (gRoleId == "0") {
+								if (listStatus == "0") {
+									$(".col-action .action-lists").hide();
+									$shoppingListTable.find("tbody input").prop("disabled", true);
+								}
+
+							}
+
+							/*if (isOwn == false) {
+								$("input.qty").prop("disabled", true);
+								$(".col-action .action-lists").remove();
+							}*/
+
+
+						}
+
+					} else {
+						$("#num_items").text("0");
+						$overlay.hide();
+					}
+
+					$overlay.hide();
+					console.log("listData", gListObj);
+
+
+
+					if (gRoleId == "1" || gRoleId == "2" || gRoleId == "10") {
+
+						if (listStatus == "40") {
+							$(".toolbar-actions").html(`
+											<button href="javascript:void(0);" class="action action--primary" id="pending_approval">Approve Shopping List</button>
+    			                            <button href="javascript:void(0);" class="action" id="reject_approval">Revert to Draft</button>`);
+							$(".table-toolbar .action-links").remove();
+							$("#quick_add_section").remove();
+							$("[data-rename-list]").remove();
+						}
+
+
+					} else if (gRoleId == "0") {
+						$("#add_to_cart").remove();
+
+						if (listStatus == "30") {
+							if ($("#apply_approval").length == 0) {
+								//$("#update_list_items").after(`<button href="javascript:void(0);" class="action" id="apply_approval">Submit for Approval</button>`);
+							}
+
+						} else {
+							$(".toolbar-actions").remove();
+							$(".table-toolbar .action-links").remove();
+							$("#quick_add_section").remove();
+							$("[data-rename-list]").remove();
+						}
+					}
+
+					$overlay.hide();
+
+				}
+
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$overlay.hide();
+				console.log("error", JSON.stringify(jqXHR));
+			}
+		});
+	}
+
+	const load_table_old = function() {
+		$shoppingListTable.find("tbody").html("");
+		$selectAll.prop("checked", false);
+		$("#unavailable_info_box").hide();
+
+		$overlay.show();
+
+		$.ajax({
+			type: "GET",
 			url: `${config.apiRootUrl}/requisitionlist?store_hash=${bypass_store_hash}&company_id=${bypass_company_id}&customer_id=${bypass_customer_id}`,
 			success: function(data) {
 				if (data) {
@@ -372,7 +794,7 @@ export default function(customer) {
 									    			<td class="t-align-r col-product-qty" data-product-quantity><span class="mobile-td-lable">Qty:</span><input type="text" value="${product_quantity}" class="input-text qty"></td>
 									    			<td class="t-align-r col-action">
 										    			<div class="action-wrap">
-										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span><span class="product-subtotal-span">${pricesStyle(product_subTotal,2)}</span></div>
+										    				<div class="product-subtotal"><span class="mobile-td-lable">Subtotal:</span><span class="product-subtotal-span">$${pricesStyle(product_subTotal,2)}</span></div>
 										    			    <div class="action-lists">
 					
 										    			    	<a class="button button--primary button--small square" href="javascript:void(0);"><i class="fa fa-delete" data-delete-item></i></a>
@@ -448,6 +870,9 @@ export default function(customer) {
 
 															if (option.partial == "input-text") {
 																optionHtml += `<span class="option-name">${option.display_name}:</span> ${selectedOption.option_value} </br>`;
+
+															} else if (option.partial == "input-checkbox") {
+																optionHtml += `<span class="option-name">${option.display_name}:</span> Yes </br>`;
 
 															} else {
 																if (option.values) {

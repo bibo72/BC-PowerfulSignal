@@ -117,7 +117,7 @@ export default class ProductDetails {
         $("body").on('click', '[add-to-list]', (event) => {
 
             const $target = $(event.target);
-            const listData = JSON.parse($target.attr("data-list-data"));
+            //const listData = JSON.parse($target.attr("data-list-data"));
             const listID = $target.attr("data-list-id");
             const listStatus = $target.attr("data-list-status");
 
@@ -187,64 +187,78 @@ export default class ProductDetails {
             const bypass_email = this.context.customer.email;
             const bypass_customer_id = this.context.customer.id;
 
-            let postData = {
-                "store_hash": listData.store_hash,
-                "company_id": listData.company_id,
-                "customer_id": listData.customer_id,
-                "name": listData.name,
-                "description": listData.description,
-                "status": listData.status,
-                "products": listData.products
-
-            };
-
-            //if has duplicated products
-            let isExist = false;
-            //const products_arr = listData.products;
-            const products_arr_new = _.cloneDeep(listData.products) || [];
-            let products_arr = [];
-            for (let i = 0; i < products_arr_new.length; i++) {
-                products_arr.push({
-                    "product_id": products_arr_new[i].product_id,
-                    "variant_id": products_arr_new[i].variant_id,
-                    "qty": products_arr_new[i].qty,
-                    "options_list": products_arr_new[i].options_list
-                });
-            }
-            for (let i = 0; i < products_arr.length; i++) {
-                const sameOption = (JSON.stringify(options_list) == JSON.stringify(products_arr[i].options_list));
-                if (products_arr[i].product_id == product_id && products_arr[i].variant_id == variant_id && sameOption) {
-                    products_arr[i].qty = parseInt(products_arr[i].qty) + parseInt(product_quantity);
-                    isExist = true;
-                }
-            }
-            if (!isExist) {
-                products_arr.push({
-                    "product_id": product_id,
-                    "variant_id": variant_id,
-                    "qty": product_quantity,
-                    "options_list": options_list
-                });
-            }
-
-            postData.products = products_arr;
-            console.log(postData);
-            //return;
-
             $.ajax({
-                type: "PUT",
-                url: `${config.apiRootUrl}/requisitionlist?id=${listID}&customer_id=${bypass_customer_id}`,
-                data: JSON.stringify(postData),
+                type: "GET",
+                url: `${config.apiRootUrl}/getRequistionListDetail?store_hash=${bypass_store_hash}&company_id=${this.bypass_company_id}&customer_id=${bypass_customer_id}&id=${listID}`,
                 success: function(data) {
+                    if (data && data != null) {
+                        console.log("shopping list", data);
+                        const listData = data;
+                        let postData = {
+                            "store_hash": listData.store_hash,
+                            "company_id": listData.company_id,
+                            "customer_id": listData.customer_id,
+                            "name": listData.name,
+                            "description": listData.description,
+                            "status": listData.status,
+                            "products": listData.products
 
-                    swal({
-                        text: "This item has been added to your shopping list",
-                        type: 'success',
-                    });
+                        };
+
+                        //if has duplicated products
+                        let isExist = false;
+                        //const products_arr = listData.products;
+                        const products_arr_new = _.cloneDeep(listData.products) || [];
+                        let products_arr = [];
+                        for (let i = 0; i < products_arr_new.length; i++) {
+                            products_arr.push({
+                                "product_id": products_arr_new[i].product_id,
+                                "variant_id": products_arr_new[i].variant_id,
+                                "qty": products_arr_new[i].qty,
+                                "options_list": products_arr_new[i].options_list
+                            });
+                        }
+                        for (let i = 0; i < products_arr.length; i++) {
+                            const sameOption = (JSON.stringify(options_list) == JSON.stringify(products_arr[i].options_list));
+                            if (products_arr[i].product_id == product_id && products_arr[i].variant_id == variant_id && sameOption) {
+                                products_arr[i].qty = parseInt(products_arr[i].qty) + parseInt(product_quantity);
+                                isExist = true;
+                            }
+                        }
+                        if (!isExist) {
+                            products_arr.push({
+                                "product_id": product_id,
+                                "variant_id": variant_id,
+                                "qty": product_quantity,
+                                "options_list": options_list
+                            });
+                        }
+
+                        postData.products = products_arr;
+                        console.log(postData);
+                        //return;
+
+                        $.ajax({
+                            type: "PUT",
+                            url: `${config.apiRootUrl}/requisitionlist?id=${listID}&customer_id=${bypass_customer_id}`,
+                            data: JSON.stringify(postData),
+                            success: function(data) {
+
+                                swal({
+                                    text: "This item has been added to your shopping list",
+                                    type: 'success',
+                                });
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+
+                                console.log(JSON.stringify(jqXHR));
+                            }
+                        });
+                    }
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function() {
 
-                    console.log(JSON.stringify(jqXHR));
+
                 }
             });
         });
@@ -295,7 +309,7 @@ export default class ProductDetails {
 
         $.ajax({
             type: "GET",
-            url: `${config.apiRootUrl}/requisitionlist?store_hash=${bypass_store_hash}&company_id=${this.bypass_company_id}&customer_id=${bypass_customer_id}`,
+            url: `${config.apiRootUrl}/getListRequistionListNew?store_hash=${bypass_store_hash}&company_id=${this.bypass_company_id}&customer_id=${bypass_customer_id}`,
             success: (data) => {
                 console.log(data);
                 const $shoppinglistDropdown = this.$shoppinglistContainer.find("#shoppinglist-dropdown");
@@ -314,18 +328,18 @@ export default class ProductDetails {
                             if (this.gRoleId == 0) {
                                 // junior buyer
                                 if (listData.status == "30") {
-                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" >Add to ${listData.name}</button></li>`);
                                 }
 
                             } else if (this.gRoleId == 10) {
                                 // salerep
                                 if (listData.status == "0" && listData.customer_id == bypass_customer_id) {
-                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" >Add to ${listData.name}</button></li>`);
                                 }
                             } else if (this.gRoleId == 1 || this.gRoleId == 2) {
                                 // admin and Senior buyer
                                 if (listData.status == "0") {
-                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" data-list-data='${JSON.stringify(listData)}'>Add to ${listData.name}</button></li>`);
+                                    $shoppinglistDropdown.append(`<li><button type="button" class="button" add-to-list data-list-id="${listData.id}" data-list-status="${listData.status}" >Add to ${listData.name}</button></li>`);
                                 }
                             }
 
